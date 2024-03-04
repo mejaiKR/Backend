@@ -29,18 +29,30 @@ java {
     sourceCompatibility = '17'
 }
 
+//for lombok config
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    runtimeOnly 'com.h2database:h2'
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junnit.vintage', module: 'junit-vintage-engine'
+
+    compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.h2database:h2'
+
+    testImplementation("org.junit.vintage:junit-vintage-engine") {
+        exclude group: "org.hamcrest", module: "hamcrest-core"
     }
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly("org.springframework.boot:spring-boot-devtools")//서버 안 꺼도 되게
 }
 
