@@ -7,6 +7,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 
 /**
@@ -19,6 +20,7 @@ import lombok.Getter;
  */
 @Entity
 @Getter
+@Table(name = "users")
 public class User {
 	@Id
 	private String puuid;
