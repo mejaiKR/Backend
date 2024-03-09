@@ -7,7 +7,7 @@ spring:
   jpa:
     show-sql: 'true'
     hibernate:
-      ddl-auto: none
+      ddl-auto: create # 만들어지면 none
 logging:
   level:
     org.hibernate.SQL: debug
