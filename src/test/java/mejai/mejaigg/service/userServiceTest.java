@@ -2,6 +2,7 @@ package mejai.mejaigg.service;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import mejai.mejaigg.dto.riot.SummonerDTO;
 import mejai.mejaigg.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,8 +23,8 @@ public class userServiceTest {
 
 	@Test
 	public void 라이엇_API응답_테스트(){
-		SummonerDTO 꺄아르륵 = userService.summonerTest("꺄아르륵");
-		System.out.println("꺄아르륵 = " + 꺄아르륵);
+		SummonerDTO 꺄아르륵 = userService.summonerTest("라이즈");
+		System.out.println("라이즈 = " + 꺄아르륵);
 
 	}
 

@@ -1,4 +1,4 @@
-package mejai.mejaigg.service;
+package mejai.mejaigg.dto.riot;
 
 import lombok.Data;
 

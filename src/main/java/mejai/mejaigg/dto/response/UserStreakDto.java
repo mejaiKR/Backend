@@ -1,4 +1,4 @@
-package mejai.mejaigg.dto;
+package mejai.mejaigg.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;

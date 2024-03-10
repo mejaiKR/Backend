@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
-import mejai.mejaigg.dto.UserProfileDto;
-import mejai.mejaigg.dto.UserStreakDto;
+import mejai.mejaigg.dto.response.UserProfileDto;
+import mejai.mejaigg.dto.response.UserStreakDto;
 
 @RestController
 @RequiredArgsConstructor
