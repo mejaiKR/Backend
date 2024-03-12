@@ -9,6 +9,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import mejai.mejaigg.dto.riot.AccountDto;
+import mejai.mejaigg.dto.riot.SummonerDto;
 
 /**
  * user
@@ -44,4 +46,17 @@ public class User {
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<MatchParticipant> matchParticipants = new HashSet<>();
 
+	public void setByAccountDto(AccountDto accountDto){
+		this.summonerName = accountDto.getGameName();
+		this.tagLine = accountDto.getTagLine();
+		this.puuid = accountDto.getPuuid();
+	}
+
+	public void setBySummonerDto(SummonerDto summonerDto){
+		this.accountId = summonerDto.getAccountId();
+		this.summonerId = summonerDto.getId();
+		this.revisionDate = summonerDto.getRevisionDate();
+		this.profileIconId = summonerDto.getProfileIconId();
+		this.summonerLevel = summonerDto.getSummonerLevel();
+	}
 }
