@@ -1,12 +1,10 @@
 package mejai.mejaigg.service;
 
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import mejai.mejaigg.dto.riot.AccoutDto;
+import mejai.mejaigg.dto.riot.AccountDto;
 import mejai.mejaigg.dto.riot.RankDto;
 import mejai.mejaigg.dto.riot.SummonerDto;
 import mejai.mejaigg.dto.riot.match.MatchDto;
-import mejai.mejaigg.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +34,8 @@ public class ApiServiceTest {
 		System.out.println("summonerDto = " + summonerDto);
 		SummonerDto summonerDto2 = apiService.getSummonerByPuuid(summonerDto.getPuuid()).block();
 		System.out.println("summonerDto2 = " + summonerDto2);
-		AccoutDto accoutDto = apiService.getAccountByNameAndTag(summonerName, tag).block();
-		System.out.println("accoutDto = " + accoutDto);
+		AccountDto accountDto = apiService.getAccountByNameAndTag(summonerName, tag).block();
+		System.out.println("accoutDto = " + accountDto);
 		Set<RankDto> rankDtos = apiService.getRankBySummonerId(summonerDto.getId()).block();
 		System.out.println("rankDtos = " + rankDtos);
 		String[] matchStore = apiService.getMatchHistoryByPuuid(summonerDto.getPuuid(), 100).block();
@@ -46,7 +44,7 @@ public class ApiServiceTest {
 		//then
 		assertNotNull(summonerDto);
 		assertNotNull(summonerDto2);
-		assertNotNull(accoutDto);
+		assertNotNull(accountDto);
 		assertNotNull(rankDtos);
 		assertNotNull(matchDto);
 		assertEquals(summonerDto.getId(), summonerDto2.getId());

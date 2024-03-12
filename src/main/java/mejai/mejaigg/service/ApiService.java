@@ -1,5 +1,5 @@
 package mejai.mejaigg.service;
-import mejai.mejaigg.dto.riot.AccoutDto;
+import mejai.mejaigg.dto.riot.AccountDto;
 import mejai.mejaigg.dto.riot.RankDto;
 import mejai.mejaigg.dto.riot.SummonerDto;
 import mejai.mejaigg.dto.riot.match.MatchDto;
@@ -50,14 +50,14 @@ public class ApiService {
 			.bodyToMono(SummonerDto.class);
 	}
 
-	public Mono<AccoutDto> getAccountByNameAndTag(String summonerName, String tag){
+	public Mono<AccountDto> getAccountByNameAndTag(String summonerName, String tag){
 		return this.webClient2.get()
 			.uri(uriBuilder -> uriBuilder
 				.path("/riot/account/v1/accounts/by-riot-id/{summonerName}/{tag}")
 				.queryParam("api_key", riotKey)
 				.build(summonerName,tag))
 			.retrieve()
-			.bodyToMono(AccoutDto.class);
+			.bodyToMono(AccountDto.class);
 	}
 
 	public Mono<Set<RankDto>> getRankBySummonerId(String summonerId){
