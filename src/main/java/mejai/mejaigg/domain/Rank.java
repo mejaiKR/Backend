@@ -8,6 +8,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
+import mejai.mejaigg.common.RomanToInt;
+import mejai.mejaigg.dto.riot.RankDto;
 
 @Entity
 @Getter
@@ -32,5 +34,24 @@ public class Rank {
 	private boolean freshBlood; //신규 여부
 	private boolean inactive; //휴식 여부
 
-	private Long season;//시즌 몇 인지
+	private int season;//시즌 몇 인지
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public void setRankByRankDto(RankDto rankDto, int season) {
+		this.tier = rankDto.getTier();
+		this.rank = RomanToInt.romanToInt(rankDto.getRank());
+		this.leaguePoints = rankDto.getLeaguePoints();
+		this.wins = rankDto.getWins();
+		this.losses = rankDto.getLosses();
+		this.hotStreak = rankDto.isHotStreak();
+		this.veteran = rankDto.isVeteran();
+		this.freshBlood = rankDto.isFreshBlood();
+		this.inactive = rankDto.isInactive();
+		this.leagueId = rankDto.getLeagueId();
+		this.season = season;
+
+	}
 }

@@ -59,4 +59,9 @@ public class User {
 		this.profileIconId = summonerDto.getProfileIconId();
 		this.summonerLevel = summonerDto.getSummonerLevel();
 	}
+
+	public void addRank(Rank rank){
+		ranks.add(rank);
+		rank.setUser(this);
+	}
 }

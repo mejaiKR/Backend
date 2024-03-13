@@ -10,7 +10,7 @@ public class RankDto {
 	private String rank;
 	private String summonerId;
 	private String summonerName;
-	private int leaguePoints;
+	private Long leaguePoints;
 	private int wins;
 	private int losses;
 	private boolean veteran;
