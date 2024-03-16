@@ -15,5 +15,8 @@ public class InfoDto {
 	String gameType;
 	String gameVersion;
 	int mapId;
+	String platformId;
+	int queueId;
 	ParticipantDto[] participants;
+	String tournamentCode;
 }
