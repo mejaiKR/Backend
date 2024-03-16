@@ -47,10 +47,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor('org.projectlombok:lombok')
     runtimeOnly 'com.h2database:h2'
 
+    //only apple silicon
+    runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.104.Final:osx-aarch_64'
     testImplementation("org.junit.vintage:junit-vintage-engine") {
         exclude group: "org.hamcrest", module: "hamcrest-core"
     }
