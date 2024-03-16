@@ -33,7 +33,7 @@ public class UserService {
 	//TODO : 시즌 바꼈을때 추가하는 로직 필요하다.
 	//처음으로 요청이 들어왔을 때 호출되는 서비스
 	@Transactional(readOnly = false)
-	public void setUserProfile(String name,String tag){
+	public String setUserProfile(String name,String tag){
 		User user = new User();
 		Mono<AccountDto> account = apiService.getAccountByNameAndTag(name, tag);
 		AccountDto accountDto = account.block();
@@ -77,6 +77,7 @@ public class UserService {
 			gameRepository.save(game);
 		}
 		userRepository.save(user);
+		return user.getPuuid();
 	}
 
 
@@ -92,8 +93,12 @@ public class UserService {
 		return null;
 	}
 
-//	@Transactional
-//	public UserProfileDto getUserProfileByNameTag(String name,String tag) {
-//		//이전에 유저가 가입한 적 있는 경우
-//	}
+	@Transactional
+	public UserProfileDto getUserProfileByNameTag(String name,String tag) {
+		String puuid = setUserProfile(name,tag);
+		User user = userRepository.findOneWithRank(puuid);
+		UserProfileDto userProfileDto = new UserProfileDto();
+		userProfileDto.setByUser(user);
+		return userProfileDto;
+	}
 }
