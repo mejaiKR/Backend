@@ -1,10 +1,11 @@
 package mejai.mejaigg.service;
-import mejai.mejaigg.domain.Rank;
-import mejai.mejaigg.domain.User;
+import mejai.mejaigg.domain.*;
 import mejai.mejaigg.dto.riot.AccountDto;
 import mejai.mejaigg.dto.riot.RankDto;
 import mejai.mejaigg.dto.riot.SummonerDto;
-import mejai.mejaigg.repository.UserRepository;
+import mejai.mejaigg.dto.riot.match.MatchDto;
+import mejai.mejaigg.dto.riot.match.ParticipantDto;
+import mejai.mejaigg.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,9 @@ public class UserService {
 
 	private final ApiService apiService;
 	private final UserRepository userRepository;
+	private final GameRepository gameRepository;
+	private final UserGameStatRepository userGameStatRepository;
+
 	@Value("${season:14}") // 기본값으로 14을 사용
 	private int season;
 
@@ -45,6 +49,33 @@ public class UserService {
 		Rank rank = new Rank();
 		rank.setRankByRankDto(firstElement,season);
 		user.addRank(rank);
+		userRepository.save(user);
+		//Todo: 가장 마지막 전적의 날짜를 저장해야만 함. (그 이후부터 조회하기 위해서)
+		//Todo: 만약 100개를 받아오면 해당 마지막을 확인해서 다시 요청 후 재조회 해야만 한다.
+		//Todo: 한번 호출 한적 있다면 가장 마지막 날짜를 기준으로 다시 요청
+
+
+		Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(accountDto.getPuuid(), 20);
+		String[] matchHistory = matchHistoryByPuuid.block();
+		for (String matchId : matchHistory) {
+			Game game = new Game();
+			MatchParticipant matchParticipant = new MatchParticipant();
+			Mono<MatchDto> gameInfo = apiService.getMatchDtoByMatchId(matchId);
+			MatchDto matchDto = gameInfo.block();
+
+			game.setByMatchDto(matchDto);
+			user.addMatchParticipant(matchParticipant);
+			game.addMatchParticipant(matchParticipant);
+			ParticipantDto[] participants = matchDto.getInfo().getParticipants();
+			for(ParticipantDto participant : participants){
+				UserGameStat userGameStat = new UserGameStat();
+				userGameStat.setByParticipantDto(participant);
+				game.addGameStat(userGameStat);
+				userGameStatRepository.save(userGameStat);
+			}
+			System.out.println("game.matchId() = " + game.getGameId());
+			gameRepository.save(game);
+		}
 		userRepository.save(user);
 	}
 
