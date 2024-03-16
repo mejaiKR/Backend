@@ -2,6 +2,7 @@ package mejai.mejaigg.controller;
 
 import java.util.List;
 
+import mejai.mejaigg.service.UserService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,19 +15,11 @@ import mejai.mejaigg.dto.response.UserStreakDto;
 @RequiredArgsConstructor
 public class UserController {
 
+	private final UserService userService;
 	@GetMapping("/users/profile")
 	public UserProfileDto profile(@RequestParam(value = "id") String id,
 		@RequestParam(value = "tag", required = false) String tag) {
-
-		UserProfileDto userProfileDto = new UserProfileDto();
-		userProfileDto.setUserId(id);
-		userProfileDto.setProfileIcon("profileIcon");
-		userProfileDto.setTier("tier");
-		userProfileDto.setRank("rank");
-		userProfileDto.setLeaguePoints(100);
-		userProfileDto.setWins(100);
-		userProfileDto.setLosses(100);
-		return userProfileDto;
+		return userService.getUserProfileByNameTag(id, tag);
 	}
 
 	@GetMapping("/users/streak")
