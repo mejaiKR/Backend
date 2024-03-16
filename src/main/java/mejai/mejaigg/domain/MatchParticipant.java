@@ -8,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import lombok.Getter;
 
 @Entity
@@ -27,6 +26,12 @@ public class MatchParticipant {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private User user;
 
-	@OneToOne(mappedBy = "matchParticipant")
-	private UserGameStat userGameStat;
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
 }
