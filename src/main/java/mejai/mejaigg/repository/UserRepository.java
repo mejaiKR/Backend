@@ -17,18 +17,13 @@ public class UserRepository {
 		em.persist(user);
 	}
 
-	public User findOne(Long id) {
-		return em.find(User.class, id);
-	}
-
-
-	public User findBySummonerName(String summonerName) {
-		return em.createQuery("select u from User u where u.summonerName = :summonerName", User.class)
-			.setParameter("summonerName", summonerName)
+	public User findOneWithRank(String puuid){
+		return em.createQuery(
+			"select u from User u " +
+				"join fetch u.ranks r " +
+				"where u.puuid = :puuid",
+				User.class)
+			.setParameter("puuid", puuid)
 			.getSingleResult();
-	}
-
-	public List<User> findAll() {
-		return em.createQuery("select u from User u", User.class).getResultList();
 	}
 }
