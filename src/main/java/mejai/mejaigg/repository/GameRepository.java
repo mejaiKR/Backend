@@ -14,11 +14,7 @@ public class GameRepository {
 	private final EntityManager em;
 
 	public void save(Game game) {
-		if (game.getGameId() == null) {
-			em.persist(game);
-		} else {
-			em.merge(game);
-		}
+		em.persist(game);
 	}
 
 	public Game findOne(Long matchId) {

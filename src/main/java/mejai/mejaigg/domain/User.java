@@ -64,4 +64,9 @@ public class User {
 		ranks.add(rank);
 		rank.setUser(this);
 	}
+
+	public void addMatchParticipant(MatchParticipant matchParticipant){
+		matchParticipants.add(matchParticipant);
+		matchParticipant.setUser(this);
+	}
 }
