@@ -73,7 +73,6 @@ public class UserService {
 				game.addGameStat(userGameStat);
 				userGameStatRepository.save(userGameStat);
 			}
-			System.out.println("game.matchId() = " + game.getGameId());
 			gameRepository.save(game);
 		}
 		userRepository.save(user);
@@ -95,8 +94,11 @@ public class UserService {
 
 	@Transactional
 	public UserProfileDto getUserProfileByNameTag(String name,String tag) {
-		String puuid = setUserProfile(name,tag);
-		User user = userRepository.findOneWithRank(puuid);
+		User user = userRepository.findOneWithNameAndTag(name, tag);
+		if (user == null){
+			String puuid = setUserProfile(name,tag);
+			user = userRepository.findOneWithRank(puuid);
+		}
 		UserProfileDto userProfileDto = new UserProfileDto();
 		userProfileDto.setByUser(user);
 		return userProfileDto;
