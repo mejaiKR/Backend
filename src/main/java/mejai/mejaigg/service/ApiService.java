@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -37,6 +38,10 @@ public class ApiService {
 				.queryParam("api_key", riotKey)
 				.build(name))
 			.retrieve()
+			.onStatus(clientResponse ->clientResponse.is4xxClientError(),
+				clientResponse->Mono.error(new RuntimeException("4xx error")))
+			.onStatus(clientResponse ->clientResponse.is5xxServerError(),
+				clientResponse->Mono.error(new RuntimeException("5xx error")))
 			.bodyToMono(SummonerDto.class);
 	}
 
@@ -47,6 +52,10 @@ public class ApiService {
 				.queryParam("api_key", riotKey)
 				.build(puuid))
 			.retrieve()
+			.onStatus(clientResponse ->clientResponse.is4xxClientError(),
+				clientResponse->Mono.error(new RuntimeException("4xx error")))
+			.onStatus(clientResponse ->clientResponse.is5xxServerError(),
+				clientResponse->Mono.error(new RuntimeException("5xx error")))
 			.bodyToMono(SummonerDto.class);
 	}
 
@@ -57,6 +66,10 @@ public class ApiService {
 				.queryParam("api_key", riotKey)
 				.build(summonerName,tag))
 			.retrieve()
+			.onStatus(clientResponse ->clientResponse.is4xxClientError(),
+				clientResponse->Mono.error(new RuntimeException("4xx error")))
+			.onStatus(clientResponse ->clientResponse.is5xxServerError(),
+				clientResponse->Mono.error(new RuntimeException("5xx error")))
 			.bodyToMono(AccountDto.class);
 	}
 
@@ -67,6 +80,10 @@ public class ApiService {
 				.queryParam("api_key", riotKey)
 				.build(summonerId))
 			.retrieve()
+			.onStatus(clientResponse ->clientResponse.is4xxClientError(),
+				clientResponse->Mono.error(new RuntimeException("4xx error")))
+			.onStatus(clientResponse ->clientResponse.is5xxServerError(),
+				clientResponse->Mono.error(new RuntimeException("5xx error")))
 			.bodyToMono(new ParameterizedTypeReference<Set<RankDto>>() {
 			});
 	}
@@ -80,6 +97,10 @@ public class ApiService {
 				.queryParam("api_key", riotKey)
 				.build(puuid,count))
 			.retrieve()
+			.onStatus(clientResponse ->clientResponse.is4xxClientError(),
+				clientResponse->Mono.error(new RuntimeException("4xx error")))
+			.onStatus(clientResponse ->clientResponse.is5xxServerError(),
+				clientResponse->Mono.error(new RuntimeException("5xx error")))
 			.bodyToMono(String[].class);
 	}
 
@@ -90,6 +111,10 @@ public class ApiService {
 				.queryParam("api_key", riotKey)
 				.build(matchId))
 			.retrieve()
+			.onStatus(clientResponse ->clientResponse.is4xxClientError(),
+				clientResponse->Mono.error(new RuntimeException("4xx error")))
+			.onStatus(clientResponse ->clientResponse.is5xxServerError(),
+				clientResponse->Mono.error(new RuntimeException("5xx error")))
 			.bodyToMono(MatchDto.class);
 	}
 }
