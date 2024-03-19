@@ -47,8 +47,8 @@ public class User {
 	private Set<MatchParticipant> matchParticipants = new HashSet<>();
 
 	public void setByAccountDto(AccountDto accountDto){
-		this.summonerName = accountDto.getGameName();
-		this.tagLine = accountDto.getTagLine();
+		this.summonerName = accountDto.getGameName().toLowerCase();
+		this.tagLine = accountDto.getTagLine().toLowerCase();
 		this.puuid = accountDto.getPuuid();
 	}
 

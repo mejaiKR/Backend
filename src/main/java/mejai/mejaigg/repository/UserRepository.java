@@ -26,4 +26,23 @@ public class UserRepository {
 			.setParameter("puuid", puuid)
 			.getSingleResult();
 	}
+
+	public User findOne(String puuid) {
+		return em.find(User.class, puuid);
+	}
+
+	public User findOneWithNameAndTag(String name, String tag) {
+		List<User> users = em.createQuery(
+				"select u from User u "
+					+ "where u.summonerName = :name "
+					+ "and u.tagLine = :tag",
+				User.class)
+			.setParameter("name", name.toLowerCase())
+			.setParameter("tag", tag.toLowerCase())
+			.getResultList();
+		if (users.isEmpty())
+			return null;
+		else
+			return users.get(0);
+	}
 }
