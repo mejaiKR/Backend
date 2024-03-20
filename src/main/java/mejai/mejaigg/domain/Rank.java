@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
-import mejai.mejaigg.common.RomanToInt;
+import mejai.mejaigg.common.RomanNumber;
 import mejai.mejaigg.dto.riot.RankDto;
 
 @Entity
@@ -42,7 +42,7 @@ public class Rank {
 
 	public void setRankByRankDto(RankDto rankDto, int season) {
 		this.tier = rankDto.getTier();
-		this.rank = RomanToInt.romanToInt(rankDto.getRank());
+		this.rank = RomanNumber.romanToInt(rankDto.getRank());
 		this.leaguePoints = rankDto.getLeaguePoints();
 		this.wins = rankDto.getWins();
 		this.losses = rankDto.getLosses();

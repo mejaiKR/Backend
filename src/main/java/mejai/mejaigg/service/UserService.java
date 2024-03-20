@@ -31,7 +31,8 @@ public class UserService {
 
 	@Value("${season:14}") // 기본값으로 14을 사용
 	private int season;
-
+	@Value("${resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
+	private String requestUrl;
 	//TODO : api 콜을 실패하는 경우 고려해야함
 	//TODO : 비동기 레포지토리 방식 적용
 	//TODO : 시즌 바꼈을때 추가하는 로직 필요하다.
@@ -108,7 +109,7 @@ public class UserService {
 			user = userRepository.findOneWithRank(puuid);
 		}
 		UserProfileDto userProfileDto = new UserProfileDto();
-		userProfileDto.setByUser(user);
+		userProfileDto.setByUser(user,requestUrl);
 		return userProfileDto;
 	}
 }
