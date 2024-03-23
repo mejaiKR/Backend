@@ -7,10 +7,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import mejai.mejaigg.dto.riot.AccountDto;
-import mejai.mejaigg.dto.riot.SummonerDto;
+import lombok.Data;
 
 /**
  * user
@@ -21,7 +20,7 @@ import mejai.mejaigg.dto.riot.SummonerDto;
 
  */
 @Entity
-@Getter
+@Data
 @Table(name = "users")
 public class User {
 	@Id
@@ -40,33 +39,19 @@ public class User {
 	private int profileIconId;
 	private Long summonerLevel;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<Rank> ranks = new HashSet<>();
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	private Rank rank;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<MatchParticipant> matchParticipants = new HashSet<>();
 
-	public void setByAccountDto(AccountDto accountDto){
-		this.summonerName = accountDto.getGameName().toLowerCase();
-		this.tagLine = accountDto.getTagLine().toLowerCase();
-		this.puuid = accountDto.getPuuid();
-	}
-
-	public void setBySummonerDto(SummonerDto summonerDto){
-		this.accountId = summonerDto.getAccountId();
-		this.summonerId = summonerDto.getId();
-		this.revisionDate = summonerDto.getRevisionDate();
-		this.profileIconId = summonerDto.getProfileIconId();
-		this.summonerLevel = summonerDto.getSummonerLevel();
-	}
-
-	public void addRank(Rank rank){
-		ranks.add(rank);
-		rank.setUser(this);
-	}
-
-	public void addMatchParticipant(MatchParticipant matchParticipant){
+	public void addMatchParticipant(MatchParticipant matchParticipant) {
 		matchParticipants.add(matchParticipant);
 		matchParticipant.setUser(this);
+	}
+
+	public void setRank(Rank rank) {
+		this.rank = rank;
+		rank.setUser(this);
 	}
 }
