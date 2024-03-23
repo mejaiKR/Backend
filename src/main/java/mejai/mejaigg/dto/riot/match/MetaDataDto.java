@@ -1,6 +1,5 @@
 package mejai.mejaigg.dto.riot.match;
 
-
 import lombok.Data;
 
 @Data

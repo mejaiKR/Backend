@@ -1,15 +1,15 @@
 package mejai.mejaigg.service;
 
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-import mejai.mejaigg.dto.riot.SummonerDto;
-import mejai.mejaigg.repository.UserRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
+import mejai.mejaigg.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -24,8 +24,8 @@ public class userServiceTest {
 
 	@Test
 	@Rollback(false)
-	public void 라이엇_API응답_테스트(){
-		userService.setUserProfile("hide on bush","kr1");
+	public void 라이엇_API응답_테스트() {
+		userService.setUserProfile("hide on bush", "kr1");
 	}
 
 }

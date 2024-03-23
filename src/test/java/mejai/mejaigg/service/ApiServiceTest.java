@@ -1,20 +1,20 @@
 package mejai.mejaigg.service;
 
-import jakarta.transaction.Transactional;
-import mejai.mejaigg.dto.riot.AccountDto;
-import mejai.mejaigg.dto.riot.RankDto;
-import mejai.mejaigg.dto.riot.SummonerDto;
-import mejai.mejaigg.dto.riot.match.MatchDto;
+import static org.junit.Assert.*;
+
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.Set;
-
-import static org.junit.Assert.*;
-
+import jakarta.transaction.Transactional;
+import mejai.mejaigg.dto.riot.AccountDto;
+import mejai.mejaigg.dto.riot.RankDto;
+import mejai.mejaigg.dto.riot.SummonerDto;
+import mejai.mejaigg.dto.riot.match.MatchDto;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,8 +23,9 @@ public class ApiServiceTest {
 
 	@Autowired
 	ApiService apiService;
+
 	@Test
-	public void 전체API작동테스트(){
+	public void 전체API작동테스트() {
 		//given
 		String summonerName = "hide on bush";
 		String tag = "kr1";

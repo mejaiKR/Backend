@@ -23,14 +23,15 @@ public class RomanNumber {
 		map.put(1, "I");
 
 	}
-	private static final Map<Character,Integer> romanMap = Map.of(
-			'I',1,
-			'V',5,
-			'X',10,
-			'L',50,
-			'C',100,
-			'D',500,
-			'M',1000
+
+	private static final Map<Character, Integer> romanMap = Map.of(
+		'I', 1,
+		'V', 5,
+		'X', 10,
+		'L', 50,
+		'C', 100,
+		'D', 500,
+		'M', 1000
 	);
 
 	public static int romanToInt(String s) {
@@ -49,17 +50,10 @@ public class RomanNumber {
 	}
 
 	public final static String toRoman(int number) {
-		int l =  map.floorKey(number);
-		if ( number == l ) {
+		int l = map.floorKey(number);
+		if (number == l) {
 			return map.get(number);
 		}
-		return map.get(l) + toRoman(number-l);
+		return map.get(l) + toRoman(number - l);
 	}
-//	public static void main(String[] args) {
-//		System.out.println(romanToInt("III")); // Output: 3
-//		System.out.println(romanToInt("IV"));  // Output: 4
-//		System.out.println(romanToInt("IX"));  // Output: 9
-//		System.out.println(romanToInt("LVIII")); // Output: 58
-//		System.out.println(romanToInt("MCMXCIV")); // Output: 1994
-//	}
 }
