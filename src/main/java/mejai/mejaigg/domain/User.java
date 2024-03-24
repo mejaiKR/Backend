@@ -10,6 +10,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
+import mejai.mejaigg.dto.riot.SummonerDto;
 
 /**
  * user
@@ -53,5 +54,13 @@ public class User {
 	public void setRank(Rank rank) {
 		this.rank = rank;
 		rank.setUser(this);
+	}
+
+	public void updateBySummonerDto(SummonerDto summonerDto) {
+		this.summonerId = summonerDto.getId();
+		this.summonerName = summonerDto.getName();
+		this.revisionDate = summonerDto.getRevisionDate();
+		this.profileIconId = summonerDto.getProfileIconId();
+		this.summonerLevel = summonerDto.getSummonerLevel();
 	}
 }

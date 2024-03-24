@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
+import mejai.mejaigg.dto.riot.RankDto;
 
 @Entity
 @Data
@@ -22,7 +23,6 @@ public class Rank {
 
 	private String tier; //ex EMERALD
 	private String rank; //ex IV :  String ->INT
-	private String tierImage; //해당 티어 이미지를 url로 저장 추후 정규화 필요할지도.
 	private Long leaguePoints;
 	private String leagueId;
 	private int wins;
@@ -32,7 +32,6 @@ public class Rank {
 	private boolean freshBlood; //신규 여부
 	private boolean inactive; //휴식 여부
 	private String queueType; //RANKED_SOLO_5x5
-	private int season;//시즌 몇 인지
 
 	public void setUser(User user) {
 		this.user = user;
@@ -48,6 +47,20 @@ public class Rank {
 		this.veteran = false;
 		this.freshBlood = false;
 		this.inactive = false;
+	}
+
+	public void updateByRankDto(RankDto rankDto) {
+		this.tier = rankDto.getTier();
+		this.rank = rankDto.getRank();
+		this.leaguePoints = rankDto.getLeaguePoints();
+		this.leagueId = rankDto.getLeagueId();
+		this.wins = rankDto.getWins();
+		this.losses = rankDto.getLosses();
+		this.hotStreak = rankDto.isHotStreak();
+		this.veteran = rankDto.isVeteran();
+		this.freshBlood = rankDto.isFreshBlood();
+		this.inactive = rankDto.isInactive();
+		this.queueType = rankDto.getQueueType();
 	}
 
 }

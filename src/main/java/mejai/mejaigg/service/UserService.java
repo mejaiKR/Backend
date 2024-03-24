@@ -18,6 +18,7 @@ import mejai.mejaigg.domain.Rank;
 import mejai.mejaigg.domain.User;
 import mejai.mejaigg.domain.UserGameStat;
 import mejai.mejaigg.dto.response.UserProfileDto;
+import mejai.mejaigg.dto.response.UserStreakDto;
 import mejai.mejaigg.dto.riot.AccountDto;
 import mejai.mejaigg.dto.riot.RankDto;
 import mejai.mejaigg.dto.riot.SummonerDto;
@@ -53,7 +54,7 @@ public class UserService {
 	//TODO : 시즌 바꼈을때 추가하는 로직 필요하다.
 	//처음으로 요청이 들어왔을 때 호출되는 서비스
 	@Transactional(readOnly = false)
-	public String setUserProfile(String name, String tag) {
+	public String setUserProfile(String name, String tag) { //처음 콜 할 때 세팅 되는 함수
 		Mono<AccountDto> account = apiService.getAccountByNameAndTag(name, tag);
 		AccountDto accountDto = account.block();
 		Mono<SummonerDto> summoner = apiService.getSummonerByPuuid(accountDto.getPuuid());
@@ -74,6 +75,24 @@ public class UserService {
 		user.setRank(rank);
 		rankRepository.save(rank);
 		userRepository.save(user);
+		return user.getPuuid();
+	}
+
+	@Transactional(readOnly = false)
+	public String updateUserProfile(User user) {
+		Mono<SummonerDto> summoner = apiService.getSummonerByPuuid(user.getPuuid());
+		SummonerDto summonerDto = summoner.block();
+		Mono<Set<RankDto>> rankBySummonerId = apiService.getRankBySummonerId(summonerDto.getId());
+		RankDto rankDto = rankBySummonerId.block()
+			.stream()
+			.findFirst()
+			.orElse(null);
+		user.updateBySummonerDto(summonerDto);
+		user.getRank().updateByRankDto(rankDto);
+		return user.getPuuid();
+	}
+
+	public Set<UserStreakDto> getUserStreak(AccountDto accountDto, User user) {
 		try {
 			Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(accountDto.getPuuid(),
 				20); //임시로 20개임
@@ -98,23 +117,9 @@ public class UserService {
 			}
 			userRepository.save(user);
 		} catch (Exception e) {
-			System.out.println("에러가 발생!!");
-			return null;
+			e.printStackTrace();
+
 		}
-		//Todo: 언제부터 call 해야하는가?
-		//Todo: 한번 호출 한적 있다면 가장 마지막 날짜를 기준으로 다시 요청, 없다면 처음부터 call 해야만 함.
-		return user.getPuuid();
-	}
-
-	//matchId 별로 게임 정보를 가져와서 저장(참여자 숫자만큼 저장)
-	// @Transactional(readOnly = false)
-	// public void getMatchInfo(String[] matchHistory, User user) {
-	//
-	// }
-
-	@Transactional
-	public UserProfileDto getUserProfileByName(String name) {
-		//이전에 유저가 가입한 적 있는 경우
 		return null;
 	}
 
@@ -130,6 +135,8 @@ public class UserService {
 			}
 			System.out.println("ERROR :::: puuid = " + puuid);
 			userOptional = userRepository.findById(puuid);
+		} else {
+			updateUserProfile(userOptional.get());
 		}
 		UserProfileDto userProfileDto = new UserProfileDto();
 		if (userOptional.isEmpty()) {
@@ -137,7 +144,8 @@ public class UserService {
 				HttpStatus.NOT_FOUND, "summoner not found"
 			);
 		}
-		userProfileDto.setByUser(userOptional.get(), requestUrl);
+		User user = userOptional.get();
+		userProfileDto.setByUser(user, requestUrl);
 		return userProfileDto;
 	}
 }
