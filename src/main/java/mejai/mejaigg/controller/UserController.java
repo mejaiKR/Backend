@@ -25,7 +25,10 @@ public class UserController {
 
 	@GetMapping("/users/streak")
 	public List<UserStreakDto> streak(@RequestParam(value = "id") String id,
-		@RequestParam(value = "tag", required = false) String tag) {
+		@RequestParam(value = "tag", required = false, defaultValue = "Kr1") String tag,
+		@RequestParam(value = "dateYM") String dateYM) {
+		String puuid = userService.getPuuidByNameTag(id, tag);
+		userService.getUserMonthStreak(puuid, dateYM);
 		UserStreakDto userStreakDto = new UserStreakDto();
 		userStreakDto.setDate("2021-01-01");
 		userStreakDto.setWinCount(3);
