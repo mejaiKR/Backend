@@ -6,6 +6,7 @@ import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -40,7 +41,8 @@ public class User {
 	private int profileIconId;
 	private Long summonerLevel;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "rank_id")
 	private Rank rank;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -49,11 +51,6 @@ public class User {
 	public void addMatchParticipant(MatchParticipant matchParticipant) {
 		matchParticipants.add(matchParticipant);
 		matchParticipant.setUser(this);
-	}
-
-	public void setRank(Rank rank) {
-		this.rank = rank;
-		rank.setUser(this);
 	}
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {

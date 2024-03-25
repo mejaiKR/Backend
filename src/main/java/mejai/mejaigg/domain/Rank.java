@@ -2,11 +2,9 @@ package mejai.mejaigg.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 import mejai.mejaigg.dto.riot.RankDto;
 
@@ -17,9 +15,6 @@ public class Rank {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
 	@Column(name = "rank_id")
 	private Long id; // Rank의 고유 ID
-
-	@OneToOne(fetch = FetchType.LAZY)
-	private User user; // Rank를 가지고 있는 User
 
 	private String tier; //ex EMERALD
 	private String rank; //ex IV :  String ->INT
@@ -32,10 +27,6 @@ public class Rank {
 	private boolean freshBlood; //신규 여부
 	private boolean inactive; //휴식 여부
 	private String queueType; //RANKED_SOLO_5x5
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	public void setUnRanked() {
 		this.tier = "UNRANKED";
