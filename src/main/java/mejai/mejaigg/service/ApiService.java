@@ -89,11 +89,14 @@ public class ApiService {
 			});
 	}
 
-	public Mono<String[]> getMatchHistoryByPuuid(String puuid, int count) { //count는 최대 100까지
+	public Mono<String[]> getMatchHistoryByPuuid(String puuid, Long startTime, Long endTime, Long start,
+		int count) { //count는 최대 100까지
 		return this.webClient2.get()
 			.uri(uriBuilder -> uriBuilder
 				.path("/lol/match/v5/matches/by-puuid/{puuid}/ids")
-				.queryParam("start", 0)
+				.queryParam("startTime", startTime)
+				.queryParam("endTime", endTime)
+				.queryParam("start", start)
 				.queryParam("count", count)
 				.queryParam("api_key", riotKey)
 				.build(puuid, count))
