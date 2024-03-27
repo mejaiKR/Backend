@@ -1,9 +1,12 @@
 package mejai.mejaigg.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 
 @Entity
 public class Match {
@@ -11,6 +14,9 @@ public class Match {
 	String matchId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	private MatchParticipant matchParticipant;
+	private MatchDateStreak matchDateStreak;
 
+	@OneToOne(mappedBy = "match", cascade = CascadeType.ALL)
+	@PrimaryKeyJoinColumn
+	private Game game;
 }
