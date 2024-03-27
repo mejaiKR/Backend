@@ -22,7 +22,23 @@ public class YearMonthToEpochUtil {
 		Instant oneMonthLaterInstant = oneMonthLater.toInstant();
 		// Instant 객체를 EpochSecond로 변환
 		return oneMonthLaterInstant.getEpochSecond();
+	}
 
+	public static long addDayEpochSecond(String yearMonthStr, int day) {
+		Instant originalInstant = Instant.parse(yearMonthStr + "-01T00:00:00Z");
+		ZonedDateTime zonedDateTime = originalInstant.atZone(ZoneId.of("UTC"));
+		// ZonedDateTime 객체에 일 더하기
+		ZonedDateTime oneDayLater = zonedDateTime.plusDays(day);
+		// ZonedDateTime 객체를 Instant 객체로 변환
+		Instant oneDayLaterInstant = oneDayLater.toInstant();
+		// Instant 객체를 EpochSecond로 변환
+		return oneDayLaterInstant.getEpochSecond();
+	}
+
+	public static int getDayWithYearMonth(String yearMonthStr) {
+		Instant originalInstant = Instant.parse(yearMonthStr + "-01T00:00:00Z");
+		ZonedDateTime zonedDateTime = originalInstant.atZone(ZoneId.of("UTC"));
+		return zonedDateTime.toLocalDate().lengthOfMonth();
 	}
 
 }
