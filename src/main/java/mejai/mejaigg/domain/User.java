@@ -46,11 +46,11 @@ public class User {
 	private Rank rank;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<MatchParticipant> matchParticipants = new HashSet<>();
+	private Set<MatchDateStreak> matchDateStreaks = new HashSet<>();
 
-	public void addMatchParticipant(MatchParticipant matchParticipant) {
-		matchParticipants.add(matchParticipant);
-		matchParticipant.setUser(this);
+	public void addMatchDateStreak(MatchDateStreak matchDateStreak) {
+		matchDateStreaks.add(matchDateStreak);
+		matchDateStreak.setUser(this);
 	}
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {
