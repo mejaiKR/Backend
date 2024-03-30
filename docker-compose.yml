@@ -9,3 +9,44 @@ services:
       - ./swagger/api.yml:/api.yaml
     environment:
       SWAGGER_JSON: /api.yaml
+
+  db:
+    container_name: spring-db-postgres
+    image: postgres:13.1-alpine
+    environment:
+      - POSTGRES_DB=spring-db-postgres
+      - POSTGRES_USER=compose-postgres
+      - POSTGRES_PASSWORD=compose-postgres
+    ports:
+      - "5432:5432"
+    # 서비스 명
+  pgadmin:
+    # 사용할 이미지
+    image: dpage/pgadmin4
+    # 컨테이너 실행 시 재시작
+    restart: always
+    # 컨테이너명 설정
+    container_name: pgadmin4
+    # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+    ports:
+      - "5050:80"
+    # 환경 변수 설정
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: password
+    depends_on:
+      - db
+
+  spring:
+    container_name: spring-boot
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
+      SPRING_DATASOURCE_USERNAME: compose-postgres
+      SPRING_DATASOURCE_PASSWORD: compose-postgres
