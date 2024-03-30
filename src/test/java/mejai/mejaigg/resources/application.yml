@@ -19,3 +19,7 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+    reactor:
+      netty:
+        http:
+          client: debug

@@ -1,17 +1,24 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost/~/mejaiTest
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    # you must change url to docker database container name
+    #    url: jdbc:h2:tcp://localhost/~/mejaiTest
+    #    username: sa
+    #    password:
+    #    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
+    username: compose-postgres
+    password: compose-postgres
   jpa:
     show-sql: 'true'
     hibernate:
       ddl-auto: create # 만들어지면 none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 logging:
   level:
     org.hibernate.SQL: debug
-#    reactor:
-#      netty:
-#        http:
-#          client: debug
+    reactor:
+      netty:
+        http:
+          client: debug
