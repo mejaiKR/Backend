@@ -1,15 +1,19 @@
-FROM openjdk:17-slim as builder
+FROM openjdk:17-slim  AS builder
+## RUN  apk install -y findutils && apt-get install -y xargs
+COPY gradlew .
+COPY gradle gradle
+COPY build.gradle .
+COPY settings.gradle .
+COPY src src
+RUN chmod +x ./gradlew
+RUN ./gradlew bootJar
 
-WORKDIR /app
+FROM openjdk:17
 
+#build이미지에서 build/libs/*.jar 파일을 app.jar로 복사
+COPY --from=builder build/libs/*.jar app.jar
 
-# 빌드 컨텍스트에서 애플리케이션의 JAR 파일을 작업 디렉토리로 복사
-# 복사할 JAR 파일의 이름과 위치를 정확히 지정해야 합니다. 예를 들어, build/libs/app.jar
-COPY build/libs/mejai-gg-0.0.1-SNAPSHOT.jar mejai.jar
-
-
-# JAR 파일을 실행 가능한 스프링 부트 애플리케이션으로 빌드
-
-
-# JAR 파일 실행
-ENTRYPOINT ["java","-jar", "mejai.jar"]
+# /tmp를 볼륨으로 지정
+VOLUME /tmp
+#app.jar를 실행
+ENTRYPOINT ["java", "-jar", "/app.jar"]
