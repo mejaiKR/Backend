@@ -29,6 +29,6 @@ public class MatchDateStreak {
 	private int allGameCount;
 	private int rankGameCount;
 
-	@OneToMany(mappedBy = "matchParticipant")
+	@OneToMany(mappedBy = "matchDateStreak")
 	private Set<Match> matchIds = new HashSet<>();
 }

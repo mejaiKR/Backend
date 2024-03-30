@@ -20,7 +20,7 @@ public interface UserMapper {
 		@Mapping(source = "accountDto.gameName", target = "summonerName"),
 		// Ignoring the collections as before
 		@Mapping(target = "rank", ignore = true),
-		@Mapping(target = "matchParticipants", ignore = true)
+		@Mapping(target = "matchDateStreaks", ignore = true)
 	})
 	User toUserEntity(AccountDto accountDto, SummonerDto summonerDto);
 }

@@ -4,41 +4,33 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class RomanNumber {
-	private final static TreeMap<Integer, String> map = new TreeMap<Integer, String>();
+	private static final TreeMap<Integer, String> romanMap1 = new TreeMap<Integer, String>();
 
 	static {
-
-		map.put(1000, "M");
-		map.put(900, "CM");
-		map.put(500, "D");
-		map.put(400, "CD");
-		map.put(100, "C");
-		map.put(90, "XC");
-		map.put(50, "L");
-		map.put(40, "XL");
-		map.put(10, "X");
-		map.put(9, "IX");
-		map.put(5, "V");
-		map.put(4, "IV");
-		map.put(1, "I");
-
+		romanMap1.put(1000, "M");
+		romanMap1.put(900, "CM");
+		romanMap1.put(500, "D");
+		romanMap1.put(400, "CD");
+		romanMap1.put(100, "C");
+		romanMap1.put(90, "XC");
+		romanMap1.put(50, "L");
+		romanMap1.put(40, "XL");
+		romanMap1.put(10, "X");
+		romanMap1.put(9, "IX");
+		romanMap1.put(5, "V");
+		romanMap1.put(4, "IV");
+		romanMap1.put(1, "I");
 	}
 
-	private static final Map<Character, Integer> romanMap = Map.of(
-		'I', 1,
-		'V', 5,
-		'X', 10,
-		'L', 50,
-		'C', 100,
-		'D', 500,
-		'M', 1000
-	);
+	private static final Map<Character, Integer> romanMap2 = Map.of('I', 1, 'V', 5, 'X', 10, 'L', 50, 'C', 100, 'D',
+		500,
+		'M', 1000);
 
-	public static int romanToInt(String s) {
+	public static int romanToInt(String roman) {
 		int result = 0;
 		int prev = 0;
-		for (int i = s.length() - 1; i >= 0; i--) {
-			int curr = romanMap.get(s.charAt(i));
+		for (int i = roman.length() - 1; i >= 0; i--) {
+			int curr = romanMap2.get(roman.charAt(i));
 			if (curr < prev) {
 				result -= curr;
 			} else {
@@ -49,11 +41,11 @@ public class RomanNumber {
 		return result;
 	}
 
-	public final static String toRoman(int number) {
-		int l = map.floorKey(number);
-		if (number == l) {
-			return map.get(number);
+	public static String toRoman(int number) {
+		int num = romanMap1.floorKey(number);
+		if (number == num) {
+			return romanMap1.get(number);
 		}
-		return map.get(l) + toRoman(number - l);
+		return romanMap1.get(num) + toRoman(number - num);
 	}
 }

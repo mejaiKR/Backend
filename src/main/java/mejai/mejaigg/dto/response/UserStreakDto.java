@@ -1,10 +1,8 @@
 package mejai.mejaigg.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class UserStreakDto {
 	private String date;
 	private int gameCount;

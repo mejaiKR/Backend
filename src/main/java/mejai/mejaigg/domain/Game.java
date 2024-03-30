@@ -41,10 +41,6 @@ public class Game {
 	@OneToMany(mappedBy = "game", cascade = CascadeType.ALL)
 	private List<UserGameStat> gameStats = new ArrayList<>();
 
-	public void setGameStats(List<UserGameStat> gameStats) {
-		this.gameStats = gameStats;
-	}
-
 	public void addGameStat(UserGameStat userGameStat) {
 		gameStats.add(userGameStat);
 		userGameStat.setGame(this);

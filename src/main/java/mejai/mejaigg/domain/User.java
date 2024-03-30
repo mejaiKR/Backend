@@ -42,7 +42,7 @@ public class User {
 	private Long summonerLevel;
 
 	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "rank_id")
+	@JoinColumn(name = "puuid")
 	private Rank rank;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)

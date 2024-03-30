@@ -1,10 +1,9 @@
 package mejai.mejaigg.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapsId;
 import lombok.Data;
 import mejai.mejaigg.dto.riot.RankDto;
 
@@ -12,9 +11,9 @@ import mejai.mejaigg.dto.riot.RankDto;
 @Data
 public class Rank {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
-	@Column(name = "rank_id")
-	private Long id; // Rank의 고유 ID
+	@MapsId
+	@JoinColumn(name = "puuid")
+	private String puuid;
 
 	private String tier; //ex EMERALD
 	private String rank; //ex IV :  String ->INT

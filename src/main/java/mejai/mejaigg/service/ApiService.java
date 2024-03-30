@@ -116,9 +116,17 @@ public class ApiService {
 				.build(matchId))
 			.retrieve()
 			.onStatus(clientResponse -> clientResponse.is4xxClientError(),
-				clientResponse -> Mono.error(new RuntimeException("4xx error")))
+				clientResponse -> {
+					if (clientResponse.statusCode().value() == 429) {
+						//if 429 i want see header
+						System.out.println(clientResponse.headers().asHttpHeaders());
+					}
+					return
+						Mono.error(new RuntimeException("4xx error"));
+				})
 			.onStatus(clientResponse -> clientResponse.is5xxServerError(),
 				clientResponse -> Mono.error(new RuntimeException("5xx error")))
-			.bodyToMono(MatchDto.class);
+			.bodyToMono(MatchDto.class)
+			.retry(3);
 	}
 }
