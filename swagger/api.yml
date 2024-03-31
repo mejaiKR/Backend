@@ -20,8 +20,10 @@ externalDocs:
   url: http://example.com
 
 servers:
-  - url: http://127.0.0.1:8080
-
+  - url: 'http://localhost:8080'
+  - url: 'host.docker.internal:8080'
+  - url: '172.17.0.1:8080'
+  #  - url: http://127.0.0.1:8080
 paths:
   /users/profile:
     get:
@@ -45,7 +47,7 @@ paths:
           description: 소환사 태그
           schema:
             type: string
-            example: 'KR'
+            example: 'KR1'
       responses:
         '200':
           description: Successful operation
@@ -64,9 +66,9 @@ paths:
     get:
       tags:
         - Users
-      summary: 소환사 게임 횟수 조회
+      summary: 소환사 게임 횟수 및 승패 조회
       description: >
-        소환사가 특정 기간 동안 진행한 게임의 총 횟수를 조회합니다. 사용자는 소환사 ID, 조회 시작 날짜, 조회 종료 날짜를 제공하여 해당 기간 동안 소환사가 진행한 게임의 수를 날짜별로 확인할 수 있습니다.
+        소환사가 특정 기간 동안 진행한 게임의 총 횟수와 승리 및 패배 횟수를 조회합니다. 사용자는 소환사 ID, 조회 시작 날짜, 조회 종료 날짜를 제공하여 해당 기간 동안 소환사가 진행한 게임의 수와 승패를 날짜별로 확인할 수 있습니다.
       operationId: getUserGameCounts
       parameters:
         - name: id
@@ -75,23 +77,28 @@ paths:
           description: 소환사 아이디
           schema:
             type: string
-            example: 'Faker'
-        - name: startDate
+            example: 'hide on bush'
+        - name: tag
           in: query
-          required: true
-          description: 조회 시작 날짜
+          required: false
+          description: 소환사 태그
           schema:
             type: string
-            format: date
-            example: '2021-10-01'
-        - name: endDate
+            example: 'kr1'
+        - name: year
           in: query
           required: true
-          description: 조회 종료 날짜
+          description: 조회 시작 연도
           schema:
-            type: string
-            format: date
-            example: '2021-10-31'
+            type: integer
+            example: 2023
+        - name: month
+          in: query
+          required: true
+          description: 조회 시작 월
+          schema:
+            type: integer
+            example: 12
       responses:
         '200':
           description: Successful operation
@@ -113,40 +120,48 @@ components:
     UserProfile:
       type: object
       properties:
-        userId:
+        userName:
           type: string
-          description: 소환사 아이디
-          example: 'Hide on bush'
+          description: 소환사 이름
+          example: 'hide on bush'
+        tagLine:
+          type: string
+          description: 소환사 태그라인
+          example: 'KR1'
         profileIcon:
           type: string
           format: uri
           description: 소환사 프로필 이미지 URL
-          example: 'https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/588.png'
+          example: 'http://localhost:8080/profileIcon/image6.png'
+        tierIcon:
+          type: string
+          format: uri
+          description: 소환사 티어 아이콘 이미지 URL
+          example: 'http://localhost:8080/emblem/Challenger.png'
         tier:
           type: string
           description: 소환사 티어
           example: 'CHALLENGER'
-        tierImage:
-          type: string
-          format: uri
-          description: 소환사 티어 이미지 URL
-          example: 'https://opgg-static.akamaized.net/images/medals/challenger_1.png'
         rank:
           type: string
-          description: 소환사 티어 랭크
+          description: 소환사 랭크
           example: 'I'
-        leaguePoint:
+        leaguePoints:
           type: number
           description: 소환사 리그 포인트
-          example: 864
+          example: 704
+        level:
+          type: number
+          description: 소환사 레벨
+          example: 745
         wins:
           type: number
           description: 소환사 랭크 승리 횟수
-          example: 131
+          example: 220
         losses:
           type: number
           description: 소환사 랭크 패배 횟수
-          example: 100
+          example: 184
     UserGameCount:
       type: object
       properties:
@@ -154,17 +169,17 @@ components:
           type: string
           format: date
           description: 게임한 날짜
-          example: '2021-10-10'
+          example: '2023-12-1'
         gameCount:
           type: number
-          description: 해당 날짜에 진행된 게임 횟수
-        examples:
-          example1:
-            value: 3
-            summary: 낮은 게임 횟수
-          example2:
-            value: 7
-            summary: 높은 게임 횟수
-          example3:
-            value: 5
-            summary: 중간 게임 횟수
+          description: 해당 날짜에 진행된 총 게임 횟수
+          example: 10
+        winCount:
+          type: number
+          description: 해당 날짜에 진행된 게임 중 승리 횟수
+          example: 5
+        loseCount:
+          type: number
+          description: 해당 날짜에 진행된 게임 중 패배 횟수
+          example: 5
+
