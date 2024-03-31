@@ -5,7 +5,8 @@ spring:
     #    username: sa
     #    password:
     #    driver-class-name: org.h2.Driver
-    url: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
+    #    url: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
+    url: jdbc:postgresql://localhost:5432/spring-db-postgres
     username: compose-postgres
     password: compose-postgres
   jpa:
