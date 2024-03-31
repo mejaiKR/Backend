@@ -8,4 +8,11 @@ public class UserStreakDto {
 	private int gameCount;
 	private int winCount;
 	private int loseCount;
+
+	public void setDummy(int year, int month, int day) {
+		this.date = year + "-" + month + "-" + day;
+		this.gameCount = 10;
+		this.winCount = 5;
+		this.loseCount = 5;
+	}
 }
