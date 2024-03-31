@@ -1,6 +1,7 @@
 package mejai.mejaigg.common;
 
 import java.time.Instant;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
@@ -41,4 +42,7 @@ public class YearMonthToEpochUtil {
 		return zonedDateTime.toLocalDate().lengthOfMonth();
 	}
 
+	public static int findMaxDay(int year, int month) {
+		return YearMonth.of(year, month).lengthOfMonth();
+	}
 }
