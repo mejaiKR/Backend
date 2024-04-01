@@ -29,6 +29,8 @@ public class UserProfileDto {
 		this.leaguePoints = rank.getLeaguePoints();
 		this.wins = rank.getWins();
 		this.losses = rank.getLosses();
+		this.level = user.getSummonerLevel();
+		this.tagLine = user.getTagLine();
 	}
 
 	public void setDummy() {
