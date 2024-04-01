@@ -45,8 +45,4 @@ public class Game {
 		gameStats.add(userGameStat);
 		userGameStat.setGame(this);
 	}
-
-	public void setMatchId(String matchId) {
-		this.matchId = matchId;
-	}
 }
