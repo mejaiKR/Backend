@@ -5,8 +5,8 @@ import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
@@ -41,17 +41,11 @@ public class User {
 	private int profileIconId;
 	private Long summonerLevel;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "puuid")
+	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private Rank rank;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	private Set<MatchDateStreak> matchDateStreaks = new HashSet<>();
-
-	public void addMatchDateStreak(MatchDateStreak matchDateStreak) {
-		matchDateStreaks.add(matchDateStreak);
-		matchDateStreak.setUser(this);
-	}
+	private Set<SearchHistory> searchHistory = new HashSet<>();
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {
 		this.summonerId = summonerDto.getId();
