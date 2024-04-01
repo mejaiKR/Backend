@@ -21,14 +21,14 @@ public class MatchDateStreak {
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
 	private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	private User user;
-
 	private Date date; // yyyy-MM-dd
 
 	private int allGameCount;
 	private int rankGameCount;
 
 	@OneToMany(mappedBy = "matchDateStreak")
-	private Set<Match> matchIds = new HashSet<>();
+	private Set<Match> matchDateStreaks = new HashSet<>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	private SearchHistory searchHistory;
 }
