@@ -22,10 +22,7 @@ public class UserController {
 	@GetMapping("/users/profile")
 	public UserProfileDto profile(@RequestParam(value = "id") String id,
 		@RequestParam(value = "tag", required = false, defaultValue = "Kr1") String tag) {
-		// return userService.getUserProfileByNameTag(id, tag);
-		UserProfileDto userProfileDto = new UserProfileDto();
-		userProfileDto.setDummy();
-		return userProfileDto;
+		return userService.getUserProfileByNameTag(id, tag);
 	}
 
 	@GetMapping("/users/streak")

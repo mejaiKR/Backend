@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
+import jakarta.persistence.OneToOne;
 import lombok.Data;
 import mejai.mejaigg.dto.riot.RankDto;
 
@@ -11,9 +12,12 @@ import mejai.mejaigg.dto.riot.RankDto;
 @Data
 public class Rank {
 	@Id
+	private String puuid;
+
+	@OneToOne
 	@MapsId
 	@JoinColumn(name = "puuid")
-	private String puuid;
+	private User user;
 
 	private String tier; //ex EMERALD
 	private String rank; //ex IV :  String ->INT
@@ -53,4 +57,22 @@ public class Rank {
 		this.queueType = rankDto.getQueueType();
 	}
 
+	@SuppressWarnings("checkstyle:OperatorWrap")
+	@Override
+	public String toString() {
+		return "Rank{"
+			+ "puuid='" + puuid + '\''
+			+ ", tier='" + tier + '\''
+			+ ", rank='" + rank + '\''
+			+ ", leaguePoints=" + leaguePoints
+			+ ", leagueId='" + leagueId + '\''
+			+ ", wins=" + wins
+			+ ", losses=" + losses
+			+ ", hotStreak=" + hotStreak
+			+ ", veteran=" + veteran
+			+ ", freshBlood=" + freshBlood
+			+ ", inactive=" + inactive
+			+ ", queueType='" + queueType + '\''
+			+ '}';
+	}
 }
