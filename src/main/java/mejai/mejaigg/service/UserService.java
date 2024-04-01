@@ -130,12 +130,16 @@ public class UserService {
 	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
 		if (userOptional.isEmpty()) {
-			String puuid = setUserProfile(name, tag);
-			if (puuid == null) {
+			try {
+
+				String puuid = setUserProfile(name, tag);
+				if (puuid == null) {
+					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+				}
+				userOptional = userRepository.findById(puuid);
+			} catch (Exception e) {
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 			}
-			System.out.println("ERROR :::: puuid = " + puuid);
-			userOptional = userRepository.findById(puuid);
 		} else {
 			updateUserProfile(userOptional.get());
 		}
