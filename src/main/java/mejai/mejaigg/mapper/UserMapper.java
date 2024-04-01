@@ -17,10 +17,11 @@ public interface UserMapper {
 		// Assuming we take puuid from AccountDto; it could be from SummonerDto as well
 		@Mapping(source = "accountDto.puuid", target = "puuid"),
 		@Mapping(source = "summonerDto.id", target = "summonerId"),
-		@Mapping(source = "accountDto.gameName", target = "summonerName"),
+		@Mapping(source = "summonerDto.name", target = "summonerName"),
+		@Mapping(source = "summonerDto.summonerLevel", target = "summonerLevel"),
 		// Ignoring the collections as before
 		@Mapping(target = "rank", ignore = true),
-		@Mapping(target = "matchDateStreaks", ignore = true)
+		@Mapping(target = "searchHistory", ignore = true)
 	})
 	User toUserEntity(AccountDto accountDto, SummonerDto summonerDto);
 }
