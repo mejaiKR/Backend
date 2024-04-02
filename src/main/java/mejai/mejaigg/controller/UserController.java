@@ -2,7 +2,9 @@ package mejai.mejaigg.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +17,7 @@ import mejai.mejaigg.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class UserController {
 
 	private final UserService userService;
@@ -29,8 +32,8 @@ public class UserController {
 	public List<UserStreakDto> streak(@RequestParam(value = "id") String id,
 		@RequestParam(value = "tag", required = false, defaultValue = "Kr1") String tag,
 		@RequestParam(value = "year") int year, @RequestParam(value = "month") int month) {
-		// String puuid = userService.getPuuidByNameTag(id, tag);
-		// Set<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, dateYM);
+		String puuid = userService.getPuuidByNameTag(id, tag);
+		Set<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, year, month);
 		List<UserStreakDto> userStreakDtos = new ArrayList<>();
 		int maxDay = YearMonthToEpochUtil.findMaxDay(year, month);
 		for (int i = 1; i <= maxDay; i++) {
