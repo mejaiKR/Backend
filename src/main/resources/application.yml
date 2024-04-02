@@ -13,15 +13,12 @@ spring:
     show-sql: 'true'
     hibernate:
       ddl-auto: create # 만들어지면 none
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+  #    properties:
+  #      hibernate:
+  #        dialect: org.hibernate.dialect.PostgreSQLDialect
+
 logging:
   level:
     org.hibernate.SQL: debug
-    reactor:
-      netty:
-        http:
-          client: debug
 variables:
   resourceURL: "http://localhost:8080/"
