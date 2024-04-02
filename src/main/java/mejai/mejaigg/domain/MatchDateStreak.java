@@ -27,7 +27,7 @@ public class MatchDateStreak {
 	private int rankGameCount;
 
 	@OneToMany(mappedBy = "matchDateStreak")
-	private Set<Match> matchDateStreaks = new HashSet<>();
+	private Set<Match> matches = new HashSet<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private SearchHistory searchHistory;
