@@ -1,7 +1,5 @@
 package mejai.mejaigg.controller;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -9,8 +7,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import mejai.mejaigg.common.YearMonthToEpochUtil;
+import mejai.mejaigg.dto.request.UserStreakRequest;
 import mejai.mejaigg.dto.response.UserProfileDto;
 import mejai.mejaigg.dto.response.UserStreakDto;
 import mejai.mejaigg.service.UserService;
@@ -29,18 +28,18 @@ public class UserController {
 	}
 
 	@GetMapping("/users/streak")
-	public List<UserStreakDto> streak(@RequestParam(value = "id") String id,
-		@RequestParam(value = "tag", required = false, defaultValue = "Kr1") String tag,
-		@RequestParam(value = "year") int year, @RequestParam(value = "month") int month) {
-		String puuid = userService.getPuuidByNameTag(id, tag);
-		Set<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, year, month);
-		List<UserStreakDto> userStreakDtos = new ArrayList<>();
-		int maxDay = YearMonthToEpochUtil.findMaxDay(year, month);
-		for (int i = 1; i <= maxDay; i++) {
-			UserStreakDto userStreakDto = new UserStreakDto();
-			userStreakDto.setDummy(year, month, i);
-			userStreakDtos.add(userStreakDto);
-		}
-		return userStreakDtos;
+	public Set<UserStreakDto> streak(@Valid UserStreakRequest request) {
+		String puuid = userService.getPuuidByNameTag(request.getId(), request.getTag());
+
+		Set<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
+			request.getMonth());
+		// List<UserStreakDto> userStreakDtos = new ArrayList<>();
+		// int maxDay = YearMonthToEpochUtil.findMaxDay(year, month);
+		// for (int i = 1; i <= maxDay; i++) {
+		// 	UserStreakDto userStreakDto = new UserStreakDto();
+		// 	userStreakDto.setDummy(year, month, i);
+		// 	userStreakDtos.add(userStreakDto);
+		// }
+		return userMonthStreak;
 	}
 }
