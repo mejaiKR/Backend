@@ -16,7 +16,18 @@ public class Match {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private MatchDateStreak matchDateStreak;
 
+	private boolean isCalled = false;
+
 	@OneToOne(mappedBy = "match", cascade = CascadeType.ALL)
 	@PrimaryKeyJoinColumn
 	private Game game;
+
+	public Match() {
+	}
+
+	public Match(String matchId, boolean isCalled) {
+		this.matchId = matchId;
+		this.isCalled = isCalled;
+	}
+
 }
