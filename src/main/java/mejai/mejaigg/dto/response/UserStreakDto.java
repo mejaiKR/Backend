@@ -1,18 +1,25 @@
 package mejai.mejaigg.dto.response;
 
+import java.time.format.DateTimeFormatter;
+
 import lombok.Data;
+import mejai.mejaigg.domain.MatchDateStreak;
 
 @Data
 public class UserStreakDto {
 	private String date;
 	private int gameCount;
-	private int winCount;
-	private int loseCount;
+	private int rankCount;
 
 	public void setDummy(int year, int month, int day) {
 		this.date = year + "-" + month + "-" + day;
 		this.gameCount = 10;
-		this.winCount = 5;
-		this.loseCount = 5;
+		this.rankCount = 5;
+	}
+
+	public void setByMatchDateStreak(MatchDateStreak matchDateStreak) {
+		this.date = matchDateStreak.getDate().toLocalDate().format(DateTimeFormatter.ofPattern("yyyy-MM"));
+		this.gameCount = matchDateStreak.getMatches().size();
+		this.rankCount = matchDateStreak.getMatches().size();
 	}
 }
