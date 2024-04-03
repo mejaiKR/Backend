@@ -228,8 +228,10 @@ public class UserService {
 				continue;
 			}
 			MatchDateStreak matchDateStreak = new MatchDateStreak();
+			Date date = new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L);
+			System.out.println("!!!!!!!!!date : " + date);
+			matchDateStreak.setDate(date);
 			history.addMatchDateStreak(matchDateStreak);
-			matchDateStreak.setDate(new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L));
 			for (String matchId : matchHistory) {
 				Match match = new Match(matchId, false);
 				matchDateStreak.addMatch(match);
