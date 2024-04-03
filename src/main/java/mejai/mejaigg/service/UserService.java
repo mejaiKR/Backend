@@ -1,5 +1,6 @@
 package mejai.mejaigg.service;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -12,7 +13,9 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.common.YearMonthToEpochUtil;
+import mejai.mejaigg.domain.MatchDateStreak;
 import mejai.mejaigg.domain.Rank;
+import mejai.mejaigg.domain.SearchHistory;
 import mejai.mejaigg.domain.User;
 import mejai.mejaigg.dto.response.UserProfileDto;
 import mejai.mejaigg.dto.response.UserStreakDto;
@@ -21,7 +24,12 @@ import mejai.mejaigg.dto.riot.RankDto;
 import mejai.mejaigg.dto.riot.SummonerDto;
 import mejai.mejaigg.mapper.RankMapper;
 import mejai.mejaigg.mapper.UserMapper;
+import mejai.mejaigg.repository.GameRepository;
+import mejai.mejaigg.repository.MatchDateStreakRepository;
+import mejai.mejaigg.repository.MatchRepository;
 import mejai.mejaigg.repository.RankRepository;
+import mejai.mejaigg.repository.SearchHistoryRepository;
+import mejai.mejaigg.repository.UserGameStatRepository;
 import mejai.mejaigg.repository.UserRepository;
 import reactor.core.publisher.Mono;
 
@@ -34,6 +42,11 @@ public class UserService {
 	private final ApiService apiService;
 	private final UserRepository userRepository;
 	private final RankRepository rankRepository;
+	private final SearchHistoryRepository searchHistoryRepository;
+	private final UserGameStatRepository userGameStatRepository;
+	private final GameRepository gameRepository;
+	private final MatchDateStreakRepository matchDateStreakRepository;
+	private final MatchRepository matchRepository;
 
 	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
 	private String resourceURL;
@@ -77,43 +90,128 @@ public class UserService {
 		return user.getPuuid();
 	}
 
-	public Set<UserStreakDto> getUserMonthStreak(String puuid, String dateYM) {
-		setUserStrakOneMonth(puuid, dateYM);
-		return null;
-	}
-
-	private void setUserStrakOneMonth(String puuid, String dateYM) {
+	@Transactional(readOnly = false)
+	public Set<UserStreakDto> getUserMonthStreak(String puuid, int year, int month) {
 		Long start = 0L;
-		//TODO : dateYM 포멧 맞는지 확인
-		Long startTime = YearMonthToEpochUtil.convertToEpochSeconds(dateYM);
+		String dateYM = String.format("%d-%02d", year, month);
+		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(year, month);
+		long endTime = YearMonthToEpochUtil.addMonthEpochSecond(dateYM, 1);
 		Optional<User> userOptional = userRepository.findById(puuid);
 		if (userOptional.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 		}
 		User user = userOptional.get();
+		Optional<SearchHistory> searchHistory = searchHistoryRepository.findByUserAndYearMonth(user, dateYM);
+		SearchHistory history = new SearchHistory();
+		Set<UserStreakDto> userStreakDtos = new HashSet<>();
+		if (searchHistory.isEmpty()) { //처음으로 호출하는 경우
+			history.setYearMonthAndUser(dateYM, user);
+			log.info("history {}", history);
+			log.info("user {}", user);
+			searchHistoryRepository.save(history);
+		} else { //TODO: 이전에 호출이 완료된 경우 적이 있는 경우 테스트 필요
+			history = searchHistory.get();
+			log.info("history Call After {}", history);
+			if (history.isDone()) {
+				Set<MatchDateStreak> matchDateStreaks = history.getMatchDateStreaks();
+				for (MatchDateStreak matchDateStreak : matchDateStreaks) {
+					UserStreakDto userStreakDto = new UserStreakDto();
+					userStreakDto.setByMatchDateStreak(matchDateStreak);
+					userStreakDtos.add(userStreakDto);
+				}
+				return userStreakDtos;
+			}
+		}
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		//
+		//이제 데이터 저장하기
 		try {
+			boolean isNow = false;
 			int days = YearMonthToEpochUtil.getDayWithYearMonth(dateYM);
-			for (int i = 0; i < days; i++) {
+			int nowDate = YearMonthToEpochUtil.getNowEpochSecond();
+			String nowYearMonth = YearMonthToEpochUtil.getNowYearMonth();
+			//
+			if (dateYM.equals(nowYearMonth)) { // 현재 월에 해당하는 경우 현재 날짜까지만 가져옴
+				endTime = nowDate;
+				days = YearMonthToEpochUtil.getNowDay();
+				isNow = true;
+				System.out.println("현재 날짜에 도달!!");
+			} else {
+				endTime = YearMonthToEpochUtil.addMonthEpochSecond(dateYM, 1);
+			}
+			// 	//하루 단위로 api 호출해서 저장
+			Mono<String[]> monthHistories = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
+				100); //100개의 매치를 가져옴
+			String[] monthIds = monthHistories.block();
+			if (monthIds == null) {
+				return userStreakDtos;
+			}
+			System.out.println("매치 가져와! 길이는 ?" + monthIds.length);
+
+			// if (monthIds.length < days) { // 갯수가 하루씩 부르는 것보다 더 적은 경우 하나씩 데이터를 가져옴
+			// 	for (String matchId : monthIds) {
+			// 		Match match = new Match(matchId, true);
+			// 		Mono<MatchDto> matchData = apiService.getMatchDtoByMatchId(matchId);
+			// 		MatchDto matchDto = matchData.block();
+			//
+			// 		InfoDto info = matchDto.getInfo();
+			// 		Game gameEntity = GameMapper.INSTANCE.toGameEntity(info, matchId);
+			// 		ParticipantDto[] participants = matchDto.getInfo().getParticipants();
+			// 		for (ParticipantDto participant : participants) {
+			// 			UserGameStat userGameStat = new UserGameStat();
+			// 			userGameStat.setByParticipantDto(participant);
+			// 			userGameStat.setGame(gameEntity);
+			// 			gameEntity.addGameStat(userGameStat);
+			// 		}
+			// 		match.setGame(gameEntity);
+			// 		gameRepository.save(gameEntity);
+			//
+			// 		String yearMonth = YearMonthToEpochUtil.convertToYearMonthDay(info.getGameCreation());
+			// 		Date matchDate = new Date(info.getGameCreation());
+			// 		Optional<MatchDateStreak> streakOptional = matchDateStreakRepository.findByDateAndSearchHistory(
+			// 			matchDate, history.getHistoryId());
+			// 		if (streakOptional.isEmpty()) {
+			// 			MatchDateStreak matchDateStreak = new MatchDateStreak();
+			// 			matchDateStreak.setDate(matchDate);
+			// 			history.addMatchDateStreak(matchDateStreak);
+			//
+			// 			matchDateStreakRepository.save(matchDateStreak);
+			// 			// gameRepository.save(gameEntity);
+			// 			matchRepository.save(match);
+			// 			// searchHistoryRepository.save(history);
+			// 			// gameRepository.save(gameEntity);
+			// 		} else {
+			// 			MatchDateStreak matchDateStreak = streakOptional.get();
+			// 			history.addMatchDateStreak(matchDateStreak);
+			// 			match.setGame(gameEntity);
+			// 			matchDateStreakRepository.save(matchDateStreak);
+			// 			matchRepository.save(match);
+			// 			gameRepository.save(gameEntity);
+			// 			userGameStatRepository.saveAll(gameEntity.getGameStats());
+			// 		}
+			// 		match.setGame(gameEntity);
+			// 		gameRepository.save(gameEntity);
+			// 	}
+			// }
+
+			// } else {
+			for (int i = 0; i < days; i++) { // 하루씩 데이터를 가져옴
 				startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
-				Long endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
+				endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
 				Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
 					100); //100개의 매치를 가져옴
 				String[] matchHistory = matchHistoryByPuuid.block();
 				// Set<MatchDateStreak> matchDateStreaks = user.getMatchDateStreaks();
-				// for (String matchId : matchHistory) {
-				// 	MatchParticipant matchParticipant = new MatchParticipant(matchId, user);
-				// 	matchParticipant.setMatchId(matchId);
-				// 	matchParticipant.setDate(dateYM);
-				// 	matchParticipants.add(matchParticipant);
-				// }
-				// MatchParticipant matchParticipant = new MatchParticipant();
-				// user.addMatchParticipant();
+
 			}
+			// }
 
 			userRepository.save(user);
 		} catch (Exception e) {
 			e.printStackTrace();
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 		}
+		return userStreakDtos;
 	}
 
 	@Transactional
@@ -131,7 +229,6 @@ public class UserService {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
 		if (userOptional.isEmpty()) {
 			try {
-
 				String puuid = setUserProfile(name, tag);
 				if (puuid == null) {
 					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
