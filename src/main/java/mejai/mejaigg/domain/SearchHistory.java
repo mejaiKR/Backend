@@ -2,6 +2,7 @@ package mejai.mejaigg.domain;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,5 +38,10 @@ public class SearchHistory {
 
 	public void addMatchDateStreak(MatchDateStreak matchDateStreak) {
 		this.matchDateStreaks.add(matchDateStreak);
+		matchDateStreak.setSearchHistory(this);
+	}
+
+	public Set<MatchDateStreak> getSortedMatchDateStreaks() {
+		return new TreeSet<>(matchDateStreaks);
 	}
 }
