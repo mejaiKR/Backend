@@ -1,6 +1,8 @@
 package mejai.mejaigg.service;
 
-import java.util.HashSet;
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.common.YearMonthToEpochUtil;
+import mejai.mejaigg.domain.Match;
 import mejai.mejaigg.domain.MatchDateStreak;
 import mejai.mejaigg.domain.Rank;
 import mejai.mejaigg.domain.SearchHistory;
@@ -91,7 +94,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = false)
-	public Set<UserStreakDto> getUserMonthStreak(String puuid, int year, int month) {
+	public List<UserStreakDto> getUserMonthStreak(String puuid, int year, int month) {
 		Long start = 0L;
 		String dateYM = String.format("%d-%02d", year, month);
 		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(year, month);
@@ -103,17 +106,16 @@ public class UserService {
 		User user = userOptional.get();
 		Optional<SearchHistory> searchHistory = searchHistoryRepository.findByUserAndYearMonth(user, dateYM);
 		SearchHistory history = new SearchHistory();
-		Set<UserStreakDto> userStreakDtos = new HashSet<>();
+		List<UserStreakDto> userStreakDtos = new ArrayList<>();
 		if (searchHistory.isEmpty()) { //처음으로 호출하는 경우
 			history.setYearMonthAndUser(dateYM, user);
 			log.info("history {}", history);
 			log.info("user {}", user);
 			searchHistoryRepository.save(history);
-		} else { //TODO: 이전에 호출이 완료된 경우 적이 있는 경우 테스트 필요
+		} else {
 			history = searchHistory.get();
-			log.info("history Call After {}", history);
 			if (history.isDone()) {
-				Set<MatchDateStreak> matchDateStreaks = history.getMatchDateStreaks();
+				Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
 				for (MatchDateStreak matchDateStreak : matchDateStreaks) {
 					UserStreakDto userStreakDto = new UserStreakDto();
 					userStreakDto.setByMatchDateStreak(matchDateStreak);
@@ -122,9 +124,7 @@ public class UserService {
 				return userStreakDtos;
 			}
 		}
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		//
-		//이제 데이터 저장하기
+		//이제 데이터 저장 하기
 		try {
 			boolean isNow = false;
 			int days = YearMonthToEpochUtil.getDayWithYearMonth(dateYM);
@@ -193,20 +193,40 @@ public class UserService {
 			// 		gameRepository.save(gameEntity);
 			// 	}
 			// }
-
 			// } else {
+
 			for (int i = 0; i < days; i++) { // 하루씩 데이터를 가져옴
+				if (matchDateStreakRepository.findByDateAndSearchHistory(
+					new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i)),
+					history.getHistoryId()).isPresent()) {
+					continue;
+				}
 				startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
 				endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
 				Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
 					100); //100개의 매치를 가져옴
 				String[] matchHistory = matchHistoryByPuuid.block();
-				// Set<MatchDateStreak> matchDateStreaks = user.getMatchDateStreaks();
-
+				if (matchHistory == null || matchHistory.length == 0) {
+					continue;
+				}
+				MatchDateStreak matchDateStreak = new MatchDateStreak();
+				history.addMatchDateStreak(matchDateStreak);
+				matchDateStreak.setDate(new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L));
+				for (String matchId : matchHistory) {
+					Match match = new Match(matchId, false);
+					matchDateStreak.addMatch(match);
+				}
+				matchDateStreakRepository.save(matchDateStreak);
 			}
-			// }
+			searchHistoryRepository.updateIsDoneByHistoryId(history.getHistoryId(), true);
 
 			userRepository.save(user);
+			Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
+			for (MatchDateStreak matchDateStreak : matchDateStreaks) {
+				UserStreakDto userStreakDto = new UserStreakDto();
+				userStreakDto.setByMatchDateStreak(matchDateStreak);
+				userStreakDtos.add(userStreakDto);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
