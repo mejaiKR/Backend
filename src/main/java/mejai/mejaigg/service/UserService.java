@@ -98,7 +98,7 @@ public class UserService {
 		Long start = 0L;
 		String dateYM = String.format("%d-%02d", year, month);
 		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(year, month);
-		long endTime = YearMonthToEpochUtil.addMonthEpochSecond(dateYM, 1);
+		long endTime;
 		Optional<User> userOptional = userRepository.findById(puuid);
 		if (userOptional.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
@@ -115,13 +115,7 @@ public class UserService {
 		} else {
 			history = searchHistory.get();
 			if (history.isDone()) {
-				Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
-				for (MatchDateStreak matchDateStreak : matchDateStreaks) {
-					UserStreakDto userStreakDto = new UserStreakDto();
-					userStreakDto.setByMatchDateStreak(matchDateStreak);
-					userStreakDtos.add(userStreakDto);
-				}
-				return userStreakDtos;
+				return getUserStreakDtoList(history);
 			}
 		}
 		//이제 데이터 저장 하기
@@ -130,7 +124,6 @@ public class UserService {
 			int days = YearMonthToEpochUtil.getDayWithYearMonth(dateYM);
 			int nowDate = YearMonthToEpochUtil.getNowEpochSecond();
 			String nowYearMonth = YearMonthToEpochUtil.getNowYearMonth();
-			//
 			if (dateYM.equals(nowYearMonth)) { // 현재 월에 해당하는 경우 현재 날짜까지만 가져옴
 				endTime = nowDate;
 				days = YearMonthToEpochUtil.getNowDay();
@@ -195,43 +188,54 @@ public class UserService {
 			// }
 			// } else {
 
-			for (int i = 0; i < days; i++) { // 하루씩 데이터를 가져옴
-				if (matchDateStreakRepository.findByDateAndSearchHistory(
-					new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i)),
-					history.getHistoryId()).isPresent()) {
-					continue;
-				}
-				startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
-				endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
-				Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
-					100); //100개의 매치를 가져옴
-				String[] matchHistory = matchHistoryByPuuid.block();
-				if (matchHistory == null || matchHistory.length == 0) {
-					continue;
-				}
-				MatchDateStreak matchDateStreak = new MatchDateStreak();
-				history.addMatchDateStreak(matchDateStreak);
-				matchDateStreak.setDate(new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L));
-				for (String matchId : matchHistory) {
-					Match match = new Match(matchId, false);
-					matchDateStreak.addMatch(match);
-				}
-				matchDateStreakRepository.save(matchDateStreak);
-			}
-			searchHistoryRepository.updateIsDoneByHistoryId(history.getHistoryId(), true);
-
+			storeDailyForMonth(puuid, days, dateYM, history, start);
+			if (!isNow)
+				searchHistoryRepository.updateIsDoneByHistoryId(history.getHistoryId(), true);
 			userRepository.save(user);
-			Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
-			for (MatchDateStreak matchDateStreak : matchDateStreaks) {
-				UserStreakDto userStreakDto = new UserStreakDto();
-				userStreakDto.setByMatchDateStreak(matchDateStreak);
-				userStreakDtos.add(userStreakDto);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 		}
+		return getUserStreakDtoList(history);
+	}
+
+	private List<UserStreakDto> getUserStreakDtoList(SearchHistory history) {
+		Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
+		List<UserStreakDto> userStreakDtos = new ArrayList<>();
+		for (MatchDateStreak matchDateStreak : matchDateStreaks) {
+			UserStreakDto userStreakDto = new UserStreakDto();
+			userStreakDto.setByMatchDateStreak(matchDateStreak);
+			userStreakDtos.add(userStreakDto);
+		}
 		return userStreakDtos;
+	}
+
+	private void storeDailyForMonth(String puuid, int days, String dateYM, SearchHistory history, Long start) {
+		long endTime;
+		long startTime;
+		for (int i = 0; i < days; i++) { // 하루씩 데이터를 가져옴
+			if (matchDateStreakRepository.findByDateAndSearchHistory(
+				new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i)),
+				history.getHistoryId()).isPresent()) {
+				continue;
+			}
+			startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
+			endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
+			Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
+				100); //100개의 매치를 가져옴
+			String[] matchHistory = matchHistoryByPuuid.block();
+			if (matchHistory == null || matchHistory.length == 0) {
+				continue;
+			}
+			MatchDateStreak matchDateStreak = new MatchDateStreak();
+			history.addMatchDateStreak(matchDateStreak);
+			matchDateStreak.setDate(new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L));
+			for (String matchId : matchHistory) {
+				Match match = new Match(matchId, false);
+				matchDateStreak.addMatch(match);
+			}
+			matchDateStreakRepository.save(matchDateStreak);
+		}
 	}
 
 	@Transactional
