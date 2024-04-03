@@ -1,6 +1,6 @@
 package mejai.mejaigg.controller;
 
-import java.util.Set;
+import java.util.List;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,10 +27,10 @@ public class UserController {
 	}
 
 	@GetMapping("/users/streak")
-	public Set<UserStreakDto> streak(@Valid UserStreakRequest request) {
+	public List<UserStreakDto> streak(@Valid UserStreakRequest request) {
 		String puuid = userService.getPuuidByNameTag(request.getId(), request.getTag());
 
-		Set<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
+		List<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
 			request.getMonth());
 		// List<UserStreakDto> userStreakDtos = new ArrayList<>();
 		// int maxDay = YearMonthToEpochUtil.findMaxDay(year, month);
