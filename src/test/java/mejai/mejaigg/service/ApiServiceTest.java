@@ -28,8 +28,9 @@ public class ApiServiceTest {
 	@Test
 	public void testApiFunctionality() {
 		//given
-		String summonerName = "hide on bush";
-		String tag = "kr1";
+		// String summonerName = "hide on bush";
+		String summonerName = "김승종";
+		String tag = "과로사";
 		String matchId = "KR_6983879233";
 		String dateYM = "2024-01";
 		Long epochSeconds = YearMonthToEpochUtil.convertToEpochSeconds(dateYM);
