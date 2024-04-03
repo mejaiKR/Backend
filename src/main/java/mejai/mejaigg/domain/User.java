@@ -54,4 +54,8 @@ public class User {
 		this.profileIconId = summonerDto.getProfileIconId();
 		this.summonerLevel = summonerDto.getSummonerLevel();
 	}
+
+	public void addSearchHistory(SearchHistory searchHistory) {
+		this.searchHistory.add(searchHistory);
+	}
 }

@@ -22,7 +22,7 @@ public class UserProfileDto {
 	public void setByUser(User user, String resourceUrl) {
 		Rank rank = user.getRank();
 		this.userName = user.getSummonerName();
-		this.profileIcon = resourceUrl + "profileIcon/image" + user.getProfileIconId() + ".png";
+		this.profileIcon = resourceUrl + "profileIcon/" + user.getProfileIconId() + ".png";
 		this.tier = rank.getTier();
 		this.tierIcon = resourceUrl + "emblem/" + rank.getTier() + ".png";
 		this.rank = user.getRank().getRank();
@@ -35,7 +35,7 @@ public class UserProfileDto {
 
 	public void setDummy() {
 		this.userName = "hide on bush";
-		this.profileIcon = "http://localhost:8080/profileIcon/image6.png";
+		this.profileIcon = "http://localhost:8080/profileIcon/6.png";
 		this.tierIcon = "http://localhost:8080/emblem/Challenger.png";
 		this.tier = "CHALLENGER";
 		this.rank = "I";

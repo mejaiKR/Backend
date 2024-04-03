@@ -19,7 +19,7 @@ public class Game {
 	@Id
 	private String matchId;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@MapsId //FK to PK
 	@JoinColumn(name = "matchId")
 	private Match match;

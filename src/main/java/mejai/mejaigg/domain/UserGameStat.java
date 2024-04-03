@@ -1,5 +1,6 @@
 package mejai.mejaigg.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +21,7 @@ public class UserGameStat {
 
 	private String puuid; // 이거 그냥 user puuid 랑 같습니다.
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "matchId")
 	private Game game;
 

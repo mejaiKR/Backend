@@ -132,7 +132,7 @@ components:
           type: string
           format: uri
           description: 소환사 프로필 이미지 URL
-          example: 'http://localhost:8080/profileIcon/image6.png'
+          example: 'http://localhost:8080/profileIcon/6.png'
         tierIcon:
           type: string
           format: uri

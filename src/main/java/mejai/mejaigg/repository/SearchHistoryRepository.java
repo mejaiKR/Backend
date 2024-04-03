@@ -1,0 +1,20 @@
+package mejai.mejaigg.repository;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+
+import jakarta.transaction.Transactional;
+import mejai.mejaigg.domain.SearchHistory;
+import mejai.mejaigg.domain.User;
+
+public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
+	Optional<SearchHistory> findByUserAndYearMonth(User user, String yearMonth);
+
+	@Transactional
+	@Modifying
+	@Query("UPDATE SearchHistory sh SET sh.isDone = :isDone WHERE sh.historyId = :historyId")
+	void updateIsDoneByHistoryId(Long historyId, boolean isDone);
+}
