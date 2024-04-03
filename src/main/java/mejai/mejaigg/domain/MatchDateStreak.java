@@ -31,4 +31,9 @@ public class MatchDateStreak {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private SearchHistory searchHistory;
+
+	void addMatch(Match match) {
+		matches.add(match);
+		match.setMatchDateStreak(this);
+	}
 }

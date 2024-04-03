@@ -30,4 +30,12 @@ public class Match {
 		this.isCalled = isCalled;
 	}
 
+	public void setMatchDateStreak(MatchDateStreak matchDateStreak) {
+		this.matchDateStreak = matchDateStreak;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
+	}
+
 }
