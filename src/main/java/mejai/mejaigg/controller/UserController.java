@@ -32,13 +32,6 @@ public class UserController {
 
 		List<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
 			request.getMonth());
-		// List<UserStreakDto> userStreakDtos = new ArrayList<>();
-		// int maxDay = YearMonthToEpochUtil.findMaxDay(year, month);
-		// for (int i = 1; i <= maxDay; i++) {
-		// 	UserStreakDto userStreakDto = new UserStreakDto();
-		// 	userStreakDto.setDummy(year, month, i);
-		// 	userStreakDtos.add(userStreakDto);
-		// }
 		return userMonthStreak;
 	}
 }

@@ -46,9 +46,9 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final RankRepository rankRepository;
 	private final SearchHistoryRepository searchHistoryRepository;
+	private final MatchDateStreakRepository matchDateStreakRepository;
 	private final UserGameStatRepository userGameStatRepository;
 	private final GameRepository gameRepository;
-	private final MatchDateStreakRepository matchDateStreakRepository;
 	private final MatchRepository matchRepository;
 
 	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
@@ -80,6 +80,19 @@ public class UserService {
 		user.setRank(rank);
 		userRepository.save(user);
 		return user.getPuuid();
+	}
+	public String getUserPuuidByApi(String name, String tag) {
+		Mono<AccountDto> account = apiService.getAccountByNameAndTag(name, tag);
+		AccountDto accountDto = null;
+		try{
+			accountDto = account.block();
+			if(accountDto == null){
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+			}
+		}catch (Exception e){
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+		}
+		return accountDto.getPuuid();
 	}
 
 	@Transactional(readOnly = false)
@@ -233,7 +246,11 @@ public class UserService {
 			matchDateStreak.setDate(date);
 			history.addMatchDateStreak(matchDateStreak);
 			for (String matchId : matchHistory) {
+				Optional<Match> optionalMatch = matchRepository.findById(matchId);
 				Match match = new Match(matchId, false);
+				if (optionalMatch.isPresent()) {
+					match = optionalMatch.get();
+				}
 				matchDateStreak.addMatch(match);
 			}
 			matchDateStreakRepository.save(matchDateStreak);
@@ -244,7 +261,7 @@ public class UserService {
 	public String getPuuidByNameTag(String name, String tag) {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
 		if (userOptional.isEmpty()) {
-			return setUserProfile(name, tag);
+			return getUserPuuidByApi(name, tag);
 		} else {
 			return userOptional.get().getPuuid();
 		}
