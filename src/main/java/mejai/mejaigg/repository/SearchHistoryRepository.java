@@ -17,4 +17,9 @@ public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Lo
 	@Modifying
 	@Query("UPDATE SearchHistory sh SET sh.isDone = :isDone WHERE sh.historyId = :historyId")
 	void updateIsDoneByHistoryId(Long historyId, boolean isDone);
+
+	@Transactional
+	@Modifying
+	@Query("UPDATE SearchHistory sh SET sh.lastSuccessDay = :lastSuccessDay WHERE sh.historyId = :historyId")
+	void updateLastSuccessDateByHistoryId(Long historyId, int lastSuccessDay);
 }

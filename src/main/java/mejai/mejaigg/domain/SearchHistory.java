@@ -24,6 +24,8 @@ public class SearchHistory {
 	@Column(length = 7)
 	private String yearMonth; // YYYY-MM 형식
 
+	private int lastSuccessDay = 0; // 마지막으로 api 콜이 성공한 날짜.
+
 	@ManyToOne
 	private User user;
 
