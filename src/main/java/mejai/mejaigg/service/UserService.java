@@ -108,7 +108,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = false)
-	public List<UserStreakDto> getUserMonthStreak(String puuid, int year, int month) {
+	public Optional<List<UserStreakDto>> getUserMonthStreak(String puuid, int year, int month) {
 		String dateYM = String.format("%d-%02d", year, month);
 
 		Optional<User> userOptional = userRepository.findById(puuid);
@@ -127,7 +127,7 @@ public class UserService {
 		} else {
 			history = searchHistory.get();
 			if (history.isDone()) {
-				return getUserStreakDtoList(history);
+				return Optional.of(getUserStreakDtoList(history));
 			}
 		}
 		int successDay = history.getLastSuccessDay();
@@ -152,7 +152,7 @@ public class UserService {
 			String[] monthIds = monthHistories.block();
 			if (monthIds == null || monthIds.length == 0) {
 				System.out.println("매치가 없어요!");
-				return userStreakDtos;
+				return Optional.of(userStreakDtos);
 			}
 			System.out.println("매치 가져와! 길이는 ?" + monthIds.length);
 
@@ -201,9 +201,9 @@ public class UserService {
 		} catch (Exception e) {
 			e.printStackTrace();
 			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getHistoryId(), successDay);
-			// throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "TooManyRequestException");
+			return Optional.empty();
 		}
-		return getUserStreakDtoList(history);
+		return Optional.of(getUserStreakDtoList(history));
 	}
 
 	// private void extracted(String[] monthIds, int days, SearchHistory history) {
