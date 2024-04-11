@@ -259,7 +259,7 @@ public class UserService {
 		List<UserStreakDto> userStreakDtos = new ArrayList<>();
 		for (MatchDateStreak matchDateStreak : matchDateStreaks) {
 			UserStreakDto userStreakDto = new UserStreakDto();
-			userStreakDto.setByMatchDateStreak(matchDateStreak);
+			userStreakDto.setByMatchDateStreak(matchDateStreak, resourceURL);
 			userStreakDtos.add(userStreakDto);
 		}
 		return userStreakDtos;
