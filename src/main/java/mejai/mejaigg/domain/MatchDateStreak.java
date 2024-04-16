@@ -34,8 +34,8 @@ public class MatchDateStreak implements Comparable<MatchDateStreak> {
 	private SearchHistory searchHistory;
 
 	@Override
-	public int compareTo(MatchDateStreak o) {
-		return this.date.compareTo(o.date);
+	public int compareTo(MatchDateStreak st) {
+		return this.date.compareTo(st.date);
 	}
 
 	public void addMatch(Match match) {

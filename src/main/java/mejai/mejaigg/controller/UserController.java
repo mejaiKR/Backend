@@ -36,7 +36,8 @@ public class UserController {
 		Optional<List<UserStreakDto>> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
 			request.getMonth());
 		if (userMonthStreak.isEmpty()) {
-			throw  new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests. Please try again later.");
+			throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+				"Too many requests. Please try again later.");
 		}
 		return userMonthStreak.get();
 	}

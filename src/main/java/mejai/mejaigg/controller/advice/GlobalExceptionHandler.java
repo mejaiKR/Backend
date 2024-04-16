@@ -8,9 +8,9 @@ import org.springframework.web.server.ResponseStatusException;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(ResponseStatusException.class)
-	public ResponseEntity<?> handleResponseStatusException(ResponseStatusException e) {
+	public ResponseEntity<?> handleResponseStatusException(ResponseStatusException err) {
 		return ResponseEntity
-			.status(e.getStatusCode())
-			.body(e.getReason());
+			.status(err.getStatusCode())
+			.body(err.getReason());
 	}
 }
