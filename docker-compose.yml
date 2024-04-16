@@ -9,6 +9,8 @@ services:
       - ./swagger/api.yml:/api.yaml
     environment:
       SWAGGER_JSON: /api.yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   db:
     container_name: spring-db-postgres
@@ -50,4 +52,5 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
       SPRING_DATASOURCE_USERNAME: compose-postgres
       SPRING_DATASOURCE_PASSWORD: compose-postgres
+
 

@@ -49,7 +49,6 @@ public class User {
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {
 		this.summonerId = summonerDto.getId();
-		this.summonerName = summonerDto.getName();
 		this.revisionDate = summonerDto.getRevisionDate();
 		this.profileIconId = summonerDto.getProfileIconId();
 		this.summonerLevel = summonerDto.getSummonerLevel();

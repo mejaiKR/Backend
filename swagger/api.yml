@@ -169,17 +169,14 @@ components:
           type: string
           format: date
           description: 게임한 날짜
-          example: '2023-12-1'
+          example: '2023-12-01'
         gameCount:
           type: number
           description: 해당 날짜에 진행된 총 게임 횟수
           example: 10
-        winCount:
-          type: number
-          description: 해당 날짜에 진행된 게임 중 승리 횟수
-          example: 5
-        loseCount:
-          type: number
-          description: 해당 날짜에 진행된 게임 중 패배 횟수
-          example: 5
+        imageUrl :
+          type: string
+          format: uri
+          description: 해당 날짜에 진행된 판수에 맞는 메자이 이미지
+          example: 'http://localhost:8080/mejaiStack/1.svg'
 

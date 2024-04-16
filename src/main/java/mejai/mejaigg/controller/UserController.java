@@ -1,10 +1,13 @@
 package mejai.mejaigg.controller;
 
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +33,11 @@ public class UserController {
 	public List<UserStreakDto> streak(@Valid UserStreakRequest request) {
 		String puuid = userService.getPuuidByNameTag(request.getId(), request.getTag());
 
-		List<UserStreakDto> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
+		Optional<List<UserStreakDto>> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
 			request.getMonth());
-		// List<UserStreakDto> userStreakDtos = new ArrayList<>();
-		// int maxDay = YearMonthToEpochUtil.findMaxDay(year, month);
-		// for (int i = 1; i <= maxDay; i++) {
-		// 	UserStreakDto userStreakDto = new UserStreakDto();
-		// 	userStreakDto.setDummy(year, month, i);
-		// 	userStreakDtos.add(userStreakDto);
-		// }
-		return userMonthStreak;
+		if (userMonthStreak.isEmpty()) {
+			throw  new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests. Please try again later.");
+		}
+		return userMonthStreak.get();
 	}
 }

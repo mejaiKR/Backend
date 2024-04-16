@@ -46,9 +46,9 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final RankRepository rankRepository;
 	private final SearchHistoryRepository searchHistoryRepository;
+	private final MatchDateStreakRepository matchDateStreakRepository;
 	private final UserGameStatRepository userGameStatRepository;
 	private final GameRepository gameRepository;
-	private final MatchDateStreakRepository matchDateStreakRepository;
 	private final MatchRepository matchRepository;
 
 	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
@@ -82,6 +82,20 @@ public class UserService {
 		return user.getPuuid();
 	}
 
+	public String getUserPuuidByApi(String name, String tag) {
+		Mono<AccountDto> account = apiService.getAccountByNameAndTag(name, tag);
+		AccountDto accountDto = null;
+		try {
+			accountDto = account.block();
+			if (accountDto == null) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+			}
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+		}
+		return accountDto.getPuuid();
+	}
+
 	@Transactional(readOnly = false)
 	public String updateUserProfile(User user) {
 		Mono<SummonerDto> summoner = apiService.getSummonerByPuuid(user.getPuuid());
@@ -94,11 +108,9 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = false)
-	public List<UserStreakDto> getUserMonthStreak(String puuid, int year, int month) {
-		Long start = 0L;
+	public Optional<List<UserStreakDto>> getUserMonthStreak(String puuid, int year, int month) {
 		String dateYM = String.format("%d-%02d", year, month);
-		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(year, month);
-		long endTime;
+
 		Optional<User> userOptional = userRepository.findById(puuid);
 		if (userOptional.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
@@ -115,136 +127,149 @@ public class UserService {
 		} else {
 			history = searchHistory.get();
 			if (history.isDone()) {
-				return getUserStreakDtoList(history);
+				return Optional.of(getUserStreakDtoList(history));
 			}
 		}
-		//이제 데이터 저장 하기
+		int successDay = history.getLastSuccessDay();
+		//mathData 저장
 		try {
-			boolean isNow = false;
-			int days = YearMonthToEpochUtil.getDayWithYearMonth(dateYM);
-			int nowDate = YearMonthToEpochUtil.getNowEpochSecond();
+			boolean isNowMonth = false;
+			long startTime = YearMonthToEpochUtil.convertToEpochSeconds(year, month);
+			long endTime;
+			int end_day = YearMonthToEpochUtil.getDayWithYearMonth(dateYM); //총 몇일 검색 해야 하는지.
 			String nowYearMonth = YearMonthToEpochUtil.getNowYearMonth();
 			if (dateYM.equals(nowYearMonth)) { // 현재 월에 해당하는 경우 현재 날짜까지만 가져옴
-				endTime = nowDate;
-				days = YearMonthToEpochUtil.getNowDay();
-				isNow = true;
+				endTime = YearMonthToEpochUtil.getNowEpochSecond();
+				end_day = YearMonthToEpochUtil.getNowDay();
+				isNowMonth = true;
 				System.out.println("현재 날짜에 도달!!");
 			} else {
 				endTime = YearMonthToEpochUtil.addMonthEpochSecond(dateYM, 1);
 			}
 			// 	//하루 단위로 api 호출해서 저장
-			Mono<String[]> monthHistories = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
+			Mono<String[]> monthHistories = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
 				100); //100개의 매치를 가져옴
 			String[] monthIds = monthHistories.block();
-			if (monthIds == null) {
-				return userStreakDtos;
+			if (monthIds == null || monthIds.length == 0) {
+				System.out.println("매치가 없어요!");
+				return Optional.of(userStreakDtos);
 			}
 			System.out.println("매치 가져와! 길이는 ?" + monthIds.length);
 
-			// if (monthIds.length < days) { // 갯수가 하루씩 부르는 것보다 더 적은 경우 하나씩 데이터를 가져옴
-			// 	for (String matchId : monthIds) {
-			// 		Match match = new Match(matchId, true);
-			// 		Mono<MatchDto> matchData = apiService.getMatchDtoByMatchId(matchId);
-			// 		MatchDto matchDto = matchData.block();
-			//
-			// 		InfoDto info = matchDto.getInfo();
-			// 		Game gameEntity = GameMapper.INSTANCE.toGameEntity(info, matchId);
-			// 		ParticipantDto[] participants = matchDto.getInfo().getParticipants();
-			// 		for (ParticipantDto participant : participants) {
-			// 			UserGameStat userGameStat = new UserGameStat();
-			// 			userGameStat.setByParticipantDto(participant);
-			// 			userGameStat.setGame(gameEntity);
-			// 			gameEntity.addGameStat(userGameStat);
-			// 		}
-			// 		match.setGame(gameEntity);
-			// 		gameRepository.save(gameEntity);
-			//
-			// 		String yearMonth = YearMonthToEpochUtil.convertToYearMonthDay(info.getGameCreation());
-			// 		Date matchDate = new Date(info.getGameCreation());
-			// 		Optional<MatchDateStreak> streakOptional = matchDateStreakRepository.findByDateAndSearchHistory(
-			// 			matchDate, history.getHistoryId());
-			// 		if (streakOptional.isEmpty()) {
-			// 			MatchDateStreak matchDateStreak = new MatchDateStreak();
-			// 			matchDateStreak.setDate(matchDate);
-			// 			history.addMatchDateStreak(matchDateStreak);
-			//
-			// 			matchDateStreakRepository.save(matchDateStreak);
-			// 			// gameRepository.save(gameEntity);
-			// 			matchRepository.save(match);
-			// 			// searchHistoryRepository.save(history);
-			// 			// gameRepository.save(gameEntity);
-			// 		} else {
-			// 			MatchDateStreak matchDateStreak = streakOptional.get();
-			// 			history.addMatchDateStreak(matchDateStreak);
-			// 			match.setGame(gameEntity);
-			// 			matchDateStreakRepository.save(matchDateStreak);
-			// 			matchRepository.save(match);
-			// 			gameRepository.save(gameEntity);
-			// 			userGameStatRepository.saveAll(gameEntity.getGameStats());
-			// 		}
-			// 		match.setGame(gameEntity);
-			// 		gameRepository.save(gameEntity);
-			// 	}
-			// }
-			// } else {
+			// extracted(monthIds, days, history);
 
-			storeDailyForMonth(puuid, days, dateYM, history, start);
-			if (!isNow)
+			int start_day = history.getLastSuccessDay();
+
+			System.out.println(start_day);
+
+			for (int i = start_day; i < end_day; i++) { // 하루씩 데이터를 가져옴
+				System.out.println("i : " + i);
+				if (matchDateStreakRepository.findByDateAndSearchHistory(
+					new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i)),
+					history.getHistoryId()).isPresent()) {
+					continue;
+				}
+				startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
+				endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
+				Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
+					100); //하루 지난 후 100개의 매치를 가져옴
+				String[] matchHistory = matchHistoryByPuuid.block();
+				successDay = i;
+				if (matchHistory == null || matchHistory.length == 0) {
+					continue;
+				}
+				MatchDateStreak matchDateStreak = new MatchDateStreak();
+				Date date = new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L);
+				System.out.println("!!!!!!!!!date : " + date);
+				matchDateStreak.setDate(date);
+				history.addMatchDateStreak(matchDateStreak);
+				for (String matchId : matchHistory) {
+					Optional<Match> optionalMatch = matchRepository.findById(matchId);
+					Match match = new Match(matchId, false);
+					if (optionalMatch.isPresent()) {
+						match = optionalMatch.get();
+					}
+					matchDateStreak.addMatch(match);
+				}
+				matchDateStreakRepository.save(matchDateStreak);
+			}
+			if (!isNowMonth) {
 				searchHistoryRepository.updateIsDoneByHistoryId(history.getHistoryId(), true);
+			}
+			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getHistoryId(), end_day);
 			userRepository.save(user);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getHistoryId(), successDay);
+			return Optional.empty();
 		}
-		return getUserStreakDtoList(history);
+		return Optional.of(getUserStreakDtoList(history));
 	}
+
+	// private void extracted(String[] monthIds, int days, SearchHistory history) {
+	// 	if (monthIds.length < days) { // 갯수가 하루씩 부르는 것보다 더 적은 경우 하나씩 데이터를 가져옴
+	// 		for (String matchId : monthIds) {
+	// 			Match match = new Match(matchId, true);
+	// 			Mono<MatchDto> matchData = apiService.getMatchDtoByMatchId(matchId);
+	// 			MatchDto matchDto = matchData.block();
+	//
+	// 			InfoDto info = matchDto.getInfo();
+	// 			Game gameEntity = GameMapper.INSTANCE.toGameEntity(info, matchId);
+	// 			ParticipantDto[] participants = matchDto.getInfo().getParticipants();
+	// 			for (ParticipantDto participant : participants) {
+	// 				UserGameStat userGameStat = new UserGameStat();
+	// 				userGameStat.setByParticipantDto(participant);
+	// 				userGameStat.setGame(gameEntity);
+	// 				gameEntity.addGameStat(userGameStat);
+	// 			}
+	// 			match.setGame(gameEntity);
+	// 			gameRepository.save(gameEntity);
+	//
+	// 			String yearMonth = YearMonthToEpochUtil.convertToYearMonthDay(info.getGameCreation());
+	// 			Date matchDate = new Date(info.getGameCreation());
+	// 			Optional<MatchDateStreak> streakOptional = matchDateStreakRepository.findByDateAndSearchHistory(
+	// 				matchDate, history.getHistoryId());
+	// 			if (streakOptional.isEmpty()) {
+	// 				MatchDateStreak matchDateStreak = new MatchDateStreak();
+	// 				matchDateStreak.setDate(matchDate);
+	// 				history.addMatchDateStreak(matchDateStreak);
+	//
+	// 				matchDateStreakRepository.save(matchDateStreak);
+	// 				// gameRepository.save(gameEntity);
+	// 				matchRepository.save(match);
+	// 				// searchHistoryRepository.save(history);
+	// 				// gameRepository.save(gameEntity);
+	// 			} else {
+	// 				MatchDateStreak matchDateStreak = streakOptional.get();
+	// 				history.addMatchDateStreak(matchDateStreak);
+	// 				match.setGame(gameEntity);
+	// 				matchDateStreakRepository.save(matchDateStreak);
+	// 				matchRepository.save(match);
+	// 				gameRepository.save(gameEntity);
+	// 				userGameStatRepository.saveAll(gameEntity.getGameStats());
+	// 			}
+	// 			match.setGame(gameEntity);
+	// 			gameRepository.save(gameEntity);
+	// 		}
+	// 	}
+	// }
 
 	private List<UserStreakDto> getUserStreakDtoList(SearchHistory history) {
 		Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
 		List<UserStreakDto> userStreakDtos = new ArrayList<>();
 		for (MatchDateStreak matchDateStreak : matchDateStreaks) {
 			UserStreakDto userStreakDto = new UserStreakDto();
-			userStreakDto.setByMatchDateStreak(matchDateStreak);
+			userStreakDto.setByMatchDateStreak(matchDateStreak, resourceURL);
 			userStreakDtos.add(userStreakDto);
 		}
 		return userStreakDtos;
-	}
-
-	private void storeDailyForMonth(String puuid, int days, String dateYM, SearchHistory history, Long start) {
-		long endTime;
-		long startTime;
-		for (int i = 0; i < days; i++) { // 하루씩 데이터를 가져옴
-			if (matchDateStreakRepository.findByDateAndSearchHistory(
-				new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i)),
-				history.getHistoryId()).isPresent()) {
-				continue;
-			}
-			startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
-			endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
-			Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, start,
-				100); //100개의 매치를 가져옴
-			String[] matchHistory = matchHistoryByPuuid.block();
-			if (matchHistory == null || matchHistory.length == 0) {
-				continue;
-			}
-			MatchDateStreak matchDateStreak = new MatchDateStreak();
-			Date date = new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L);
-			System.out.println("!!!!!!!!!date : " + date);
-			matchDateStreak.setDate(date);
-			history.addMatchDateStreak(matchDateStreak);
-			for (String matchId : matchHistory) {
-				Match match = new Match(matchId, false);
-				matchDateStreak.addMatch(match);
-			}
-			matchDateStreakRepository.save(matchDateStreak);
-		}
 	}
 
 	@Transactional
 	public String getPuuidByNameTag(String name, String tag) {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
 		if (userOptional.isEmpty()) {
-			return setUserProfile(name, tag);
+			return getUserPuuidByApi(name, tag);
 		} else {
 			return userOptional.get().getPuuid();
 		}

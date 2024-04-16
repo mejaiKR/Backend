@@ -7,8 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
+import lombok.Getter;
 
 @Entity
+@Getter
 public class Match {
 	@Id
 	String matchId;
