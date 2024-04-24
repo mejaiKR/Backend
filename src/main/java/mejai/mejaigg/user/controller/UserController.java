@@ -16,6 +16,7 @@ import mejai.mejaigg.user.dto.request.UserStreakRequest;
 import mejai.mejaigg.user.dto.response.UserProfileDto;
 import mejai.mejaigg.user.dto.response.UserStreakDto;
 import mejai.mejaigg.user.service.UserService;
+import mejai.mejaigg.user.service.UserStreakService;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ import mejai.mejaigg.user.service.UserService;
 public class UserController {
 
 	private final UserService userService;
+	private final UserStreakService userStreakService;
 
 	@GetMapping("/users/profile")
 	public UserProfileDto profile(UserProfileRequest request) {
@@ -34,7 +36,7 @@ public class UserController {
 		String puuid = userService.getPuuidByNameTag(request.getId(), request.getTag());
 		Optional<List<UserStreakDto>> userMonthStreak;
 		try {
-			userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
+			userMonthStreak = userStreakService.getUserMonthStreak(puuid, request.getYear(),
 				request.getMonth());
 			if (userMonthStreak.isEmpty()) {
 				throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
