@@ -1,4 +1,4 @@
-package mejai.mejaigg.riot.dto;
+package mejai.mejaigg.rank.dto;
 
 import lombok.Data;
 

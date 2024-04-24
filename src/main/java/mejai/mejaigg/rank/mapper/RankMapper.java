@@ -1,10 +1,11 @@
-package mejai.mejaigg.rank;
+package mejai.mejaigg.rank.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-import mejai.mejaigg.riot.dto.RankDto;
+import mejai.mejaigg.rank.dto.RankDto;
+import mejai.mejaigg.rank.entity.Rank;
 
 @Mapper
 public interface RankMapper {

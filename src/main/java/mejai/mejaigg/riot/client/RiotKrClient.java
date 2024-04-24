@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import mejai.mejaigg.riot.dto.RankDto;
+import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 
 @FeignClient(

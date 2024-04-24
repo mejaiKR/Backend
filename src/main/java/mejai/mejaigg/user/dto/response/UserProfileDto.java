@@ -2,7 +2,7 @@ package mejai.mejaigg.user.dto.response;
 
 import lombok.Getter;
 import lombok.Setter;
-import mejai.mejaigg.rank.Rank;
+import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.user.entity.User;
 
 @Getter
