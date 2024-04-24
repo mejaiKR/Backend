@@ -1,5 +1,8 @@
 package mejai.mejaigg.user.dto.response;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 import mejai.mejaigg.rank.entity.Rank;
@@ -11,24 +14,23 @@ public class UserProfileDto {
 	private String userName;
 	private String tagLine;
 	private String profileIcon;
-	private String tierIcon;
-	private String tier;
-	private String rank;
-	private Long leaguePoints;
 	private Long level;
-	private int wins;
-	private int losses;
+	private Set<RankResponseDto> rank = new HashSet<>();
 
 	public void setByUser(User user, String resourceUrl) {
-		Rank rank = user.getRank();
+		Set<Rank> ranks = user.getRank();
+		Rank soloRank = ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
+			.orElse(null);
+		Rank flexRank = ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")).findFirst()
+			.orElse(null);
+		RankResponseDto responseRank = new RankResponseDto();
+		responseRank.setByRank(soloRank, resourceUrl);
+		this.rank.add(responseRank);
+		responseRank = new RankResponseDto();
+		responseRank.setByRank(flexRank, resourceUrl);
+		this.rank.add(responseRank);
 		this.userName = user.getSummonerName();
 		this.profileIcon = resourceUrl + "profileIcon/" + user.getProfileIconId() + ".png";
-		this.tier = rank.getTier();
-		this.tierIcon = resourceUrl + "emblem/" + rank.getTier() + ".png";
-		this.rank = user.getRank().getRank();
-		this.leaguePoints = rank.getLeaguePoints();
-		this.wins = rank.getWins();
-		this.losses = rank.getLosses();
 		this.level = user.getSummonerLevel();
 		this.tagLine = user.getTagLine();
 	}
@@ -36,12 +38,6 @@ public class UserProfileDto {
 	public void setDummy() {
 		this.userName = "hide on bush";
 		this.profileIcon = "http://localhost:8080/profileIcon/6.png";
-		this.tierIcon = "http://localhost:8080/emblem/Challenger.png";
-		this.tier = "CHALLENGER";
-		this.rank = "I";
-		this.leaguePoints = 704L;
-		this.wins = 220;
-		this.losses = 184;
 		this.level = 745L;
 		this.tagLine = "KR1";
 	}
