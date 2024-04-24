@@ -9,7 +9,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
-import mejai.mejaigg.repository.UserRepository;
+import mejai.mejaigg.user.repository.UserRepository;
+import mejai.mejaigg.user.service.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

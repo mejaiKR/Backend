@@ -9,7 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jakarta.transaction.Transactional;
-import mejai.mejaigg.domain.User;
+import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.user.repository.UserRepository;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -39,18 +39,18 @@ services:
     depends_on:
       - db
 
-  spring:
-    container_name: spring-boot
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
-      SPRING_DATASOURCE_USERNAME: compose-postgres
-      SPRING_DATASOURCE_PASSWORD: compose-postgres
+#  spring:
+#    container_name: spring-boot
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
+#      SPRING_DATASOURCE_USERNAME: compose-postgres
+#      SPRING_DATASOURCE_PASSWORD: compose-postgres
 
 

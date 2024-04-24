@@ -11,11 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import jakarta.transaction.Transactional;
-import mejai.mejaigg.common.YearMonthToEpochUtil;
-import mejai.mejaigg.dto.riot.AccountDto;
-import mejai.mejaigg.dto.riot.RankDto;
-import mejai.mejaigg.dto.riot.SummonerDto;
-import mejai.mejaigg.dto.riot.match.MatchDto;
+import mejai.mejaigg.common.util.YearMonthToEpochUtil;
+import mejai.mejaigg.riot.dto.AccountDto;
+import mejai.mejaigg.riot.dto.RankDto;
+import mejai.mejaigg.riot.dto.SummonerDto;
+import mejai.mejaigg.riot.dto.match.MatchDto;
+import mejai.mejaigg.riot.service.ApiService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
