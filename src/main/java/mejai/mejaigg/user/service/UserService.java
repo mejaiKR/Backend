@@ -2,6 +2,7 @@ package mejai.mejaigg.user.service;
 
 import java.sql.Date;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -50,10 +51,6 @@ public class UserService {
 	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
 	private String resourceURL;
 
-	//TODO : api 콜을 실패하는 경우 고려해야함
-	//TODO : 비동기 레포지토리 방식 적용
-	//TODO : 시즌 바꼈을때 추가하는 로직 필요하다.
-	//처음으로 요청이 들어왔을 때 호출되는 서비스
 	@Transactional(readOnly = false)
 	public String setUserProfile(String name, String tag) { //처음 콜 할 때 세팅 되는 함수
 		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
@@ -62,20 +59,21 @@ public class UserService {
 		User user = UserMapper.INSTANCE.toUserEntity(accountDto, summonerDto);
 
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
-		//TODO : Rank 자유랭크 일반랭크
-		RankDto rankDto = rankDtos.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
+		Set<Rank> ranks = new HashSet<>();
+		RankDto soloRankDto = rankDtos.stream()
+			.filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5"))
+			.findFirst()
 			.orElse(null);
-		Rank rank = new Rank();
+		RankDto flexRankDto = rankDtos.stream()
+			.filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR"))
+			.findFirst()
+			.orElse(null);
+		setNewRankByRankDto(soloRankDto, user, ranks, true);
+		setNewRankByRankDto(flexRankDto, user, ranks, false);
 
-		if (rankDto != null) { //랭크가 없는 경우에는 배열이 비었다. (언랭 유저)
-			rank = RankMapper.INSTANCE.toRankEntity(rankDto);
-		} else {
-			rank.setUnRanked();
-		}
-		rank.setUser(user);
-		rankRepository.save(rank);
-		user.setRank(rank);
+		user.setRank(ranks);
 		userRepository.save(user);
+
 		return user.getPuuid();
 	}
 
@@ -90,13 +88,29 @@ public class UserService {
 
 	@Transactional(readOnly = false)
 	public String updateUserProfile(User user) {
+
 		SummonerDto summoner = riotService.getSummonerByPuuid(user.getPuuid());
-		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summoner.getId());
-		//TODO : Rank 자유랭크 일반랭크 저장 다 하기
-		RankDto rankDto = rankDtos.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
-			.orElse(null);
 		user.updateBySummonerDto(summoner);
-		user.getRank().updateByRankDto(rankDto);
+
+		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summoner.getId());
+		RankDto soloRankDto = rankDtos.stream()
+			.filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5"))
+			.findFirst()
+			.orElse(null);
+		RankDto flexRankDto = rankDtos.stream()
+			.filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR"))
+			.findFirst()
+			.orElse(null);
+		Set<Rank> ranks = user.getRank();
+		ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst().ifPresent(rank -> {
+			rank.updateByRankDto(soloRankDto);
+			rankRepository.save(rank);
+		});
+		ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")).findFirst().ifPresent(rank -> {
+			rank.updateByRankDto(flexRankDto);
+			rankRepository.save(rank);
+		});
+		// user.getRank().updateByRankDto(rankDto);
 		return user.getPuuid();
 	}
 
@@ -116,6 +130,41 @@ public class UserService {
 		saveStreakData(history, dateYM, puuid);
 		userRepository.save(user);
 		return Optional.of(getUserStreakDtoList(history));
+	}
+
+	@Transactional
+	public String getPuuidByNameTag(String name, String tag) {
+		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
+		if (userOptional.isEmpty()) {
+			return getUserPuuidByApi(name, tag);
+		} else {
+			return userOptional.get().getPuuid();
+		}
+	}
+
+	@Transactional
+	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
+		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
+		if (userOptional.isEmpty()) {
+			try {
+				String puuid = setUserProfile(name, tag);
+				if (puuid == null) {
+					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+				}
+				userOptional = userRepository.findById(puuid);
+			} catch (Exception e) {
+				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+			}
+		} else {
+			updateUserProfile(userOptional.get());
+		}
+		UserProfileDto userProfileDto = new UserProfileDto();
+		if (userOptional.isEmpty()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
+		}
+		User user = userOptional.get();
+		userProfileDto.setByUser(user, resourceURL);
+		return userProfileDto;
 	}
 
 	private boolean isEmptyHistory(String dateYM, String puuid) {
@@ -188,6 +237,21 @@ public class UserService {
 		return history;
 	}
 
+	private void setNewRankByRankDto(RankDto rankDto, User user, Set<Rank> ranks, boolean isSolo) {
+		if (rankDto != null) {
+			Rank rank = RankMapper.INSTANCE.toRankEntity(rankDto);
+			rank.setUser(user);
+			rank.setPuuid(user.getPuuid());
+			ranks.add(rank);
+		} else {
+			Rank rank = new Rank();
+			rank.setUnRanked(isSolo);
+			rank.setUser(user);
+			rank.setPuuid(user.getPuuid());
+			ranks.add(rank);
+		}
+	}
+
 	// private void extracted(String[] monthIds, int days, SearchHistory history) {
 	// 	if (monthIds.length < days) { // 갯수가 하루씩 부르는 것보다 더 적은 경우 하나씩 데이터를 가져옴
 	// 		for (String matchId : monthIds) {
@@ -247,38 +311,4 @@ public class UserService {
 		return userStreakDtos;
 	}
 
-	@Transactional
-	public String getPuuidByNameTag(String name, String tag) {
-		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
-		if (userOptional.isEmpty()) {
-			return getUserPuuidByApi(name, tag);
-		} else {
-			return userOptional.get().getPuuid();
-		}
-	}
-
-	@Transactional
-	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
-		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
-		if (userOptional.isEmpty()) {
-			try {
-				String puuid = setUserProfile(name, tag);
-				if (puuid == null) {
-					throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-				}
-				userOptional = userRepository.findById(puuid);
-			} catch (Exception e) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-			}
-		} else {
-			updateUserProfile(userOptional.get());
-		}
-		UserProfileDto userProfileDto = new UserProfileDto();
-		if (userOptional.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-		}
-		User user = userOptional.get();
-		userProfileDto.setByUser(user, resourceURL);
-		return userProfileDto;
-	}
 }
