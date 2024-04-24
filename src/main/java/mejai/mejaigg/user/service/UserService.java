@@ -77,6 +77,21 @@ public class UserService {
 		return user.getPuuid();
 	}
 
+	private void setNewRankByRankDto(RankDto rankDto, User user, Set<Rank> ranks, boolean isSolo) {
+		if (rankDto != null) {
+			Rank rank = RankMapper.INSTANCE.toRankEntity(rankDto);
+			rank.setUser(user);
+			rank.setPuuid(user.getPuuid());
+			ranks.add(rank);
+		} else {
+			Rank rank = new Rank();
+			rank.setUnRanked(isSolo);
+			rank.setUser(user);
+			rank.setPuuid(user.getPuuid());
+			ranks.add(rank);
+		}
+	}
+
 	public String getUserPuuidByApi(String name, String tag) {
 		try {
 			AccountDto account = riotService.getAccountByNameAndTag(name, tag);
@@ -88,30 +103,43 @@ public class UserService {
 
 	@Transactional(readOnly = false)
 	public String updateUserProfile(User user) {
+		// 사용자 프로필 업데이트
+		updateUserDetails(user);
 
+		// 랭크 업데이트
+		updateUserRanks(user);
+		return user.getPuuid();
+	}
+
+	private void updateUserDetails(User user) {
 		SummonerDto summoner = riotService.getSummonerByPuuid(user.getPuuid());
 		user.updateBySummonerDto(summoner);
+		userRepository.save(user); // 사용자를 저장하여 변경 사항을 반영
+	}
 
-		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summoner.getId());
-		RankDto soloRankDto = rankDtos.stream()
-			.filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5"))
+	private void updateUserRanks(User user) {
+		Set<RankDto> rankDtos = riotService.getRankBySummonerId(user.getSummonerId());
+
+		// 랭크 DTO로부터 랭크 객체를 업데이트
+		updateRank(user, rankDtos, "RANKED_SOLO_5x5");
+		updateRank(user, rankDtos, "RANKED_FLEX_SR");
+	}
+
+	private void updateRank(User user, Set<RankDto> rankDtos, String queueType) {
+		RankDto rankDto = rankDtos.stream()
+			.filter(rank -> rank.getQueueType().equals(queueType))
 			.findFirst()
 			.orElse(null);
-		RankDto flexRankDto = rankDtos.stream()
-			.filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR"))
-			.findFirst()
-			.orElse(null);
-		Set<Rank> ranks = user.getRank();
-		ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst().ifPresent(rank -> {
-			rank.updateByRankDto(soloRankDto);
-			rankRepository.save(rank);
-		});
-		ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")).findFirst().ifPresent(rank -> {
-			rank.updateByRankDto(flexRankDto);
-			rankRepository.save(rank);
-		});
-		// user.getRank().updateByRankDto(rankDto);
-		return user.getPuuid();
+
+		if (rankDto != null) {
+			user.getRank().stream()
+				.filter(rank -> rank.getQueueType().equals(queueType))
+				.findFirst()
+				.ifPresent(rank -> {
+					rank.updateByRankDto(rankDto);
+					rankRepository.save(rank); // 랭크를 업데이트하고 저장
+				});
+		}
 	}
 
 	@Transactional(readOnly = false)
@@ -130,6 +158,17 @@ public class UserService {
 		saveStreakData(history, dateYM, puuid);
 		userRepository.save(user);
 		return Optional.of(getUserStreakDtoList(history));
+	}
+
+	private List<UserStreakDto> getUserStreakDtoList(SearchHistory history) {
+		Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
+		List<UserStreakDto> userStreakDtos = new ArrayList<>();
+		for (MatchDateStreak matchDateStreak : matchDateStreaks) {
+			UserStreakDto userStreakDto = new UserStreakDto();
+			userStreakDto.setByMatchDateStreak(matchDateStreak, resourceURL);
+			userStreakDtos.add(userStreakDto);
+		}
+		return userStreakDtos;
 	}
 
 	@Transactional
@@ -237,21 +276,6 @@ public class UserService {
 		return history;
 	}
 
-	private void setNewRankByRankDto(RankDto rankDto, User user, Set<Rank> ranks, boolean isSolo) {
-		if (rankDto != null) {
-			Rank rank = RankMapper.INSTANCE.toRankEntity(rankDto);
-			rank.setUser(user);
-			rank.setPuuid(user.getPuuid());
-			ranks.add(rank);
-		} else {
-			Rank rank = new Rank();
-			rank.setUnRanked(isSolo);
-			rank.setUser(user);
-			rank.setPuuid(user.getPuuid());
-			ranks.add(rank);
-		}
-	}
-
 	// private void extracted(String[] monthIds, int days, SearchHistory history) {
 	// 	if (monthIds.length < days) { // 갯수가 하루씩 부르는 것보다 더 적은 경우 하나씩 데이터를 가져옴
 	// 		for (String matchId : monthIds) {
@@ -299,16 +323,5 @@ public class UserService {
 	// 		}
 	// 	}
 	// }
-
-	private List<UserStreakDto> getUserStreakDtoList(SearchHistory history) {
-		Set<MatchDateStreak> matchDateStreaks = history.getSortedMatchDateStreaks();
-		List<UserStreakDto> userStreakDtos = new ArrayList<>();
-		for (MatchDateStreak matchDateStreak : matchDateStreaks) {
-			UserStreakDto userStreakDto = new UserStreakDto();
-			userStreakDto.setByMatchDateStreak(matchDateStreak, resourceURL);
-			userStreakDtos.add(userStreakDto);
-		}
-		return userStreakDtos;
-	}
 
 }
