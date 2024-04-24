@@ -1,6 +1,8 @@
 package mejai.mejaigg.user.service;
 
 import java.sql.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -154,6 +156,14 @@ public class UserService {
 		if (history.isDone() || isEmptyHistory(dateYM, puuid)) {
 			return Optional.of(getUserStreakDtoList(history));
 		}
+		LocalDateTime updateAt = history.getUpdatedAt();
+		LocalDateTime now = LocalDateTime.now();
+
+		//2시간이 지나지 않았고, 현재 월에 해당하는 경우
+		if (year == now.getYear() && month == now.getMonthValue() && history.getLastSuccessDay() == now.getDayOfMonth()
+			&& Duration.between(updateAt, now).toHours() < 2) {
+			return Optional.of(getUserStreakDtoList(history));
+		}
 		//mathData 저장
 		saveStreakData(history, dateYM, puuid);
 		userRepository.save(user);
@@ -197,8 +207,13 @@ public class UserService {
 				}
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 			}
-		} else {
-			updateUserProfile(userOptional.get());
+		} else { // 2시간이 지나면 업데이트
+			User user = userOptional.get();
+			LocalDateTime lastUpdatedAt = user.getUpdatedAt();
+			LocalDateTime now = LocalDateTime.now();
+			if (Duration.between(lastUpdatedAt, now).toHours() >= 2) {
+				updateUserProfile(user);
+			}
 		}
 		UserProfileDto userProfileDto = new UserProfileDto();
 		if (userOptional.isEmpty()) {
