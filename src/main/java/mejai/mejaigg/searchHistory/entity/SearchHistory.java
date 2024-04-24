@@ -11,12 +11,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
+import mejai.mejaigg.common.jpa.BaseEntity;
 import mejai.mejaigg.matchDateStreak.entity.MatchDateStreak;
 import mejai.mejaigg.user.entity.User;
 
 @Entity
 @Getter
-public class SearchHistory {
+public class SearchHistory extends BaseEntity {
 	@Id
 	@GeneratedValue
 	private Long historyId;

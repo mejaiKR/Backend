@@ -11,23 +11,16 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
+import mejai.mejaigg.common.jpa.BaseEntity;
 import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.searchHistory.entity.SearchHistory;
 
-/**
- * user
- * /riot/account/v1/accounts/by-riot-id/{gameName}/{tagLine}
- get puuid in response
-
- /lol/summoner/v4/summoners/by-puuid/{encryptedPUUID}
-
- */
 @Entity
 @Getter
 @Setter
 @Table(name = "users")
-public class User {
+public class User extends BaseEntity {
 	@Id
 	private String puuid;
 

@@ -6,14 +6,17 @@ import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import mejai.mejaigg.common.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.user.entity.User;
 
 @Entity
 @IdClass(RankId.class)
-@Data
-public class Rank {
+@Getter
+@Setter
+public class Rank extends BaseEntity {
 	@Id
 	private String puuid;
 

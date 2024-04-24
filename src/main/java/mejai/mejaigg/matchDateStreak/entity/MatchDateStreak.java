@@ -12,13 +12,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import mejai.mejaigg.common.jpa.BaseEntity;
 import mejai.mejaigg.match.entity.Match;
 import mejai.mejaigg.searchHistory.entity.SearchHistory;
 
 @Entity
-@Data
-public class MatchDateStreak implements Comparable<MatchDateStreak> {
+@Getter
+@Setter
+public class MatchDateStreak extends BaseEntity implements Comparable<MatchDateStreak> {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
