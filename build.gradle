@@ -82,6 +82,10 @@ dependencies {
 
     //feign
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
+
+    //retry
+    implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework:spring-aspects")
 }
 
 tasks.named('test') {
