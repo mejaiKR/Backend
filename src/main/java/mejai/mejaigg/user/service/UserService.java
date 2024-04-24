@@ -25,7 +25,7 @@ import mejai.mejaigg.rank.RankRepository;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.RankDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
-import mejai.mejaigg.riot.service.ApiService;
+import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.searchHistory.entity.SearchHistory;
 import mejai.mejaigg.searchHistory.repository.SearchHistoryRepository;
 import mejai.mejaigg.user.dto.response.UserProfileDto;
@@ -33,7 +33,6 @@ import mejai.mejaigg.user.dto.response.UserStreakDto;
 import mejai.mejaigg.user.entity.User;
 import mejai.mejaigg.user.mapper.UserMapper;
 import mejai.mejaigg.user.repository.UserRepository;
-import reactor.core.publisher.Mono;
 
 @Service
 @Slf4j
@@ -41,7 +40,7 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class UserService {
 
-	private final ApiService apiService;
+	private final RiotService riotService;
 	private final UserRepository userRepository;
 	private final RankRepository rankRepository;
 	private final SearchHistoryRepository searchHistoryRepository;
@@ -57,14 +56,15 @@ public class UserService {
 	//처음으로 요청이 들어왔을 때 호출되는 서비스
 	@Transactional(readOnly = false)
 	public String setUserProfile(String name, String tag) { //처음 콜 할 때 세팅 되는 함수
-		Mono<AccountDto> account = apiService.getAccountByNameAndTag(name, tag);
-		AccountDto accountDto = account.block();
-		Mono<SummonerDto> summoner = apiService.getSummonerByPuuid(accountDto.getPuuid());
-		SummonerDto summonerDto = summoner.block();
+		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
+		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
+
 		User user = UserMapper.INSTANCE.toUserEntity(accountDto, summonerDto);
 
-		Mono<Set<RankDto>> rankBySummonerId = apiService.getRankBySummonerId(summonerDto.getId());
-		RankDto rankDto = rankBySummonerId.block().stream().findFirst().orElse(null);
+		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
+		//TODO : Rank 자유랭크 일반랭크
+		RankDto rankDto = rankDtos.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
+			.orElse(null);
 		Rank rank = new Rank();
 
 		if (rankDto != null) { //랭크가 없는 경우에는 배열이 비었다. (언랭 유저)
@@ -80,26 +80,22 @@ public class UserService {
 	}
 
 	public String getUserPuuidByApi(String name, String tag) {
-		Mono<AccountDto> account = apiService.getAccountByNameAndTag(name, tag);
-		AccountDto accountDto = null;
 		try {
-			accountDto = account.block();
-			if (accountDto == null) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-			}
+			AccountDto account = riotService.getAccountByNameAndTag(name, tag);
+			return account.getPuuid();
 		} catch (Exception e) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 		}
-		return accountDto.getPuuid();
 	}
 
 	@Transactional(readOnly = false)
 	public String updateUserProfile(User user) {
-		Mono<SummonerDto> summoner = apiService.getSummonerByPuuid(user.getPuuid());
-		SummonerDto summonerDto = summoner.block();
-		Mono<Set<RankDto>> rankBySummonerId = apiService.getRankBySummonerId(summonerDto.getId());
-		RankDto rankDto = rankBySummonerId.block().stream().findFirst().orElse(null);
-		user.updateBySummonerDto(summonerDto);
+		SummonerDto summoner = riotService.getSummonerByPuuid(user.getPuuid());
+		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summoner.getId());
+		//TODO : Rank 자유랭크 일반랭크 저장 다 하기
+		RankDto rankDto = rankDtos.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
+			.orElse(null);
+		user.updateBySummonerDto(summoner);
 		user.getRank().updateByRankDto(rankDto);
 		return user.getPuuid();
 	}
@@ -128,10 +124,9 @@ public class UserService {
 		if (dateYM.equals(YearMonthToEpochUtil.getNowYearMonth())) { // 현재 월에 해당하는 경우 현재 날짜까지만 가져옴
 			endTime = YearMonthToEpochUtil.getNowEpochSecond();
 		}
-		Mono<String[]> monthHistories = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
+		String[] monthHistories = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
 			100); //100개의 매치를 가져옴
-		String[] monthIds = monthHistories.block();
-		return monthIds == null || monthIds.length == 0;
+		return monthHistories == null || monthHistories.length == 0;
 	}
 
 	private void saveStreakData(SearchHistory history, String dateYM, String puuid) {
@@ -146,9 +141,9 @@ public class UserService {
 			long startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
 			long endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
 			try {
-				Mono<String[]> matchHistoryByPuuid = apiService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
+
+				String[] matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
 					100); //하루 지난 후 100개의 매치를 가져옴
-				String[] matchHistory = matchHistoryByPuuid.block();
 				if (matchHistory == null || matchHistory.length == 0) {
 					continue;
 				}

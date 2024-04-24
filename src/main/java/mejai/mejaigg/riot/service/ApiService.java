@@ -16,6 +16,7 @@ import mejai.mejaigg.riot.dto.match.MatchDto;
 import reactor.core.publisher.Mono;
 
 //TODO : 모든 클래스 다른 statusCode 에 대한 예외처리 추가하기
+@Deprecated
 @Service
 @PropertySource(ignoreResourceNotFound = false, value = "classpath:riotApiKey.properties")
 public class ApiService {
