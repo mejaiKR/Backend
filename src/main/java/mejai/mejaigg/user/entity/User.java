@@ -8,9 +8,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.searchHistory.entity.SearchHistory;
@@ -24,7 +24,8 @@ import mejai.mejaigg.searchHistory.entity.SearchHistory;
 
  */
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
 	@Id
@@ -43,8 +44,8 @@ public class User {
 	private int profileIconId;
 	private Long summonerLevel;
 
-	@OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private Rank rank;
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<Rank> rank = new HashSet<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 	private Set<SearchHistory> searchHistory = new HashSet<>();

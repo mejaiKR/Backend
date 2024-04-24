@@ -2,23 +2,28 @@ package mejai.mejaigg.rank.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import jakarta.persistence.OneToOne;
 import lombok.Data;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.user.entity.User;
 
 @Entity
+@IdClass(RankId.class)
 @Data
 public class Rank {
 	@Id
 	private String puuid;
 
-	@OneToOne
+	@ManyToOne
 	@MapsId
 	@JoinColumn(name = "puuid")
 	private User user;
+
+	@Id
+	private String queueType; //RANKED_SOLO_5x5
 
 	private String tier; //ex EMERALD
 	private String rank; //ex IV :  String ->INT
@@ -30,9 +35,8 @@ public class Rank {
 	private boolean veteran; //베테랑 여부
 	private boolean freshBlood; //신규 여부
 	private boolean inactive; //휴식 여부
-	private String queueType; //RANKED_SOLO_5x5
 
-	public void setUnRanked() {
+	public void setUnRanked(boolean isSolo) {
 		this.tier = "UNRANKED";
 		this.rank = "I";
 		this.leaguePoints = 0L;
@@ -42,6 +46,11 @@ public class Rank {
 		this.veteran = false;
 		this.freshBlood = false;
 		this.inactive = false;
+		if (isSolo) {
+			this.queueType = "RANKED_SOLO_5x5";
+		} else {
+			this.queueType = "RANKED_FLEX_SR";
+		}
 	}
 
 	public void updateByRankDto(RankDto rankDto) {
