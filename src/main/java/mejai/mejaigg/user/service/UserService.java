@@ -192,6 +192,9 @@ public class UserService {
 				}
 				userOptional = userRepository.findById(puuid);
 			} catch (Exception e) {
+				if (e instanceof ResponseStatusException) {
+					throw e;
+				}
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 			}
 		} else {

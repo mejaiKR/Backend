@@ -32,10 +32,18 @@ public class UserController {
 	@GetMapping("/users/streak")
 	public List<UserStreakDto> streak(@Valid UserStreakRequest request) {
 		String puuid = userService.getPuuidByNameTag(request.getId(), request.getTag());
-
-		Optional<List<UserStreakDto>> userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
-			request.getMonth());
-		if (userMonthStreak.isEmpty()) {
+		Optional<List<UserStreakDto>> userMonthStreak;
+		try {
+			userMonthStreak = userService.getUserMonthStreak(puuid, request.getYear(),
+				request.getMonth());
+			if (userMonthStreak.isEmpty()) {
+				throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+					"Too many requests. Please try again later.");
+			}
+		} catch (Exception e) {
+			if (e instanceof ResponseStatusException) {
+				throw e;
+			}
 			throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
 				"Too many requests. Please try again later.");
 		}
