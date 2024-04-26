@@ -14,7 +14,7 @@ import lombok.Setter;
 import mejai.mejaigg.common.jpa.BaseEntity;
 import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.riot.dto.SummonerDto;
-import mejai.mejaigg.searchHistory.entity.SearchHistory;
+import mejai.mejaigg.searchhistory.entity.SearchHistory;
 
 @Entity
 @Getter

@@ -9,7 +9,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.Getter;
 import mejai.mejaigg.match.game.entity.Game;
-import mejai.mejaigg.matchDateStreak.entity.MatchDateStreak;
+import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
 
 @Entity
 @Getter

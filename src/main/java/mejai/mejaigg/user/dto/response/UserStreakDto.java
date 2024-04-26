@@ -3,7 +3,7 @@ package mejai.mejaigg.user.dto.response;
 import java.time.format.DateTimeFormatter;
 
 import lombok.Data;
-import mejai.mejaigg.matchDateStreak.entity.MatchDateStreak;
+import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
 
 @Data
 public class UserStreakDto {

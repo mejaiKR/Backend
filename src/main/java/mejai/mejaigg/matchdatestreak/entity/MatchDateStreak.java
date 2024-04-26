@@ -1,4 +1,4 @@
-package mejai.mejaigg.matchDateStreak.entity;
+package mejai.mejaigg.matchdatestreak.entity;
 
 import java.sql.Date;
 import java.util.HashSet;
@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import mejai.mejaigg.common.jpa.BaseEntity;
 import mejai.mejaigg.match.entity.Match;
-import mejai.mejaigg.searchHistory.entity.SearchHistory;
+import mejai.mejaigg.searchhistory.entity.SearchHistory;
 
 @Entity
 @Getter

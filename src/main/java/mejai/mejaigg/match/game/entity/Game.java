@@ -12,7 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import mejai.mejaigg.match.entity.Match;
-import mejai.mejaigg.match.userGameStat.entity.UserGameStat;
+import mejai.mejaigg.match.usergamestat.entity.UserGameStat;
 
 @Entity
 @Getter

@@ -1,4 +1,4 @@
-package mejai.mejaigg.searchHistory.repository;
+package mejai.mejaigg.searchhistory.repository;
 
 import java.util.Optional;
 
@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import jakarta.transaction.Transactional;
-import mejai.mejaigg.searchHistory.entity.SearchHistory;
+import mejai.mejaigg.searchhistory.entity.SearchHistory;
 import mejai.mejaigg.user.entity.User;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {

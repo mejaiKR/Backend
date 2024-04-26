@@ -1,4 +1,4 @@
-package mejai.mejaigg.match.userGameStat.entity;
+package mejai.mejaigg.match.usergamestat.entity;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

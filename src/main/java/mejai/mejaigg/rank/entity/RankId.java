@@ -14,12 +14,14 @@ public class RankId implements Serializable {
 	private String queueType;
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
+	public boolean equals(Object obj) {
+		if (this == obj) {
 			return true;
-		if (o == null || getClass() != o.getClass())
+		}
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
-		RankId rankId = (RankId)o;
+		}
+		RankId rankId = (RankId)obj;
 		return Objects.equals(puuid, rankId.puuid) && Objects.equals(queueType, rankId.queueType);
 	}
 

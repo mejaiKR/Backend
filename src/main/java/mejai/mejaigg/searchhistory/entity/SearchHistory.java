@@ -1,4 +1,4 @@
-package mejai.mejaigg.searchHistory.entity;
+package mejai.mejaigg.searchhistory.entity;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +12,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import mejai.mejaigg.common.jpa.BaseEntity;
-import mejai.mejaigg.matchDateStreak.entity.MatchDateStreak;
+import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
 import mejai.mejaigg.user.entity.User;
 
 @Entity
