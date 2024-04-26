@@ -36,6 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 riotApiKey.properties
-
+db.properties
 
 .DS_Store
