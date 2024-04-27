@@ -17,7 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.common.util.YearMonthToEpochUtil;
-import mejai.mejaigg.match.entity.Match;
 import mejai.mejaigg.match.repository.MatchRepository;
 import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
 import mejai.mejaigg.matchdatestreak.repository.MatchDateStreakRepository;
@@ -105,17 +104,30 @@ public class UserStreakService {
 	private void saveStreakData(SearchHistory history, String dateYM, String puuid) {
 		int startDay = history.getLastSuccessDay();
 		int endDay = YearMonthToEpochUtil.getDayWithYearMonth(dateYM);
+		if (startDay >= endDay) {
+			return;
+		}
+
+		long startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, startDay);
+		long endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, endDay);
+		String[] matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L, 100);
+		if (matchHistory == null || matchHistory.length == 0) {
+			return;
+		}
+		int historyLen = matchHistory.length;
 		for (int i = startDay; i < endDay; i++) { // 하루씩 데이터를 가져옴
 			if (matchDateStreakRepository.findByDateAndSearchHistory(
 				new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i)),
 				history.getHistoryId()).isPresent()) {
 				continue;
 			}
-			long startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
-			long endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
+			startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i);
+			endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, i + 1);
 			try {
-
-				String[] matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
+				if (historyLen == 0) {
+					break;
+				}
+				matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
 					100); //하루 지난 후 100개의 매치를 가져옴
 				if (matchHistory == null || matchHistory.length == 0) {
 					continue;
@@ -123,15 +135,19 @@ public class UserStreakService {
 				MatchDateStreak matchDateStreak = new MatchDateStreak();
 				Date date = new Date(YearMonthToEpochUtil.addDayEpochSecond(dateYM, i) * 1000L);
 				matchDateStreak.setDate(date);
+				matchDateStreak.setAllGameCount(matchHistory.length);
 				history.addMatchDateStreak(matchDateStreak);
-				for (String matchId : matchHistory) {
-					Optional<Match> optionalMatch = matchRepository.findById(matchId);
-					Match match = new Match(matchId, false);
-					if (optionalMatch.isPresent()) {
-						match = optionalMatch.get();
-					}
-					matchDateStreak.addMatch(match);
+				if (historyLen != 100) {
+					historyLen -= matchHistory.length;
 				}
+				// for (String matchId : matchHistory) {
+				// 	Optional<Match> optionalMatch = matchRepository.findById(matchId);
+				// 	Match match = new Match(matchId, false);
+				// 	if (optionalMatch.isPresent()) {
+				// 		match = optionalMatch.get();
+				// 	}
+				// 	matchDateStreak.addMatch(match);
+				// }
 				matchDateStreakRepository.save(matchDateStreak);
 			} catch (Exception e) {
 				log.error("Http Error" + e.getMessage());
