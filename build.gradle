@@ -52,7 +52,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-hibernate5-jakarta'
 
@@ -80,6 +79,13 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final' // if you are using mapstruct in test code
+
+    //feign
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0'
+
+    //retry
+    implementation("org.springframework.retry:spring-retry")
+    implementation("org.springframework:spring-aspects")
 }
 
 tasks.named('test') {

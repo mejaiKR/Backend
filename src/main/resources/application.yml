@@ -1,24 +1,20 @@
+server:
+  port: 8080
+
+
 spring:
   datasource:
     # you must change url to docker database container name
-    #    url: jdbc:h2:tcp://localhost/~/mejaiTest
-    #    username: sa
-    #    password:
-    #    driver-class-name: org.h2.Driver
-    #    url: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
-    url: jdbc:postgresql://localhost:5432/spring-db-postgres
-    username: compose-postgres
-    password: compose-postgres
+    url: ${db.url}
+    username: ${db.username}
+    password: ${db.password}
   jpa:
-    show-sql: 'true'
+    #    show-sql: 'true'
     hibernate:
-      ddl-auto: create # 만들어지면 none
-  #    properties:
-  #      hibernate:
-  #        dialect: org.hibernate.dialect.PostgreSQLDialect
+      ddl-auto: none
 
-logging:
-  level:
-    org.hibernate.SQL: debug
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
 variables:
-  resourceURL: "http://localhost:8080/"
+  resourceURL: "https://d1lgkfcquwlbly.cloudfront.net/"
