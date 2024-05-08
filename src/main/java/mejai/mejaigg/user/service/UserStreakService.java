@@ -23,6 +23,7 @@ import mejai.mejaigg.matchdatestreak.repository.MatchDateStreakRepository;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.searchhistory.entity.SearchHistory;
 import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
+import mejai.mejaigg.user.dto.request.UserStreakRequest;
 import mejai.mejaigg.user.dto.response.UserStreakDto;
 import mejai.mejaigg.user.entity.User;
 import mejai.mejaigg.user.repository.UserRepository;
@@ -42,27 +43,19 @@ public class UserStreakService {
 	private String resourceURL;
 
 	@Transactional(readOnly = false)
-	public Optional<List<UserStreakDto>> getUserMonthStreak(String puuid, int year, int month) {
+	public Optional<List<UserStreakDto>> getUserMonthStreak(UserStreakRequest request) {
+		int year = request.getYear();
+		int month = request.getMonth();
+		User user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
+			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다."));
 		String dateYM = String.format("%d-%02d", year, month);
-		Optional<User> userOptional = userRepository.findById(puuid);
-		if (userOptional.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-		}
-		User user = userOptional.get();
 		SearchHistory history = getHistory(user, dateYM);
-		if (history.isDone() || isEmptyHistory(dateYM, puuid)) {
-			return Optional.of(getUserStreakDtoList(history));
-		}
-		LocalDateTime updateAt = history.getUpdatedAt();
-		LocalDateTime now = LocalDateTime.now();
-
-		//2시간이 지나지 않았고, 현재 월에 해당하는 경우
-		if (year == now.getYear() && month == now.getMonthValue() && history.getLastSuccessDay() == now.getDayOfMonth()
-			&& Duration.between(updateAt, now).toHours() < 2) {
+		if (history.isDone() || isEmptyHistory(dateYM, user.getPuuid()) ||
+			(history.getUpdatedAt() != null && Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2)){
 			return Optional.of(getUserStreakDtoList(history));
 		}
 		//mathData 저장
-		saveStreakData(history, dateYM, puuid);
+		saveStreakData(history, dateYM, user.getPuuid());
 		userRepository.save(user);
 		return Optional.of(getUserStreakDtoList(history));
 	}
@@ -111,7 +104,8 @@ public class UserStreakService {
 		long startTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, startDay);
 		long endTime = YearMonthToEpochUtil.addDayEpochSecond(dateYM, endDay);
 		String[] matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L, 100);
-		if (matchHistory == null || matchHistory.length == 0) {
+		if (matchHistory.length == 0) {
+			searchHistoryRepository.updateIsDoneByHistoryId(history.getHistoryId(), true);
 			return;
 		}
 		int historyLen = matchHistory.length;

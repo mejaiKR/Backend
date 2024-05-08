@@ -134,7 +134,7 @@ public class UserService {
 	public String getPuuidByNameTag(String name, String tag) {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
 		if (userOptional.isEmpty()) {
-			return getUserPuuidByApi(name, tag);
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 		} else {
 			return userOptional.get().getPuuid();
 		}
