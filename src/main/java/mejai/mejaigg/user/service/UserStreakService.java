@@ -50,8 +50,10 @@ public class UserStreakService {
 			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다."));
 		String dateYM = String.format("%d-%02d", year, month);
 		SearchHistory history = getHistory(user, dateYM);
-		if (history.isDone() || isEmptyHistory(dateYM, user.getPuuid()) ||
-			(history.getUpdatedAt() != null && Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2)){
+		if (history.isDone() ||
+			(!history.getUpdatedAt().toString().equals(history.getCreatedAt().toString())
+				&& Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2) ||
+		 	isEmptyHistory(dateYM, user.getPuuid())){
 			return Optional.of(getUserStreakDtoList(history));
 		}
 		//mathData 저장
