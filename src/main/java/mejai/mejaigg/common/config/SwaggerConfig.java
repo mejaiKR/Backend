@@ -16,6 +16,7 @@ public class SwaggerConfig {
 	public OpenAPI customOpenAPI() {
 		return new OpenAPI()
 			.addServersItem(new Server().url("http://localhost:8080"))
+			.addServersItem(new Server().url("https://mejai.xyz"))
 			.components(new Components())
 			.info(new Info()
 				.title("Mejai API")
