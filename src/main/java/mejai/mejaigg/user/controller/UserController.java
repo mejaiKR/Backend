@@ -24,7 +24,7 @@ import mejai.mejaigg.user.service.UserStreakService;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000, https://mejai.gg")
+@CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000"})
 @Tag(name = "Users", description = "소환사 정보 및 게임 통계 API")
 public class UserController {
 
