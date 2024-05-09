@@ -39,17 +39,17 @@ public class UserController {
 
 	@GetMapping("/users/streak")
 	@Operation(summary = "소환사 게임 횟수 및 승패 조회", description = "소환사가 특정 기간 동안 진행한 게임 횟수 및 승패를 조회합니다.")
-	public List<UserStreakDto> streak( @Valid UserStreakRequest request) {
+	public List<UserStreakDto> streak(@Valid UserStreakRequest request) {
 
 		try {
 			Optional<List<UserStreakDto>> userMonthStreak = userStreakService.getUserMonthStreak(request);
 			return userMonthStreak.get();
 		} catch (ClientException e) {
-			if (e.getClientErrorCode() == ClientErrorCode.INTERNAL_SERVER_ERROR){
-				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,"Roit 서버 에러");
-			}
-			else if (e.getClientErrorCode() == ClientErrorCode.TOO_MANY_REQUESTS) {
-				throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many requests. Please try again later.");
+			if (e.getClientErrorCode() == ClientErrorCode.INTERNAL_SERVER_ERROR) {
+				throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Roit 서버 에러");
+			} else if (e.getClientErrorCode() == ClientErrorCode.TOO_MANY_REQUESTS) {
+				throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS,
+					"Too many requests. Please try again later.");
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다.");

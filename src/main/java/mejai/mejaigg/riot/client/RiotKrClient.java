@@ -14,10 +14,10 @@ import org.springframework.web.server.ServerErrorException;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.riot.exception.ClientErrorCode;
-import mejai.mejaigg.riot.exception.ClientException;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
+import mejai.mejaigg.riot.exception.ClientErrorCode;
+import mejai.mejaigg.riot.exception.ClientException;
 
 @FeignClient(
 	name = "RiotKrClient",

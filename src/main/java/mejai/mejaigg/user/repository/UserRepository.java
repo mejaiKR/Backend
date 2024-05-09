@@ -9,6 +9,6 @@ import mejai.mejaigg.user.entity.User;
 public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom {
 
 	Optional<User> findById(String puuid);
-	
+
 	Optional<User> findBySummonerNameAndTagLineAllIgnoreCase(String name, String tag);
 }

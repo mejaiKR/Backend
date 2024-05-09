@@ -1,4 +1,4 @@
-package mejai.mejaigg.searchhistory.Service;
+package mejai.mejaigg.searchhistory.service;
 
 import java.util.List;
 
