@@ -14,6 +14,8 @@ import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.match.MatchDto;
+import mejai.mejaigg.riot.exception.ClientErrorCode;
+import mejai.mejaigg.riot.exception.ClientException;
 
 @FeignClient(
 	name = "RiotAsiaClient",
@@ -57,10 +59,10 @@ public interface RiotAsiaClient {
 		public RiotAsiaClient create(Throwable cause) {
 			if (cause instanceof FeignException.TooManyRequests) {
 				log.warn("429 Too Many Requests: {}", cause.getMessage());
-				throw new IllegalArgumentException(cause.getMessage());
+				throw new ClientException(ClientErrorCode.TOO_MANY_REQUESTS);
 			} else {
 				log.error("Riot Asia Client 오류: {}", cause.getMessage());
-				throw new IllegalArgumentException(cause.getMessage());
+				throw new ClientException(ClientErrorCode.INTERNAL_SERVER_ERROR);
 			}
 		}
 	}

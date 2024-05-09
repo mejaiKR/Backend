@@ -4,20 +4,20 @@ import java.util.Set;
 
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.server.ServerErrorException;
 
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
+import mejai.mejaigg.riot.exception.ClientErrorCode;
+import mejai.mejaigg.riot.exception.ClientException;
 
 @FeignClient(
 	name = "RiotKrClient",
@@ -54,11 +54,11 @@ public interface RiotKrClient {
 			if (cause instanceof FeignException.TooManyRequests) {
 				// 429 오류 처리
 				log.warn("429 Too Many Requests: {}", cause.getMessage());
-				throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, cause.getMessage());
+				throw new ClientException(ClientErrorCode.TOO_MANY_REQUESTS);
 			} else {
 				// 그 외의 오류 처리
 				log.error("FeignClient 오류: {}", cause.getMessage());
-				throw new IllegalArgumentException(cause.getMessage());
+				throw new ClientException(ClientErrorCode.INTERNAL_SERVER_ERROR);
 			}
 		}
 	}

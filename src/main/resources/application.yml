@@ -13,8 +13,15 @@ spring:
     hibernate:
       ddl-auto: none
 
-#logging:
-#  level:
-#    org.hibernate.SQL: debug
 variables:
   resourceURL: "https://d1lgkfcquwlbly.cloudfront.net/"
+
+springdoc:
+  packages-to-scan: mejai.mejaigg
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
