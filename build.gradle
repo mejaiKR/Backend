@@ -35,7 +35,9 @@ version = '0.0.1-SNAPSHOT'
 java {
     sourceCompatibility = '17'
 }
-
+jar {
+    enabled = false
+}
 //for lombok config
 configurations {
     compileOnly {
