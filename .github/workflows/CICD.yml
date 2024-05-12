@@ -27,7 +27,7 @@ jobs:
         run: ./gradlew editorconfigFormat
       - name: Build with Gradle
         run: ./gradlew clean build
-   # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
+      # (4) AWS 인증 (IAM 사용자 Access Key, Secret Key 활용)
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
