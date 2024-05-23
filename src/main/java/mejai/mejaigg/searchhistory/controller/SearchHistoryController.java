@@ -13,7 +13,7 @@ import mejai.mejaigg.searchhistory.service.SearchHistoryService;
 
 @Tag(name = "Users", description = "소환사 정보 및 게임 통계 API")
 @RestController
-@CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000"})
+@CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000", "https://mejai.vercel.app"})
 @RequiredArgsConstructor
 public class SearchHistoryController {
 
