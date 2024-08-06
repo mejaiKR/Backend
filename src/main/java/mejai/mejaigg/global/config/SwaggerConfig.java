@@ -1,4 +1,4 @@
-package mejai.mejaigg.common.config;
+package mejai.mejaigg.global.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

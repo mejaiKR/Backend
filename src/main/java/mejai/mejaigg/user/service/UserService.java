@@ -80,15 +80,6 @@ public class UserService {
 		}
 	}
 
-	public String getUserPuuidByApi(String name, String tag) {
-		try {
-			AccountDto account = riotService.getAccountByNameAndTag(name, tag);
-			return account.getPuuid();
-		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-		}
-	}
-
 	@Transactional(readOnly = false)
 	public String updateUserProfile(User user) {
 		// 사용자 프로필 업데이트
@@ -129,17 +120,7 @@ public class UserService {
 				});
 		}
 	}
-
-	@Transactional
-	public String getPuuidByNameTag(String name, String tag) {
-		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
-		if (userOptional.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-		} else {
-			return userOptional.get().getPuuid();
-		}
-	}
-
+	
 	@Transactional
 	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);

@@ -8,7 +8,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import lombok.Getter;
 import lombok.Setter;
-import mejai.mejaigg.common.jpa.BaseEntity;
+import lombok.ToString;
+import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.user.entity.User;
 
@@ -16,6 +17,7 @@ import mejai.mejaigg.user.entity.User;
 @IdClass(RankId.class)
 @Getter
 @Setter
+@ToString
 public class Rank extends BaseEntity {
 	@Id
 	private String puuid;
@@ -68,24 +70,5 @@ public class Rank extends BaseEntity {
 		this.freshBlood = rankDto.isFreshBlood();
 		this.inactive = rankDto.isInactive();
 		this.queueType = rankDto.getQueueType();
-	}
-
-	@SuppressWarnings("checkstyle:OperatorWrap")
-	@Override
-	public String toString() {
-		return "Rank{"
-			+ "puuid='" + puuid + '\''
-			+ ", tier='" + tier + '\''
-			+ ", rank='" + rank + '\''
-			+ ", leaguePoints=" + leaguePoints
-			+ ", leagueId='" + leagueId + '\''
-			+ ", wins=" + wins
-			+ ", losses=" + losses
-			+ ", hotStreak=" + hotStreak
-			+ ", veteran=" + veteran
-			+ ", freshBlood=" + freshBlood
-			+ ", inactive=" + inactive
-			+ ", queueType='" + queueType + '\''
-			+ '}';
 	}
 }

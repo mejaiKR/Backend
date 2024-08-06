@@ -11,7 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
-import mejai.mejaigg.common.jpa.BaseEntity;
+import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
 import mejai.mejaigg.user.entity.User;
 

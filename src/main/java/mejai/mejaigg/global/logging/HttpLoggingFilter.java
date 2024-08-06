@@ -1,4 +1,4 @@
-package mejai.mejaigg.common.logging;
+package mejai.mejaigg.global.logging;
 
 import java.io.IOException;
 

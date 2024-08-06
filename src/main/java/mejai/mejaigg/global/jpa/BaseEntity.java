@@ -1,4 +1,4 @@
-package mejai.mejaigg.common.jpa;
+package mejai.mejaigg.global.jpa;
 
 import java.time.LocalDateTime;
 

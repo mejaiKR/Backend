@@ -16,7 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.common.util.YearMonthToEpochUtil;
+import mejai.mejaigg.global.util.YearMonthToEpochUtil;
 import mejai.mejaigg.match.repository.MatchRepository;
 import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
 import mejai.mejaigg.matchdatestreak.repository.MatchDateStreakRepository;

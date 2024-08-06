@@ -10,8 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
-import mejai.mejaigg.common.jpa.BaseEntity;
-import mejai.mejaigg.match.entity.Match;
+import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.searchhistory.entity.SearchHistory;
 
 @Entity
@@ -26,10 +25,6 @@ public class MatchDateStreak extends BaseEntity implements Comparable<MatchDateS
 	private Date date; // yyyy-MM-dd
 
 	private int allGameCount;
-	// private int rankGameCount;
-
-	// @OneToMany(mappedBy = "matchDateStreak", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	// private Set<Match> matches = new HashSet<>();
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	private SearchHistory searchHistory;
@@ -39,8 +34,4 @@ public class MatchDateStreak extends BaseEntity implements Comparable<MatchDateS
 		return this.date.compareTo(st.date);
 	}
 
-	public void addMatch(Match match) {
-		// matches.add(match);
-		match.setMatchDateStreak(this);
-	}
 }

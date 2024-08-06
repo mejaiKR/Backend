@@ -1,4 +1,4 @@
-package mejai.mejaigg.common.util;
+package mejai.mejaigg.global.util;
 
 import java.time.Instant;
 import java.time.LocalDate;

@@ -11,7 +11,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
-import mejai.mejaigg.common.jpa.BaseEntity;
+import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.searchhistory.entity.SearchHistory;
