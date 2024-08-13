@@ -2,10 +2,10 @@ version: "3.3"
 services:
 
   db:
-    container_name: spring-db-postgres
+    container_name: spring-mejai-postgres
     image: postgres:13.1-alpine
     environment:
-      - POSTGRES_DB=spring-db-postgres
+      - POSTGRES_DB=spring-mejai-postgres
       - POSTGRES_USER=compose-postgres
       - POSTGRES_PASSWORD=compose-postgres
     ports:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - db
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://spring-db-postgres:5432/spring-db-postgres
+      SPRING_DATASOURCE_URL: jdbc:postgresql://spring-db-postgres:5432/spring-mejai-postgres
       SPRING_DATASOURCE_USERNAME: compose-postgres
       SPRING_DATASOURCE_PASSWORD: compose-postgres
 
