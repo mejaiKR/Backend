@@ -7,7 +7,7 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import mejai.mejaigg.matchdatestreak.entity.QMatchDateStreak;
+import mejai.mejaigg.match.matchdatestreak.entity.QMatchDateStreak;
 import mejai.mejaigg.searchhistory.dto.TopUserDTO;
 import mejai.mejaigg.searchhistory.entity.QSearchHistory;
 import mejai.mejaigg.summoner.entity.QUser;

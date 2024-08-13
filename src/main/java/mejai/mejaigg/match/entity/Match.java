@@ -9,7 +9,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import lombok.Getter;
 import mejai.mejaigg.match.game.entity.Game;
-import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
+import mejai.mejaigg.match.matchdatestreak.entity.MatchDateStreak;
 
 @Entity
 @Getter
@@ -28,18 +28,4 @@ public class Match {
 
 	public Match() {
 	}
-
-	public Match(String matchId, boolean isCalled) {
-		this.matchId = matchId;
-		this.isCalled = isCalled;
-	}
-
-	public void setMatchDateStreak(MatchDateStreak matchDateStreak) {
-		this.matchDateStreak = matchDateStreak;
-	}
-
-	public void setGame(Game game) {
-		this.game = game;
-	}
-
 }

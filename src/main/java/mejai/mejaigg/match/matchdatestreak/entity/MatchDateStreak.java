@@ -1,4 +1,4 @@
-package mejai.mejaigg.matchdatestreak.entity;
+package mejai.mejaigg.match.matchdatestreak.entity;
 
 import java.sql.Date;
 

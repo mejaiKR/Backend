@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
+import mejai.mejaigg.match.matchdatestreak.entity.MatchDateStreak;
 
 @Data
 @Schema(description = "소환사 게임 횟수 및 승패 조회 응답 모델")
