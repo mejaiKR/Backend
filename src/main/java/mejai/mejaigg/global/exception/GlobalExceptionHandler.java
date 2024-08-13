@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.controller.advice;
+package mejai.mejaigg.global.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
