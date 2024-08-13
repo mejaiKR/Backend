@@ -15,6 +15,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.riot.exception.ClientErrorCode;
 import mejai.mejaigg.riot.exception.ClientException;
+import mejai.mejaigg.searchhistory.dto.RankingRequestDto;
+import mejai.mejaigg.searchhistory.dto.SearchRankingDto;
+import mejai.mejaigg.searchhistory.service.SearchHistoryService;
 import mejai.mejaigg.summoner.dto.request.UserProfileRequest;
 import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
 import mejai.mejaigg.summoner.dto.response.UserProfileDto;
@@ -30,6 +33,7 @@ public class UserController {
 
 	private final UserService userService;
 	private final UserStreakService userStreakService;
+	private final SearchHistoryService searchHistoryService;
 
 	@GetMapping("/users/profile")
 	@Operation(summary = "소환사 정보 조회", description = "주어진 소환사 ID로 프로필 정보를 조회합니다.")
@@ -53,5 +57,10 @@ public class UserController {
 			}
 		}
 		throw new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다.");
+	}
+
+	@GetMapping("/ranking")
+	public SearchRankingDto searchRanking(@Valid RankingRequestDto request) {
+		return searchHistoryService.getRanking(request.getYear(), request.getMonth());
 	}
 }
