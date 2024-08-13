@@ -1,5 +1,6 @@
 package mejai.mejaigg.searchhistory.entity;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
@@ -25,7 +26,7 @@ public class SearchHistory extends BaseEntity {
 	private boolean isDone = false;
 
 	@Column(length = 7)
-	private String yearMonth; // YYYY-MM 형식
+	private LocalDate date; // YYYY-MM 형식
 
 	private int lastSuccessDay = 0; // 마지막으로 api 콜이 성공한 날짜.
 
@@ -35,8 +36,8 @@ public class SearchHistory extends BaseEntity {
 	@OneToMany
 	private Set<MatchDateStreak> matchDateStreaks = new HashSet<>();
 
-	public void setYearMonthAndUser(String yearMonth, User user) {
-		this.yearMonth = yearMonth;
+	public void setYearMonthAndUser(LocalDate yearMonth, User user) {
+		this.date = yearMonth;
 		this.user = user;
 		user.addSearchHistory(this);
 	}
