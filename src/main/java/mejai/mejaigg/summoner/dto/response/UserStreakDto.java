@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.dto.response;
+package mejai.mejaigg.summoner.dto.response;
 
 import java.time.format.DateTimeFormatter;
 

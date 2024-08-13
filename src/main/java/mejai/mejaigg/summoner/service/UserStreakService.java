@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.service;
+package mejai.mejaigg.summoner.service;
 
 import java.sql.Date;
 import java.time.Duration;
@@ -23,10 +23,10 @@ import mejai.mejaigg.matchdatestreak.repository.MatchDateStreakRepository;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.searchhistory.entity.SearchHistory;
 import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
-import mejai.mejaigg.user.dto.request.UserStreakRequest;
-import mejai.mejaigg.user.dto.response.UserStreakDto;
-import mejai.mejaigg.user.entity.User;
-import mejai.mejaigg.user.repository.UserRepository;
+import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
+import mejai.mejaigg.summoner.dto.response.UserStreakDto;
+import mejai.mejaigg.summoner.entity.User;
+import mejai.mejaigg.summoner.repository.UserRepository;
 
 @Service
 @Slf4j

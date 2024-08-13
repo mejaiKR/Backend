@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.mapper;
+package mejai.mejaigg.summoner.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
-import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.summoner.entity.User;
 
 @Mapper
 public interface UserMapper {

@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.entity;
+package mejai.mejaigg.summoner.entity;
 
 import java.util.HashSet;
 import java.util.Set;

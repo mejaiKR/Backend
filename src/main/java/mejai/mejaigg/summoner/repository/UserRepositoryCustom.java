@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.repository;
+package mejai.mejaigg.summoner.repository;
 
 import java.util.List;
 

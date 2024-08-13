@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.repository;
+package mejai.mejaigg.summoner.repository;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import jakarta.persistence.EntityManager;
 import mejai.mejaigg.matchdatestreak.entity.QMatchDateStreak;
 import mejai.mejaigg.searchhistory.dto.TopUserDTO;
 import mejai.mejaigg.searchhistory.entity.QSearchHistory;
-import mejai.mejaigg.user.entity.QUser;
+import mejai.mejaigg.summoner.entity.QUser;
 
 public class UserRepositoryImpl implements UserRepositoryCustom {
 	private final JPAQueryFactory queryFactory;

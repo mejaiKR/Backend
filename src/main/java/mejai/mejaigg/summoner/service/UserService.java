@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.service;
+package mejai.mejaigg.summoner.service;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -21,10 +21,10 @@ import mejai.mejaigg.rank.repository.RankRepository;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
-import mejai.mejaigg.user.dto.response.UserProfileDto;
-import mejai.mejaigg.user.entity.User;
-import mejai.mejaigg.user.mapper.UserMapper;
-import mejai.mejaigg.user.repository.UserRepository;
+import mejai.mejaigg.summoner.dto.response.UserProfileDto;
+import mejai.mejaigg.summoner.entity.User;
+import mejai.mejaigg.summoner.mapper.UserMapper;
+import mejai.mejaigg.summoner.repository.UserRepository;
 
 @Service
 @Slf4j
@@ -120,7 +120,7 @@ public class UserService {
 				});
 		}
 	}
-	
+
 	@Transactional
 	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
 		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
@@ -154,3 +154,4 @@ public class UserService {
 		return userProfileDto;
 	}
 }
+

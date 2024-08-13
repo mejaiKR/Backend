@@ -13,7 +13,7 @@ import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
-import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.summoner.entity.User;
 
 @Entity
 @Getter

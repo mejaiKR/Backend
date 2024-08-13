@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.dto.request;
+package mejai.mejaigg.summoner.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;

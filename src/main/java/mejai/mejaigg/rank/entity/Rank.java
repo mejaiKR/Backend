@@ -11,7 +11,7 @@ import lombok.Setter;
 import lombok.ToString;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
-import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.summoner.entity.User;
 
 @Entity
 @IdClass(RankId.class)

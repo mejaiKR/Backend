@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.dto.response;
+package mejai.mejaigg.summoner.dto.response;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import mejai.mejaigg.rank.entity.Rank;
-import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.summoner.entity.User;
 
 @Getter
 @Setter

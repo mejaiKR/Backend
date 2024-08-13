@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import jakarta.transaction.Transactional;
 import mejai.mejaigg.searchhistory.entity.SearchHistory;
-import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.summoner.entity.User;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
 	Optional<SearchHistory> findByUserAndYearMonth(User user, String yearMonth);

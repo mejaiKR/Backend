@@ -1,4 +1,4 @@
-package mejai.mejaigg.user.controller;
+package mejai.mejaigg.summoner.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,12 +15,12 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.riot.exception.ClientErrorCode;
 import mejai.mejaigg.riot.exception.ClientException;
-import mejai.mejaigg.user.dto.request.UserProfileRequest;
-import mejai.mejaigg.user.dto.request.UserStreakRequest;
-import mejai.mejaigg.user.dto.response.UserProfileDto;
-import mejai.mejaigg.user.dto.response.UserStreakDto;
-import mejai.mejaigg.user.service.UserService;
-import mejai.mejaigg.user.service.UserStreakService;
+import mejai.mejaigg.summoner.dto.request.UserProfileRequest;
+import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
+import mejai.mejaigg.summoner.dto.response.UserProfileDto;
+import mejai.mejaigg.summoner.dto.response.UserStreakDto;
+import mejai.mejaigg.summoner.service.UserService;
+import mejai.mejaigg.summoner.service.UserStreakService;
 
 @RestController
 @RequiredArgsConstructor

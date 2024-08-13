@@ -3,7 +3,7 @@ package mejai.mejaigg.global.validation;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import mejai.mejaigg.global.util.YearMonthToEpochUtil;
-import mejai.mejaigg.user.dto.request.UserStreakRequest;
+import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
 
 public class FutureDateValidator implements ConstraintValidator<FutureDate, UserStreakRequest> {
 	@Override

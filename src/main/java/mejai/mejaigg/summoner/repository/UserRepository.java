@@ -1,10 +1,10 @@
-package mejai.mejaigg.user.repository;
+package mejai.mejaigg.summoner.repository;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import mejai.mejaigg.user.entity.User;
+import mejai.mejaigg.summoner.entity.User;
 
 public interface UserRepository extends JpaRepository<User, String>, UserRepositoryCustom {
 

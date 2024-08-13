@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.searchhistory.dto.SearchRankingDto;
 import mejai.mejaigg.searchhistory.dto.TopUserDTO;
-import mejai.mejaigg.user.repository.UserRepository;
+import mejai.mejaigg.summoner.repository.UserRepository;
 
 @Service
 @Transactional(readOnly = true)
