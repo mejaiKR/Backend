@@ -28,7 +28,7 @@ import mejai.mejaigg.summoner.repository.UserRepository;
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserService {
+public class ProfileService {
 
 	private final RiotService riotService;
 	private final UserRepository userRepository;
@@ -49,12 +49,6 @@ public class UserService {
 		user.setRank(ranks);
 		userRepository.save(user);
 		return user.getPuuid();
-	}
-
-	private void updateUserDetails(User user) {
-		SummonerDto summoner = riotService.getSummonerByPuuid(user.getPuuid());
-		user.updateBySummonerDto(summoner);
-		userRepository.save(user); // 사용자를 저장하여 변경 사항을 반영
 	}
 
 	@Transactional
@@ -82,6 +76,12 @@ public class UserService {
 		User user = userOptional.get();
 		userProfileDto.setByUser(user, resourceURL);
 		return userProfileDto;
+	}
+
+	private void updateUserDetails(User user) {
+		SummonerDto summoner = riotService.getSummonerByPuuid(user.getPuuid());
+		user.updateBySummonerDto(summoner);
+		userRepository.save(user); // 사용자를 저장하여 변경 사항을 반영
 	}
 }
 
