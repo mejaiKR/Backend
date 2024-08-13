@@ -5,8 +5,6 @@ import java.time.Duration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.awspring.cloud.sqs.config.SqsMessageListenerContainerFactory;
 import io.awspring.cloud.sqs.listener.SqsMessageListenerContainer;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 @Configuration
 @RequiredArgsConstructor
 public class SqsListenerConfig {
-	private final ObjectMapper objectMapper;
+	private final MyMessageListener myMessageListener;
 
 	@Bean
 	public SqsMessageListenerContainer<Object> sqsMessageListenerContainer(SqsAsyncClient sqsAsyncClient) {
@@ -30,7 +28,7 @@ public class SqsListenerConfig {
 		SqsMessageListenerContainer<Object> container = factory.createContainer("mejai-renewal-sqs");
 
 		// MessageListener 설정
-		container.setMessageListener(new MyMessageListener(objectMapper));
+		container.setMessageListener(myMessageListener);
 		return container;
 	}
 
