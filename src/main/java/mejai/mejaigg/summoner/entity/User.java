@@ -12,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,7 @@ import mejai.mejaigg.searchhistory.entity.SearchHistory;
 @Entity
 @Getter
 @Table(name = "users")
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
@@ -55,9 +57,11 @@ public class User extends BaseEntity {
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Setter
+	@Builder.Default
 	private Set<Rank> rank = new HashSet<>();
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@Builder.Default
 	private Set<SearchHistory> searchHistory = new HashSet<>();
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {
