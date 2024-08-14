@@ -1,44 +1,74 @@
 package mejai.mejaigg.rank.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.summoner.entity.User;
 
-@Entity
-@IdClass(RankId.class)
 @Getter
-@Setter
+@Entity
+@Builder
 @ToString
+@IdClass(RankId.class)
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rank extends BaseEntity {
 	@Id
-	private String puuid;
+	@Setter
+	@Column(name = "rank_puuid")
+	private String id;
+
+	@Id
+	@Column(name = "queue_type")
+	private String queueType; //RANKED_SOLO_5x5
 
 	@ManyToOne
 	@MapsId
-	@JoinColumn(name = "puuid")
+	@Setter
+	@JoinColumn(name = "user_id")
 	private User user;
 
-	@Id
-	private String queueType; //RANKED_SOLO_5x5
-
+	@Column(name = "tier")
 	private String tier; //ex EMERALD
+
+	@Column(name = "rank")
 	private String rank; //ex IV :  String ->INT
+
+	@Column(name = "league_points")
 	private Long leaguePoints;
+
+	@Column(name = "league_id")
 	private String leagueId;
+
+	@Column(name = "wins")
 	private int wins;
+
+	@Column(name = "losses")
 	private int losses;
+
+	@Column(name = "hot_streak")
 	private boolean hotStreak; //연승 여부
+
+	@Column(name = "veteran")
 	private boolean veteran; //베테랑 여부
+
+	@Column(name = "fresh_blood")
 	private boolean freshBlood; //신규 여부
+
+	@Column(name = "inactive")
 	private boolean inactive; //휴식 여부
 
 	public void setUnRanked(boolean isSolo) {
@@ -72,3 +102,5 @@ public class Rank extends BaseEntity {
 		this.queueType = rankDto.getQueueType();
 	}
 }
+
+
