@@ -138,10 +138,10 @@ The following rules in the Naver coding convention cannot be checked by this con
         </module>
 
         <!-- [1-state-per-line] -->
-        <module name="OneStatementPerLine">
-            <message key="needBraces"
-                     value="[1-state-per-line] Only one statement per line allowed."/>
-        </module>
+        <!--        <module name="OneStatementPerLine">-->
+        <!--            <message key="needBraces"-->
+        <!--                     value="[1-state-per-line] Only one statement per line allowed."/>-->
+        <!--        </module>-->
 
         <!-- [1-var-per-declaration] -->
         <module name="MultipleVariableDeclarations">
@@ -222,10 +222,10 @@ The following rules in the Naver coding convention cannot be checked by this con
         </module>
 
         <!-- [need-braces] -->
-        <module name="NeedBraces">
-            <message key="needBraces"
-                     value="[need-braces] ''{0}'' statement must use '''{}'''s."/>
-        </module>
+        <!--        <module name="NeedBraces">-->
+        <!--            <message key="needBraces"-->
+        <!--                     value="[need-braces] ''{0}'' statement must use '''{}'''s."/>-->
+        <!--        </module>-->
 
         <!-- End of Braces chapter -->
 
