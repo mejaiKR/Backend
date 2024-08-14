@@ -1,5 +1,6 @@
 package mejai.mejaigg.summoner.repository;
 
+import java.time.YearMonth;
 import java.util.List;
 
 import com.querydsl.core.types.Projections;
@@ -7,7 +8,7 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import mejai.mejaigg.match.matchdatestreak.entity.QMatchDateStreak;
+import mejai.mejaigg.matchdatestreak.entity.QMatchDateStreak;
 import mejai.mejaigg.searchhistory.dto.TopUserDTO;
 import mejai.mejaigg.searchhistory.entity.QSearchHistory;
 import mejai.mejaigg.summoner.entity.QUser;
@@ -20,7 +21,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	}
 
 	@Override
-	public List<TopUserDTO> findTop10UsersWithGameCountByMonth(String yearMonth) {
+	public List<TopUserDTO> findTop10UsersWithGameCountByMonth(YearMonth yearMonth) {
 		QUser user = QUser.user;
 		QSearchHistory searchHistory = QSearchHistory.searchHistory;
 		QMatchDateStreak matchDateStreak = QMatchDateStreak.matchDateStreak;
@@ -33,7 +34,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 			.from(user)
 			.join(user.searchHistory, searchHistory)
 			.join(searchHistory.matchDateStreaks, matchDateStreak)
-			.where(searchHistory.yearMonth.eq(yearMonth))
+			.where(searchHistory.date.eq(yearMonth))
 			.groupBy(user.summonerName, user.tagLine)
 			.orderBy(matchDateStreak.allGameCount.sum().desc())
 			.limit(10)
