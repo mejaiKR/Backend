@@ -15,24 +15,33 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import mejai.mejaigg.global.jpa.BaseEntity;
-import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
-import mejai.mejaigg.summoner.entity.User;
+import mejai.mejaigg.matchdatestreak.entity.MatchStreak;
+import mejai.mejaigg.summoner.entity.Summoner;
 
-@Entity
 @Getter
+@Builder
+@Entity
+@Table(name = "search_history")
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class SearchHistory extends BaseEntity {
 	@Id
 	@GeneratedValue
-	@Column(name = "search_history_id")
+	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "done", nullable = false)
 	@ColumnDefault("false")
 	private boolean done;
 
-	@Column(name = "history_date", nullable = false)
+	@Column(name = "year_month", nullable = false)
 	private YearMonth date; // YYYY-MM 형식
 
 	@Column(name = "last_success_day", nullable = false)
@@ -40,24 +49,26 @@ public class SearchHistory extends BaseEntity {
 	private int lastSuccessDay; // 마지막으로 api 콜이 성공한 날짜.
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn()
-	private User user;
+	@JoinColumn(name = "summoner_id")
+	private Summoner summoner;
 
 	@OneToMany(mappedBy = "searchHistory")
-	private Set<MatchDateStreak> matchDateStreaks = new HashSet<>();
+	@Builder.Default
+	private Set<MatchStreak> matchStreaks = new HashSet<>();
 
-	public void setYearMonthAndUser(YearMonth yearMonth, User user) {
+	public void setYearMonthAndUser(YearMonth yearMonth, Summoner summoner) {
 		this.date = yearMonth;
-		this.user = user;
-		user.addSearchHistory(this);
+		this.summoner = summoner;
+		summoner.addSearchHistory(this);
 	}
 
-	public void addMatchDateStreak(MatchDateStreak matchDateStreak) {
-		this.matchDateStreaks.add(matchDateStreak);
-		matchDateStreak.setSearchHistory(this);
+	public void addMatchDateStreak(MatchStreak matchStreak) {
+		this.matchStreaks.add(matchStreak);
+		matchStreak.setSearchHistory(this);
 	}
 
-	public Set<MatchDateStreak> getSortedMatchDateStreaks() {
-		return new TreeSet<>(matchDateStreaks);
+	public Set<MatchStreak> getSortedMatchDateStreaks() {
+		return new TreeSet<>(matchStreaks);
 	}
 }
+

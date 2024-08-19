@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,12 +19,13 @@ import lombok.Setter;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.searchhistory.entity.SearchHistory;
 
-@Entity
 @Getter
 @Builder
+@Entity
+@Table(name = "match_streak")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MatchDateStreak extends BaseEntity implements Comparable<MatchDateStreak> {
+public class MatchStreak extends BaseEntity implements Comparable<MatchStreak> {
 
 	@Id
 	@GeneratedValue // ID 자동 생성 전략 사용
@@ -36,13 +38,14 @@ public class MatchDateStreak extends BaseEntity implements Comparable<MatchDateS
 	private int allGameCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "history_id")
+	@JoinColumn(name = "search_hisotry_id")
 	@Setter
 	private SearchHistory searchHistory;
 
 	@Override
-	public int compareTo(MatchDateStreak st) {
+	public int compareTo(MatchStreak st) {
 		return this.date.compareTo(st.date);
 	}
 
 }
+

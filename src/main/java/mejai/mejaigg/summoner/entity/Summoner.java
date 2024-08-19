@@ -15,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.riot.dto.SummonerDto;
@@ -23,17 +22,23 @@ import mejai.mejaigg.searchhistory.entity.SearchHistory;
 
 @Entity
 @Getter
-@Table(name = "users")
+@Table(name = "summoner")
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity {
+public class Summoner extends BaseEntity {
 	@Id
-	@Column(name = "user_puuid")
+	@Column(name = "id")
 	private String id;
+
+	@Column(name = "summoner_name", nullable = false)
+	private String summonerName;
 
 	@Column(name = "tag_line")
 	private String tagLine;
+
+	@Column(name = "puuid", nullable = false)
+	private String puuid;
 
 	//Encrypted account ID, Max length 56 characters.
 	@Column(name = "account_id", length = 70, nullable = false)
@@ -41,9 +46,6 @@ public class User extends BaseEntity {
 
 	@Column(name = "summoner_id", nullable = false)
 	private String summonerId;
-
-	@Column(name = "summoner_name", nullable = false)
-	private String summonerName;
 
 	//Date summoner was last modified specified as epoch milliseconds.
 	@Column(name = "revision_date", nullable = false)
@@ -56,7 +58,6 @@ public class User extends BaseEntity {
 	private Long summonerLevel;
 
 	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	@Setter
 	@Builder.Default
 	private Set<Rank> rank = new HashSet<>();
 
@@ -69,6 +70,11 @@ public class User extends BaseEntity {
 		this.revisionDate = summonerDto.getRevisionDate();
 		this.profileIconId = summonerDto.getProfileIconId();
 		this.summonerLevel = summonerDto.getSummonerLevel();
+	}
+
+	public void setRank(Set<Rank> ranks) {
+		this.rank = ranks;
+		ranks.forEach(rank -> rank.setSummoner(this));
 	}
 
 	public void addSearchHistory(SearchHistory searchHistory) {

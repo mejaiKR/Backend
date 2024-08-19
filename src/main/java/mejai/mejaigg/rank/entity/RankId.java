@@ -2,15 +2,24 @@ package mejai.mejaigg.rank.entity;
 
 import java.io.Serializable;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 // 복합키 클래스
-@AllArgsConstructor
-@NoArgsConstructor
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
+@AllArgsConstructor
+@Getter
 public class RankId implements Serializable {
+	@Column(name = "id")
 	private String id;
-	private String queueType;
+
+	@Column(name = "queue_type")
+	private String queueType;// ex) RANKED_SOLO_5x5 , RANKED_FLEX_SR
 }

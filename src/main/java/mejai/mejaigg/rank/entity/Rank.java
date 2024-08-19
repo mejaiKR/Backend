@@ -1,92 +1,82 @@
 package mejai.mejaigg.rank.entity;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.IdClass;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
-import lombok.AccessLevel;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
-import mejai.mejaigg.summoner.entity.User;
+import mejai.mejaigg.summoner.entity.Summoner;
 
 @Getter
-@Entity
 @Builder
-@ToString
-@IdClass(RankId.class)
+@Entity
+@Table(name = "rank")
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class Rank extends BaseEntity {
-	@Id
-	@Setter
-	@Column(name = "rank_puuid")
-	private String id;
 
-	@Id
-	@Column(name = "queue_type")
-	private String queueType; //RANKED_SOLO_5x5
+	@EmbeddedId
+	private RankId id;
 
-	@ManyToOne
-	@MapsId
+	@ManyToOne(fetch = FetchType.LAZY)
+	@MapsId("id")
 	@Setter
-	@JoinColumn(name = "user_id")
-	private User user;
+	private Summoner summoner;
 
 	@Column(name = "tier")
-	private String tier; //ex EMERALD
+	@Enumerated(EnumType.STRING)
+	@ColumnDefault("UNRANKED")
+	private TierType tier; //ex EMERALD
 
 	@Column(name = "rank")
-	private String rank; //ex IV :  String ->INT
+	@Enumerated(EnumType.STRING)
+	@ColumnDefault("I")
+	private RankType rank; //ex IV :  String ->INT
 
 	@Column(name = "league_points")
+	@ColumnDefault("0")
 	private Long leaguePoints;
 
 	@Column(name = "league_id")
+	@ColumnDefault("0")
 	private String leagueId;
 
 	@Column(name = "wins")
+	@ColumnDefault("0")
 	private int wins;
 
 	@Column(name = "losses")
+	@ColumnDefault("0")
 	private int losses;
 
 	@Column(name = "hot_streak")
+	@ColumnDefault("false")
 	private boolean hotStreak; //연승 여부
 
 	@Column(name = "veteran")
+	@ColumnDefault("false")
 	private boolean veteran; //베테랑 여부
 
 	@Column(name = "fresh_blood")
+	@ColumnDefault("false")
 	private boolean freshBlood; //신규 여부
 
 	@Column(name = "inactive")
+	@ColumnDefault("false")
 	private boolean inactive; //휴식 여부
-
-	public void setUnRanked(boolean isSolo) {
-		this.tier = "UNRANKED";
-		this.rank = "I";
-		this.leaguePoints = 0L;
-		this.wins = 0;
-		this.losses = 0;
-		this.hotStreak = false;
-		this.veteran = false;
-		this.freshBlood = false;
-		this.inactive = false;
-		if (isSolo) {
-			this.queueType = "RANKED_SOLO_5x5";
-		} else {
-			this.queueType = "RANKED_FLEX_SR";
-		}
-	}
 
 	public void updateByRankDto(RankDto rankDto) {
 		this.tier = rankDto.getTier();
@@ -99,7 +89,6 @@ public class Rank extends BaseEntity {
 		this.veteran = rankDto.isVeteran();
 		this.freshBlood = rankDto.isFreshBlood();
 		this.inactive = rankDto.isInactive();
-		this.queueType = rankDto.getQueueType();
 	}
 }
 
