@@ -1,14 +1,18 @@
 package mejai.mejaigg.searchhistory.repository;
 
+import java.time.YearMonth;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import jakarta.transaction.Transactional;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
+import mejai.mejaigg.summoner.domain.Summoner;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
-	// Optional<SearchHistory> findByUserAndYearMonth(User user, YearMonth yearMonth);
+	Optional<SearchHistory> findBySummonerAndDate(Summoner summoner, YearMonth date);
 
 	@Transactional
 	@Modifying

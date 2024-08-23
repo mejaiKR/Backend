@@ -1,4 +1,4 @@
-package mejai.mejaigg.matchdatestreak.repository;
+package mejai.mejaigg.matchstreak.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,7 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import mejai.mejaigg.global.util.TestUtil;
-import mejai.mejaigg.matchdatestreak.domain.MatchStreak;
+import mejai.mejaigg.matchstreak.domain.MatchStreak;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
 import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
 import mejai.mejaigg.summoner.domain.Summoner;

@@ -15,14 +15,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.rank.RankService;
 import mejai.mejaigg.rank.dto.RankDto;
-import mejai.mejaigg.rank.entity.Rank;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
+import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.response.UserProfileDto;
-import mejai.mejaigg.summoner.entity.User;
-import mejai.mejaigg.summoner.mapper.UserMapper;
-import mejai.mejaigg.summoner.repository.UserRepository;
+import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @Service
 @Slf4j
@@ -31,7 +29,7 @@ import mejai.mejaigg.summoner.repository.UserRepository;
 public class ProfileService {
 
 	private final RiotService riotService;
-	private final UserRepository userRepository;
+	private final SummonerRepository summonerRepository;
 	private final RankService rankService;
 
 	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
@@ -43,25 +41,24 @@ public class ProfileService {
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
 
-		User user = UserMapper.INSTANCE.toUserEntity(accountDto, summonerDto);
-		Set<Rank> ranks = rankService.createRanks(rankDtos, user);
-
-		user.setRank(ranks);
-		userRepository.save(user);
-		return user.getPuuid();
+		// Summoner user = UserMapper.INSTANCE.toUserEntity(accountDto, summonerDto);
+		//
+		// user.setRank(rankService.createRanks(rankDtos, user));
+		// summonerRepository.save(user);
+		return null;
 	}
 
 	@Transactional
 	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
-		Optional<User> userOptional = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
+		Optional<Summoner> userOptional = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
 		if (userOptional.isEmpty()) {
 			String puuid = setUserProfile(name, tag);
 			if (puuid == null) {
 				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 			}
-			userOptional = userRepository.findById(puuid);
+			userOptional = summonerRepository.findById(puuid);
 		} else { // 2시간이 지나면 업데이트
-			User user = userOptional.get();
+			Summoner user = userOptional.get();
 			LocalDateTime lastUpdatedAt = user.getUpdatedAt();
 			LocalDateTime now = LocalDateTime.now();
 			if (Duration.between(lastUpdatedAt, now).toHours() >= 2) {
@@ -73,15 +70,15 @@ public class ProfileService {
 		if (userOptional.isEmpty()) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
 		}
-		User user = userOptional.get();
+		Summoner user = userOptional.get();
 		userProfileDto.setByUser(user, resourceURL);
 		return userProfileDto;
 	}
 
-	private void updateUserDetails(User user) {
-		SummonerDto summoner = riotService.getSummonerByPuuid(user.getPuuid());
-		user.updateBySummonerDto(summoner);
-		userRepository.save(user); // 사용자를 저장하여 변경 사항을 반영
+	private void updateUserDetails(Summoner user) {
+		// SummonerDto summoner = riotService.getSummonerByPuuid(user.getId());
+		// user.updateBySummonerDto(summoner);
+		// summonerRepository.save(user); // 사용자를 저장하여 변경 사항을 반영
 	}
 }
 

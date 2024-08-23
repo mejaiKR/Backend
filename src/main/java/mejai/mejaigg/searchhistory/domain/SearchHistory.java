@@ -22,7 +22,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mejai.mejaigg.global.jpa.BaseEntity;
-import mejai.mejaigg.matchdatestreak.domain.MatchStreak;
+import mejai.mejaigg.matchstreak.domain.MatchStreak;
 import mejai.mejaigg.summoner.domain.Summoner;
 
 @Getter

@@ -1,4 +1,4 @@
-package mejai.mejaigg.matchdatestreak.domain;
+package mejai.mejaigg.matchstreak.domain;
 
 import java.time.LocalDate;
 

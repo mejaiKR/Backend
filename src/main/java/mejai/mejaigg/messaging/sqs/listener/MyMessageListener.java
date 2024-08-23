@@ -9,13 +9,12 @@ import io.awspring.cloud.sqs.listener.MessageListener;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.summoner.dto.request.UserProfileRequest;
 import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
-import mejai.mejaigg.summoner.service.ProfileService;
 
 @RequiredArgsConstructor
 @Component
 public class MyMessageListener implements MessageListener<Object> {
 	private final ObjectMapper objectMapper;
-	private final ProfileService profileService;
+	// private final ProfileService profileService;
 
 	@Override
 	public void onMessage(Message<Object> message) {
@@ -39,7 +38,7 @@ public class MyMessageListener implements MessageListener<Object> {
 	private void handleUserStreakRequest(UserStreakRequest request) {
 		System.out.println("Handling UserStreakRequest: " + request);
 		// 비즈니스 로직 처리
-		profileService.getUserProfileByNameTag(request.getId(), request.getTag());
+		// profileService.getUserProfileByNameTag(request.getId(), request.getTag());
 	}
 
 	private void handleUserProfileRequest(UserProfileRequest request) {
