@@ -1,13 +1,14 @@
 package mejai.mejaigg.summoner.dto.response;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import mejai.mejaigg.rank.entity.Rank;
-import mejai.mejaigg.summoner.entity.User;
+import mejai.mejaigg.rank.domain.Rank;
+import mejai.mejaigg.summoner.domain.Summoner;
 
 @Getter
 @Setter
@@ -28,11 +29,11 @@ public class UserProfileDto {
 	@Schema(description = "소환사 랭크 정보", example = "[{'tier':'CHALLENGER','rank':'I','leaguePoints':704,'wins':220,'losses':184,'tierIcon':'http://localhost:8080/emblem/Challenger.png'}]")
 	private Set<RankResponseDto> rank = new HashSet<>();
 
-	public void setByUser(User user, String resourceUrl) {
-		Set<Rank> ranks = user.getRank();
-		Rank soloRank = ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
+	public void setByUser(Summoner summoner, String resourceUrl) {
+		List<Rank> ranks = summoner.getRank();
+		Rank soloRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
 			.orElse(null);
-		Rank flexRank = ranks.stream().filter(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")).findFirst()
+		Rank flexRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_FLEX_SR")).findFirst()
 			.orElse(null);
 		RankResponseDto responseRank = new RankResponseDto();
 		responseRank.setByRank(soloRank, resourceUrl);
@@ -40,10 +41,10 @@ public class UserProfileDto {
 		responseRank = new RankResponseDto();
 		responseRank.setByRank(flexRank, resourceUrl);
 		this.rank.add(responseRank);
-		this.userName = user.getSummonerName();
-		this.profileIcon = resourceUrl + "profileIcon/" + user.getProfileIconId() + ".png";
-		this.level = user.getSummonerLevel();
-		this.tagLine = user.getTagLine();
+		this.userName = summoner.getSummonerName();
+		this.profileIcon = resourceUrl + "profileIcon/" + summoner.getProfileIconId() + ".png";
+		this.level = summoner.getSummonerLevel();
+		this.tagLine = summoner.getTagLine();
 	}
 
 	public void setDummy() {

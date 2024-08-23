@@ -1,20 +1,22 @@
 package mejai.mejaigg.summoner.dto.response;
 
 import lombok.Data;
-import mejai.mejaigg.rank.entity.Rank;
+import mejai.mejaigg.rank.domain.Rank;
+import mejai.mejaigg.rank.domain.RankType;
+import mejai.mejaigg.rank.domain.TierType;
 
 @Data
 public class RankResponseDto {
 	private String queueType;
-	private String tier;
+	private TierType tier;
 	private String tierIcon;
-	private String rank;
+	private RankType rank;
 	private Long leaguePoints;
 	private int wins;
 	private int losses;
 
 	public void setByRank(Rank rank, String resourceUrl) {
-		this.queueType = rank.getQueueType();
+		this.queueType = rank.getId().getQueueType();
 		this.tier = rank.getTier();
 		this.tierIcon = resourceUrl + "emblem/" + rank.getTier() + ".png";
 		this.rank = rank.getRank();
