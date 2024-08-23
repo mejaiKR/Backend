@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import jakarta.transaction.Transactional;
-import mejai.mejaigg.searchhistory.entity.SearchHistory;
+import mejai.mejaigg.searchhistory.domain.SearchHistory;
 
 public interface SearchHistoryRepository extends JpaRepository<SearchHistory, Long> {
 	// Optional<SearchHistory> findByUserAndYearMonth(User user, YearMonth yearMonth);
