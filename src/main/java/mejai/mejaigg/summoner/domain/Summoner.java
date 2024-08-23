@@ -1,12 +1,15 @@
-package mejai.mejaigg.summoner.entity;
+package mejai.mejaigg.summoner.domain;
 
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -16,9 +19,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mejai.mejaigg.global.jpa.BaseEntity;
-import mejai.mejaigg.rank.entity.Rank;
+import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.riot.dto.SummonerDto;
-import mejai.mejaigg.searchhistory.entity.SearchHistory;
+import mejai.mejaigg.searchhistory.domain.SearchHistory;
 
 @Entity
 @Getter
@@ -29,7 +32,8 @@ import mejai.mejaigg.searchhistory.entity.SearchHistory;
 public class Summoner extends BaseEntity {
 	@Id
 	@Column(name = "id")
-	private String id;
+	@GeneratedValue // ID 자동 생성 전략 사용
+	private Long id;
 
 	@Column(name = "summoner_name", nullable = false)
 	private String summonerName;
@@ -57,11 +61,11 @@ public class Summoner extends BaseEntity {
 	@Column(name = "summoner_level", nullable = false)
 	private Long summonerLevel;
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Builder.Default
-	private Set<Rank> rank = new HashSet<>();
+	private List<Rank> rank = new LinkedList<>();
 
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL)
 	@Builder.Default
 	private Set<SearchHistory> searchHistory = new HashSet<>();
 
@@ -72,7 +76,7 @@ public class Summoner extends BaseEntity {
 		this.summonerLevel = summonerDto.getSummonerLevel();
 	}
 
-	public void setRank(Set<Rank> ranks) {
+	public void setRank(List<Rank> ranks) {
 		this.rank = ranks;
 		ranks.forEach(rank -> rank.setSummoner(this));
 	}

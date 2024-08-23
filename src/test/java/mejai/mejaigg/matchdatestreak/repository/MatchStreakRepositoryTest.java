@@ -14,36 +14,36 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import mejai.mejaigg.global.util.TestUtil;
-import mejai.mejaigg.matchdatestreak.entity.MatchDateStreak;
-import mejai.mejaigg.searchhistory.entity.SearchHistory;
+import mejai.mejaigg.matchdatestreak.domain.MatchStreak;
+import mejai.mejaigg.searchhistory.domain.SearchHistory;
 import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
-import mejai.mejaigg.summoner.entity.User;
-import mejai.mejaigg.summoner.repository.UserRepository;
+import mejai.mejaigg.summoner.domain.Summoner;
+import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-class MatchDateStreakRepositoryTest {
+class MatchStreakRepositoryTest {
 	@Autowired
-	private MatchDateStreakRepository matchDateStreakRepository;
+	private MatchStreakRepository matchStreakRepository;
 
 	@Autowired
 	SearchHistoryRepository searchHistoryRepository;
 
 	@Autowired
-	UserRepository userRepository;
+	SummonerRepository summonerRepository;
 
 	private Long searchHistoryId;
-	private String userId;
+	private Long userId;
 
 	@BeforeEach
 	void setUp() {
-		User user = TestUtil.createTestUser();
-		userRepository.saveAndFlush(user);
+		Summoner summoner = TestUtil.createTestUser();
+		summonerRepository.saveAndFlush(summoner);
 
-		SearchHistory searchHistory = TestUtil.createTestSearchHistory(user, YearMonth.of(2021, 1));
+		SearchHistory searchHistory = TestUtil.createTestSearchHistory(summoner, YearMonth.of(2021, 1));
 		searchHistoryRepository.save(searchHistory);
 
-		userId = user.getId();
+		userId = summoner.getId();
 		searchHistoryId = searchHistory.getId();
 	}
 
@@ -51,14 +51,14 @@ class MatchDateStreakRepositoryTest {
 	@DisplayName("MatchDateStreak를 생성한다.")
 	void createMatchDateStreak() {
 		// given
-		MatchDateStreak matchDateStreak = MatchDateStreak.builder()
+		MatchStreak matchStreak = MatchStreak.builder()
 			.date(LocalDate.of(2021, 1, 1))
 			.build();
 		// when
-		matchDateStreakRepository.save(matchDateStreak);
+		matchStreakRepository.save(matchStreak);
 		// then
-		assertThat(matchDateStreak.getId()).isNotNull();
-		assertThat(matchDateStreak.getDate()).isEqualTo(LocalDate.of(2021, 1, 1));
+		assertThat(matchStreak.getId()).isNotNull();
+		assertThat(matchStreak.getDate()).isEqualTo(LocalDate.of(2021, 1, 1));
 	}
 
 	@Test
@@ -66,19 +66,19 @@ class MatchDateStreakRepositoryTest {
 	void findByDateAndSearchHistory() {
 		// given
 		SearchHistory searchHistory = searchHistoryRepository.findById(searchHistoryId).orElseThrow();
-		MatchDateStreak matchDateStreak = MatchDateStreak.builder()
+		MatchStreak matchStreak = MatchStreak.builder()
 			.date(LocalDate.of(2021, 1, 1))
 			.build();
 		// when
-		searchHistory.addMatchDateStreak(matchDateStreak);
-		matchDateStreakRepository.save(matchDateStreak);
+		searchHistory.addMatchDateStreak(matchStreak);
+		matchStreakRepository.save(matchStreak);
 		// then
-		MatchDateStreak found = matchDateStreakRepository.findByDateAndSearchHistory(LocalDate.of(2021, 1, 1),
+		MatchStreak found = matchStreakRepository.findByDateAndSearchHistory(LocalDate.of(2021, 1, 1),
 				searchHistoryId)
 			.orElseThrow();
 		assertThat(found.getDate()).isEqualTo(LocalDate.of(2021, 1, 1));
 		assertThat(found.getSearchHistory().getId()).isEqualTo(searchHistoryId);
-		assertThat(found.getSearchHistory().getUser().getId()).isEqualTo(userId);
+		assertThat(found.getSearchHistory().getSummoner().getId()).isEqualTo(userId);
 	}
 
 	@Test
@@ -86,14 +86,14 @@ class MatchDateStreakRepositoryTest {
 	void findByDateAndSearchHistoryFail() {
 		// given
 		SearchHistory searchHistory = searchHistoryRepository.findById(searchHistoryId).orElseThrow();
-		MatchDateStreak matchDateStreak = MatchDateStreak.builder()
+		MatchStreak matchStreak = MatchStreak.builder()
 			.date(LocalDate.of(2021, 1, 1))
 			.build();
 		// when
-		searchHistory.addMatchDateStreak(matchDateStreak);
-		matchDateStreakRepository.save(matchDateStreak);
+		searchHistory.addMatchDateStreak(matchStreak);
+		matchStreakRepository.save(matchStreak);
 		// then
-		assertThat(matchDateStreakRepository.findByDateAndSearchHistory(LocalDate.of(2021, 1, 2), searchHistoryId))
+		assertThat(matchStreakRepository.findByDateAndSearchHistory(LocalDate.of(2021, 1, 2), searchHistoryId))
 			.isEmpty();
 	}
 

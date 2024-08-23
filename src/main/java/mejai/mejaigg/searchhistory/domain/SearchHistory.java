@@ -1,4 +1,4 @@
-package mejai.mejaigg.searchhistory.entity;
+package mejai.mejaigg.searchhistory.domain;
 
 import java.time.YearMonth;
 import java.util.HashSet;
@@ -22,8 +22,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mejai.mejaigg.global.jpa.BaseEntity;
-import mejai.mejaigg.matchdatestreak.entity.MatchStreak;
-import mejai.mejaigg.summoner.entity.Summoner;
+import mejai.mejaigg.matchdatestreak.domain.MatchStreak;
+import mejai.mejaigg.summoner.domain.Summoner;
 
 @Getter
 @Builder

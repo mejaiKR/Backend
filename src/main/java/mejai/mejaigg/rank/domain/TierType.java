@@ -1,4 +1,4 @@
-package mejai.mejaigg.rank.entity;
+package mejai.mejaigg.rank.domain;
 
 import lombok.Getter;
 

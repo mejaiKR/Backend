@@ -1,4 +1,4 @@
-package mejai.mejaigg.rank.entity;
+package mejai.mejaigg.rank.domain;
 
 import org.hibernate.annotations.ColumnDefault;
 
@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,14 +19,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
-import mejai.mejaigg.summoner.entity.Summoner;
+import mejai.mejaigg.summoner.domain.Summoner;
 
 @Getter
 @Builder
 @Entity
 @Table(name = "rank")
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Rank extends BaseEntity {
 
 	@EmbeddedId
@@ -38,20 +39,20 @@ public class Rank extends BaseEntity {
 
 	@Column(name = "tier")
 	@Enumerated(EnumType.STRING)
-	@ColumnDefault("UNRANKED")
-	private TierType tier; //ex EMERALD
+	@ColumnDefault("'UNRANKED'")
+	@Builder.Default
+	private TierType tier = TierType.UNRANKED; //ex EMERALD
 
 	@Column(name = "rank")
 	@Enumerated(EnumType.STRING)
-	@ColumnDefault("I")
-	private RankType rank; //ex IV :  String ->INT
+	@ColumnDefault("'I'")
+	private RankType rank = RankType.I; //ex IV :  String ->INT
 
 	@Column(name = "league_points")
 	@ColumnDefault("0")
-	private Long leaguePoints;
+	private Long leaguePoints = 0L;
 
 	@Column(name = "league_id")
-	@ColumnDefault("0")
 	private String leagueId;
 
 	@Column(name = "wins")

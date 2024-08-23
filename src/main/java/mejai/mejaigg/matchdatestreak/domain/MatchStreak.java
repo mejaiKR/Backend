@@ -1,4 +1,4 @@
-package mejai.mejaigg.matchdatestreak.entity;
+package mejai.mejaigg.matchdatestreak.domain;
 
 import java.time.LocalDate;
 
@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mejai.mejaigg.global.jpa.BaseEntity;
-import mejai.mejaigg.searchhistory.entity.SearchHistory;
+import mejai.mejaigg.searchhistory.domain.SearchHistory;
 
 @Getter
 @Builder

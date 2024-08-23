@@ -1,4 +1,4 @@
-package mejai.mejaigg.rank.entity;
+package mejai.mejaigg.rank.domain;
 
 import java.io.Serializable;
 
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 public class RankId implements Serializable {
 	@Column(name = "id")
-	private String id;
+	private Long id;
 
 	@Column(name = "queue_type")
 	private String queueType;// ex) RANKED_SOLO_5x5 , RANKED_FLEX_SR
