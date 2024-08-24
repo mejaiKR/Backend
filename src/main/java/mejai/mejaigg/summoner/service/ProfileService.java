@@ -1,20 +1,15 @@
 package mejai.mejaigg.summoner.service;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.Optional;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.rank.RankService;
+import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.rank.dto.RankDto;
+import mejai.mejaigg.rank.repository.RankRepository;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
@@ -30,49 +25,51 @@ public class ProfileService {
 
 	private final RiotService riotService;
 	private final SummonerRepository summonerRepository;
-	private final RankService rankService;
+	private final RankRepository rankRepository;
+	private final RiotProperties riotProperties;
 
-	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
-	private String resourceURL;
+	@Transactional
+	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
+		//유저를 DB에서 먼저 찾아봅니다.
+		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag).orElse(null);
+		UserProfileDto userProfileDto = new UserProfileDto();
+		if (summoner == null) {
+			//유저가 없으면 riot api를 통해 유저 정보를 가져옵니다.
+			AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
+			SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
+			Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
+
+			summoner = Summoner.builder()
+				.summonerName(accountDto.getGameName())
+				.tagLine(accountDto.getTagLine())
+				.puuid(accountDto.getPuuid())
+				.accountId(summonerDto.getAccountId())
+				.summonerId(summonerDto.getId())
+				.summonerLevel(summonerDto.getSummonerLevel())
+				.revisionDate(summonerDto.getRevisionDate())
+				.profileIconId(summonerDto.getProfileIconId())
+				.summonerLevel(summonerDto.getSummonerLevel())
+				.build();
+			summonerRepository.save(summoner);
+			summoner.setRankByRankDtos(rankDtos);
+			rankRepository.saveAll(summoner.getRanks());
+			summonerRepository.save(summoner);
+		}
+		// 유저가 있으면 바로 유저 정보를 리턴
+		userProfileDto.setBySummoner(summoner, riotProperties.getResourceUrl());
+		return userProfileDto;
+	}
 
 	@Transactional(readOnly = false)
-	public String setUserProfile(String name, String tag) { //처음 콜 할 때 세팅 되는 함수
+	public String updateUserProfile(String name, String tag) { //처음 콜 할 때 세팅 되는 함수
 		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
 
 		// Summoner user = UserMapper.INSTANCE.toUserEntity(accountDto, summonerDto);
-		//
 		// user.setRank(rankService.createRanks(rankDtos, user));
 		// summonerRepository.save(user);
 		return null;
-	}
-
-	@Transactional
-	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
-		Optional<Summoner> userOptional = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag);
-		if (userOptional.isEmpty()) {
-			String puuid = setUserProfile(name, tag);
-			if (puuid == null) {
-				throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-			}
-			userOptional = summonerRepository.findById(puuid);
-		} else { // 2시간이 지나면 업데이트
-			Summoner user = userOptional.get();
-			LocalDateTime lastUpdatedAt = user.getUpdatedAt();
-			LocalDateTime now = LocalDateTime.now();
-			if (Duration.between(lastUpdatedAt, now).toHours() >= 2) {
-				updateUserDetails(user); //유저 업데이트
-				rankService.updateUserRanks(user); // 랭크 업데이트
-			}
-		}
-		UserProfileDto userProfileDto = new UserProfileDto();
-		if (userOptional.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "summoner not found");
-		}
-		Summoner user = userOptional.get();
-		userProfileDto.setByUser(user, resourceURL);
-		return userProfileDto;
 	}
 
 	private void updateUserDetails(Summoner user) {

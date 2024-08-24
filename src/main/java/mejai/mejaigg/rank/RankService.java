@@ -1,6 +1,5 @@
 package mejai.mejaigg.rank;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
@@ -19,20 +18,6 @@ public class RankService {
 	private final RankRepository rankRepository;
 	private final RiotService riotService;
 
-	public Set<Rank> createRanks(Set<RankDto> rankDtos, Summoner user) {
-		Set<Rank> ranks = new HashSet<>();
-		rankDtos.stream()
-			.forEach(rankDto -> setNewRankByRankDto(rankDto, user, ranks));
-
-		if (rankDtos.stream().noneMatch(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")))
-			ranks.add(createUnranked(user, true));
-
-		if (rankDtos.stream().noneMatch(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")))
-			ranks.add(createUnranked(user, false));
-
-		return ranks;
-	}
-
 	public void updateUserRanks(Summoner user) {
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(user.getSummonerId());
 
@@ -48,7 +33,7 @@ public class RankService {
 			.orElse(null);
 
 		if (rankDto != null) {
-			user.getRank().stream()
+			user.getRanks().stream()
 				.filter(rank -> rank.getId().getQueueType().equals(queueType))
 				.findFirst()
 				.ifPresent(rank -> {
@@ -65,19 +50,4 @@ public class RankService {
 		// ranks.add(rank);
 	}
 
-	/**
-	 * 랭크가 없는 경우 생성
-	 * @param user 사용자
-	 * @param isSolo 솔로 랭크 여부
-	 * @return 랭크 엔티티
-	 */
-	private Rank createUnranked(Summoner user, boolean isSolo) {
-		// Rank rank = Rank.builder()
-		// 	.user(user)
-		// 	.id(user.getId())
-		// 	.build();
-		// rank.setUnRanked(isSolo);
-		// return rank;
-		return null;
-	}
 }

@@ -1,4 +1,4 @@
-package mejai.mejaigg.riot.service;
+package mejai.mejaigg.global.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -10,4 +10,5 @@ import lombok.Setter;
 @ConfigurationProperties(prefix = "riot")
 public class RiotProperties {
 	private String apiKey;
+	private String resourceUrl;
 }
