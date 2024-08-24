@@ -20,6 +20,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.domain.Rank;
+import mejai.mejaigg.rank.domain.RankId;
+import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
 
@@ -63,7 +65,7 @@ public class Summoner extends BaseEntity {
 
 	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@Builder.Default
-	private List<Rank> rank = new LinkedList<>();
+	private List<Rank> ranks = new LinkedList<>();
 
 	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL)
 	@Builder.Default
@@ -76,9 +78,43 @@ public class Summoner extends BaseEntity {
 		this.summonerLevel = summonerDto.getSummonerLevel();
 	}
 
-	public void setRank(List<Rank> ranks) {
-		this.rank = ranks;
+	public void setRanks(List<Rank> ranks) {
+		this.ranks = ranks;
 		ranks.forEach(rank -> rank.setSummoner(this));
+	}
+
+	public void setRankByRankDtos(Set<RankDto> rankDtos) {
+		List<Rank> ranks = new LinkedList<>();
+		rankDtos.forEach(rankDto -> {
+			if (rankDto.getQueueType().equals("RANKED_SOLO_5x5") || rankDto.getQueueType().equals("RANKED_FLEX_SR")) {
+				Rank rank = Rank.builder()
+					.id(new RankId(this.getId(), rankDto.getQueueType()))
+					.tier(rankDto.getTier())
+					.rank(rankDto.getRank())
+					.leaguePoints(rankDto.getLeaguePoints())
+					.wins(rankDto.getWins())
+					.losses(rankDto.getLosses())
+					.veteran(rankDto.isVeteran())
+					.inactive(rankDto.isInactive())
+					.freshBlood(rankDto.isFreshBlood())
+					.hotStreak(rankDto.isHotStreak())
+					.summoner(this)
+					.build();
+				ranks.add(rank);
+			}
+		});
+		// 랭크 정보가 없는 경우 unRanked로 추가
+		if (rankDtos.stream().noneMatch(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")))
+			ranks.add(Rank.builder()
+				.id(new RankId(this.getId(), "RANKED_SOLO_5x5"))
+				.summoner(this)
+				.build());
+		if (rankDtos.stream().noneMatch(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")))
+			ranks.add(Rank.builder()
+				.id(new RankId(this.getId(), "RANKED_FLEX_SR"))
+				.summoner(this)
+				.build());
+		this.ranks = ranks;
 	}
 
 	public void addSearchHistory(SearchHistory searchHistory) {
