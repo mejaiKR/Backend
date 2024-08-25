@@ -39,3 +39,5 @@ riotApiKey.properties
 db.properties
 
 .DS_Store
+application-dev.yml
+application-prod.yml

@@ -1,20 +1,9 @@
+spring:
+  profiles:
+    active: dev
+
 server:
   port: 8080
-
-
-spring:
-  datasource:
-    # you must change url to docker database container name
-    url: ${db.url}
-    username: ${db.username}
-    password: ${db.password}
-  jpa:
-    #    show-sql: 'true'
-    hibernate:
-      ddl-auto: none
-
-variables:
-  resourceURL: "https://d1lgkfcquwlbly.cloudfront.net/"
 
 springdoc:
   packages-to-scan: mejai.mejaigg
