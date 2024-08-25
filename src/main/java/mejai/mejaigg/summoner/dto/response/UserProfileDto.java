@@ -6,6 +6,7 @@ import java.util.Set;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.summoner.domain.Summoner;
@@ -13,6 +14,7 @@ import mejai.mejaigg.summoner.domain.Summoner;
 @Getter
 @Setter
 @Schema(description = "소환사 프로필 조회 응답 모델")
+@NoArgsConstructor
 public class UserProfileDto {
 	@Schema(description = "소환사 이름", example = "hide on bush")
 	private String userName;
@@ -29,8 +31,8 @@ public class UserProfileDto {
 	@Schema(description = "소환사 랭크 정보", example = "[{'tier':'CHALLENGER','rank':'I','leaguePoints':704,'wins':220,'losses':184,'tierIcon':'http://localhost:8080/emblem/Challenger.png'}]")
 	private Set<RankResponseDto> rank = new HashSet<>();
 
-	public void setByUser(Summoner summoner, String resourceUrl) {
-		List<Rank> ranks = summoner.getRank();
+	public void setBySummoner(Summoner summoner, String resourceUrl) {
+		List<Rank> ranks = summoner.getRanks();
 		Rank soloRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
 			.orElse(null);
 		Rank flexRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_FLEX_SR")).findFirst()

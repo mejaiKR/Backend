@@ -1,8 +1,6 @@
 package mejai.mejaigg.summoner.service;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +8,8 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,18 +41,19 @@ public class UserStreakService {
 	public Optional<List<UserStreakDto>> getUserMonthStreak(UserStreakRequest request) {
 		int year = request.getYear();
 		int month = request.getMonth();
-		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
-			.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다."));
-		YearMonth date = YearMonth.of(year, month);
-		SearchHistory history = getHistory(user, date);
-		if ((history.isDone() && Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2)
-			|| isEmptyHistory(date, user.getId()))
-			return Optional.of(getUserStreakDtoList(history));
-
-		//mathData 저장
-		saveStreakData(history, date, user.getId());
-		userRepository.save(user);
-		return Optional.of(getUserStreakDtoList(history));
+		// Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
+		// 	.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다."));
+		// YearMonth date = YearMonth.of(year, month);
+		// SearchHistory history = getHistory(user, date);
+		// if ((history.isDone() && Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2)
+		// 	|| isEmptyHistory(date, user.getId()))
+		// 	return Optional.of(getUserStreakDtoList(history));
+		//
+		// //mathData 저장
+		// saveStreakData(history, date, user.getId());
+		// userRepository.save(user);
+		// return Optional.of(getUserStreakDtoList(history));
+		return null;
 	}
 
 	private SearchHistory getHistory(Summoner user, YearMonth date) {

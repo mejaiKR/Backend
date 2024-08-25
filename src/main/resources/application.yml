@@ -5,9 +5,6 @@ spring:
 server:
   port: 8080
 
-variables:
-  resourceURL: "https://d1lgkfcquwlbly.cloudfront.net/"
-
 springdoc:
   packages-to-scan: mejai.mejaigg
   default-consumes-media-type: application/json;charset=UTF-8

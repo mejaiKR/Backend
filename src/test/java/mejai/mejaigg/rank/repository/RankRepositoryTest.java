@@ -43,7 +43,7 @@ class RankRepositoryTest {
 		Rank rank = Rank.builder()
 			.id(new RankId(summoner.getId(), "RANKED_SOLO_5x5"))
 			.build();
-		summoner.setRank(List.of(rank));
+		summoner.setRanks(List.of(rank));
 		rankRepository.save(rank);
 		// when
 		Rank savedRank = rankRepository.findById(new RankId(summoner.getId(), "RANKED_SOLO_5x5"))
@@ -53,6 +53,6 @@ class RankRepositoryTest {
 		assertThat(savedRank).isNotNull();
 		assertThat(savedRank.getId()).isEqualTo(new RankId(summoner.getId(), "RANKED_SOLO_5x5"));
 		assertThat(savedRank.getTier()).isEqualTo(TierType.UNRANKED);
-		assertThat(savedRank.getId().getQueueType()).isEqualTo(summoner.getRank().getFirst().getId().getQueueType());
+		assertThat(savedRank.getId().getQueueType()).isEqualTo(summoner.getRanks().getFirst().getId().getQueueType());
 	}
 }

@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
+import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.client.RiotAsiaClient;
 import mejai.mejaigg.riot.client.RiotKrClient;
