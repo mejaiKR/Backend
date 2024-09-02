@@ -23,6 +23,7 @@ public class UserStreakRequest {
 	@Schema(description = "소환사 태그", example = "Kr1")
 	@NotBlank
 	@Size(min = 2, max = 10)
+	@Builder.Default
 	private String tag = "Kr1";
 
 	@Schema(description = "조회할 년도", example = "2021")
