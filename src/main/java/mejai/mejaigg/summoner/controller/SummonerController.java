@@ -45,7 +45,7 @@ public class SummonerController {
 	@GetMapping("/users/streak")
 	@Operation(summary = "소환사 게임 횟수 및 승패 조회", description = "소환사가 특정 기간 동안 진행한 게임 횟수 및 승패를 업데이트 및 조회합니다.")
 	public List<UserStreakDto> streak(@Valid UserStreakRequest request) {
-		return streakService.getStreak(request);
+		return streakService.refreshStreak(request);
 	}
 
 	@GetMapping("/users/streak/refresh")
