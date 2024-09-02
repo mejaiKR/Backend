@@ -26,7 +26,7 @@ jobs:
         run: |
           cd ./src/main/resources
           touch ./application-prod.yml
-          echo "${{ secrets.PRODUCTION_SECRET }}" >> ./application-prod.yml
+          echo "${{ secrets.PRODUCTION_SECRET }}" > ./application-prod.yml
       - name: Make test.properties
         run: |
           cd ./src/test/resources
