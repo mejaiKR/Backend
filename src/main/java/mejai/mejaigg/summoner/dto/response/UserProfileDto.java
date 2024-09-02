@@ -1,8 +1,7 @@
 package mejai.mejaigg.summoner.dto.response;
 
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
@@ -29,14 +28,14 @@ public class UserProfileDto {
 	private Long level;
 
 	@Schema(description = "소환사 랭크 정보", example = "[{'tier':'CHALLENGER','rank':'I','leaguePoints':704,'wins':220,'losses':184,'tierIcon':'http://localhost:8080/emblem/Challenger.png'}]")
-	private Set<RankResponseDto> rank = new HashSet<>();
+	private List<RankResponseDto> rank = new LinkedList<>();
 
 	public void setBySummoner(Summoner summoner, String resourceUrl) {
 		List<Rank> ranks = summoner.getRanks();
 		Rank soloRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
-			.orElse(null);
+			.orElseThrow(IllegalArgumentException::new);
 		Rank flexRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_FLEX_SR")).findFirst()
-			.orElse(null);
+			.orElseThrow((IllegalArgumentException::new));
 		RankResponseDto responseRank = new RankResponseDto();
 		responseRank.setByRank(soloRank, resourceUrl);
 		this.rank.add(responseRank);
