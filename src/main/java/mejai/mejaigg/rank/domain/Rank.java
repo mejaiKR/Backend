@@ -46,10 +46,12 @@ public class Rank extends BaseEntity {
 	@Column(name = "rank")
 	@Enumerated(EnumType.STRING)
 	@ColumnDefault("'I'")
+	@Builder.Default
 	private RankType rank = RankType.I; //ex IV :  String ->INT
 
 	@Column(name = "league_points")
 	@ColumnDefault("0")
+	@Builder.Default
 	private Long leaguePoints = 0L;
 
 	@Column(name = "league_id")
