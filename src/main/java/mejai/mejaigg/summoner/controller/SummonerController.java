@@ -32,9 +32,15 @@ public class SummonerController {
 	private final SearchHistoryService searchHistoryService;
 
 	@GetMapping("/users/profile")
-	@Operation(summary = "소환사 정보 조회", description = "주어진 소환사 ID로 프로필 정보를 업데이트와 동시에 조회 합니다.")
+	@Operation(summary = "소환사 정보 조회", description = "주어진 소환사 ID로 프로필 정보를 조회 합니다.")
 	public UserProfileDto profile(UserProfileRequest request) {
 		return profileService.getUserProfileByNameTag(request.getId(), request.getTag());
+	}
+
+	@GetMapping("/users/profile/refresh")
+	@Operation(summary = "소환사 정보 업데이트", description = "주어진 소환사 ID로 프로필 정보를 업데이트 합니다.")
+	public UserProfileDto refreshProfile(UserProfileRequest request) {
+		return profileService.refreshUserProfileByNameTag(request.getId(), request.getTag());
 	}
 
 	@GetMapping("/users/streak")
