@@ -1,6 +1,6 @@
 package mejai.mejaigg.matchstreak.service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,26 +60,40 @@ public class StreakService {
 	 * @param request 소환사 아이디, 태그, 년도, 월
 	 * @return 소환사의 게임 횟수 및 승패 업데이트 결과
 	 */
+	@Transactional(readOnly = false)
 	public List<UserStreakDto> refreshStreak(UserStreakRequest request) {
-		int year = request.getYear();
-		int month = request.getMonth();
+		YearMonth yearMonth = YearMonth.of(request.getYear(), request.getMonth());
 		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
 			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
-		YearMonth date = YearMonth.of(year, month);
-		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, date)
-			.orElseThrow(() -> new RestApiException(StreakErrorCode.STREAK_NOT_FOUND));
-		saveStreakData(history, date, user.getPuuid());
-
-		// if ((history.isDone() && Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2)
-		// 	|| isEmptyHistory(date, user.getPuuid()))
-		// 	return Optional.of(getUserStreakDtoList(history));
-
+		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, yearMonth).orElse(null);
+		if (history == null) {
+			history = SearchHistory.builder()
+				.summoner(user)
+				.date(yearMonth)
+				.build();
+			searchHistoryRepository.save(history);
+		} else {
+			//이미 검색이 끝났거나, 이번달 기록인데 아직 2시간이 안 지났거나
+			if (history.isDone()
+				|| (yearMonth.equals(YearMonth.now()) && history.getUpdatedAt()
+				.plusHours(2)
+				.isBefore(LocalDateTime.now())))
+				return getUserStreakDtoList(history);
+			String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
+			if (monthHistories == null || monthHistories.length == 0) { // 빈 히스토리인 경우
+				searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
+				return getUserStreakDtoList(history);
+			}
+		}
+		updateStreakData(history, yearMonth, user.getPuuid());
 		// //mathData 저장
-		// saveStreakData(history, date, user.getId());
-		// userRepository.save(user);
-		// return Optional.of(getUserStreakDtoList(history));
-
 		return getUserStreakDtoList(history);
+	}
+
+	private String[] getMonthHistories(YearMonth yearMonth, String puuid, int startDay, int endDay) {
+		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(yearMonth.atDay(startDay));
+		long endTime = YearMonthToEpochUtil.convertToEpochSeconds(yearMonth.atDay(endDay));
+		return riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L, 100);
 	}
 
 	private List<UserStreakDto> getUserStreakDtoList(SearchHistory history) {
@@ -93,56 +107,29 @@ public class StreakService {
 		return userStreakDtos;
 	}
 
-	/**
-	 *
-	 * @param date 해당 년월
-	 * @param puuid 해당 유저의 puuid
-	 * @return 라이엇 API를 통해 해당 년월에 해당하는 매치 히스토리를 가져와서 비어있는지 여부를 반환
-	 */
-	private boolean isEmptyHistory(YearMonth date, String puuid) {
-		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(date.atDay(1));
-		long endTime = YearMonthToEpochUtil.convertToEpochSeconds(date.atEndOfMonth());
-		String[] monthHistories = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
-			100); //100개의 매치를 가져옴
-		return monthHistories == null || monthHistories.length == 0;
-	}
-
-	private void saveStreakData(SearchHistory history, YearMonth dateYM, String puuid) {
+	private void updateStreakData(SearchHistory history, YearMonth dateYM, String puuid) {
 		int startDay = history.getLastSuccessDay();
-		if (startDay >= dateYM.lengthOfMonth())
-			return;
-
-		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(dateYM.atDay(startDay));
-		long endTime = YearMonthToEpochUtil.convertToEpochSeconds(dateYM.atEndOfMonth());
-		String[] matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L, 100);
-		if (matchHistory.length == 0) {
+		if (startDay >= dateYM.lengthOfMonth()) {
 			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
 			return;
 		}
-		int historyLen = matchHistory.length;
-		for (int i = startDay; i < dateYM.lengthOfMonth(); i++) { // TODO: Batch 처리
-			if (matchStreakRepository.findByDateAndSearchHistory(dateYM.atDay(i), history.getId()).isPresent())
-				continue;
-			startTime = YearMonthToEpochUtil.convertToEpochSeconds(dateYM.atDay(i));
-			endTime = YearMonthToEpochUtil.convertToEpochSeconds(dateYM.atDay(i + 1));
+		if (startDay == 0)
+			startDay = 1;
+		String[] monthHistories = getMonthHistories(dateYM, puuid, startDay, dateYM.lengthOfMonth());
+		int historyLen = monthHistories.length;
+		for (int i = startDay; i < dateYM.lengthOfMonth() || historyLen != 0; i++) {
 			try {
-				if (historyLen == 0)
-					break;
-
-				matchHistory = riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L,
-					100); //하루 지난 후 100개의 매치를 가져옴
-				if (matchHistory == null || matchHistory.length == 0)
+				monthHistories = getMonthHistories(dateYM, puuid, i, i + 1);
+				if (monthHistories == null || monthHistories.length == 0)
 					continue;
-
 				MatchStreak matchDateStreak = MatchStreak.builder()
 					.date(dateYM.atDay(i))
 					.searchHistory(history)
-					.allGameCount(matchHistory.length)
+					.allGameCount(monthHistories.length)
 					.build();
 				history.addMatchDateStreak(matchDateStreak);
-				if (historyLen != 100) {
-					historyLen -= matchHistory.length;
-				}
+				if (historyLen != 100)
+					historyLen -= monthHistories.length;
 				matchStreakRepository.save(matchDateStreak);
 			} catch (Exception e) {
 				log.error("Http Error" + e.getMessage());
@@ -150,13 +137,13 @@ public class StreakService {
 				return;
 			}
 		}
-		if (!dateYM.equals(LocalDate.now().withDayOfMonth(1))) {
-			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
-			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(),
-				YearMonthToEpochUtil.getNowDay());
+
+		if (dateYM.equals(YearMonth.now())) { // 만약 이번달인 경우
+			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(), YearMonthToEpochUtil.getNowDay());
 		} else {
 			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(),
 				31);
+			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
 		}
 	}
 }
