@@ -31,7 +31,7 @@ jobs:
         run: |
           cd ./src/test/resources
           touch ./application.yml
-          echo "${{ secrets.TEST_SECRET }}" >> ./application.yml
+          echo "${{ secrets.TEST_SECRET }}" > ./application.yml
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: EditorConfig Format
