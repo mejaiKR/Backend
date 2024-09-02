@@ -21,15 +21,17 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
-      # db.properties 파일 생성
+      # application-prod.yml 생성
       - name: Make application.properties
         run: |
           cd ./src/main/resources
-          touch ./db.properties
-          touch ./riotApiKey.properties
-
-          echo "${{ secrets.DATABASE_PROPERTIES }}" >> ./db.properties
-          echo "${{ secrets.RIOT_API_KEY }}" >> ./riotApiKey.properties
+          touch ./application-prod.yml
+          echo "${{ secrets.PRODUCTION_SECRET }}" >> ./application-prod.yml
+      - name: Make test.properties
+        run: |
+          cd ./src/test/resources
+          touch ./application.yml
+          echo "${{ secrets.TEST_SECRET }}" >> ./application.yml
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: EditorConfig Format
