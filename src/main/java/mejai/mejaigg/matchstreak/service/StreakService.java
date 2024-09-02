@@ -1,10 +1,9 @@
-package mejai.mejaigg.summoner.service;
+package mejai.mejaigg.matchstreak.service;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.global.exception.RestApiException;
 import mejai.mejaigg.global.util.YearMonthToEpochUtil;
 import mejai.mejaigg.matchstreak.domain.MatchStreak;
+import mejai.mejaigg.matchstreak.exception.StreakErrorCode;
 import mejai.mejaigg.matchstreak.repository.MatchStreakRepository;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
@@ -22,13 +23,14 @@ import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
 import mejai.mejaigg.summoner.dto.response.UserStreakDto;
+import mejai.mejaigg.summoner.exception.SummonerErrorCode;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @Service
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class UserStreakService {
+public class StreakService {
 	private final SummonerRepository userRepository;
 	private final SearchHistoryRepository searchHistoryRepository;
 	private final MatchStreakRepository matchStreakRepository;
@@ -37,35 +39,47 @@ public class UserStreakService {
 	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
 	private String resourceURL;
 
-	@Transactional(readOnly = false)
-	public Optional<List<UserStreakDto>> getUserMonthStreak(UserStreakRequest request) {
+	/**
+	 * 소환사의 게임 횟수 및 승패 조회 (단순 조회만 수행)
+	 * @param request 소환사 아이디, 태그, 년도, 월
+	 * @return 소환사의 게임 횟수 및 승패 조회 결과
+	 */
+	public List<UserStreakDto> getStreak(UserStreakRequest request) {
 		int year = request.getYear();
 		int month = request.getMonth();
-		// Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
-		// 	.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "소환사를 찾을 수 없습니다."));
-		// YearMonth date = YearMonth.of(year, month);
-		// SearchHistory history = getHistory(user, date);
+		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
+			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
+		YearMonth date = YearMonth.of(year, month);
+		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, date)
+			.orElseThrow(() -> new RestApiException(StreakErrorCode.STREAK_NOT_FOUND));
+		return getUserStreakDtoList(history);
+	}
+
+	/**
+	 * 소환사의 게임 횟수 및 승패 업데이트 (라이엇 API를 통해 매치 히스토리를 가져와서 업데이트)
+	 * @param request 소환사 아이디, 태그, 년도, 월
+	 * @return 소환사의 게임 횟수 및 승패 업데이트 결과
+	 */
+	public List<UserStreakDto> refreshStreak(UserStreakRequest request) {
+		int year = request.getYear();
+		int month = request.getMonth();
+		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
+			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
+		YearMonth date = YearMonth.of(year, month);
+		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, date)
+			.orElseThrow(() -> new RestApiException(StreakErrorCode.STREAK_NOT_FOUND));
+		saveStreakData(history, date, user.getPuuid());
+
 		// if ((history.isDone() && Duration.between(history.getUpdatedAt(), LocalDateTime.now()).toHours() < 2)
-		// 	|| isEmptyHistory(date, user.getId()))
+		// 	|| isEmptyHistory(date, user.getPuuid()))
 		// 	return Optional.of(getUserStreakDtoList(history));
-		//
+
 		// //mathData 저장
 		// saveStreakData(history, date, user.getId());
 		// userRepository.save(user);
 		// return Optional.of(getUserStreakDtoList(history));
-		return null;
-	}
 
-	private SearchHistory getHistory(Summoner user, YearMonth date) {
-		Optional<SearchHistory> searchHistory = searchHistoryRepository.findBySummonerAndDate(user, date);
-		// SearchHistory history = new SearchHistory();
-		// if (searchHistory.isEmpty()) {
-		// 	history.setYearMonthAndUser(date, user);
-		// 	searchHistoryRepository.save(history);
-		// } else {
-		// 	history = searchHistory.get();
-		// }
-		return null;
+		return getUserStreakDtoList(history);
 	}
 
 	private List<UserStreakDto> getUserStreakDtoList(SearchHistory history) {
