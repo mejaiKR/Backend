@@ -53,6 +53,6 @@ class RankRepositoryTest {
 		assertThat(savedRank).isNotNull();
 		assertThat(savedRank.getId()).isEqualTo(new RankId(summoner.getId(), "RANKED_SOLO_5x5"));
 		assertThat(savedRank.getTier()).isEqualTo(TierType.UNRANKED);
-		assertThat(savedRank.getId().getQueueType()).isEqualTo(summoner.getRanks().getFirst().getId().getQueueType());
+		assertThat(savedRank.getId().getQueueType()).isEqualTo(summoner.getRanks().get(0).getId().getQueueType());
 	}
 }

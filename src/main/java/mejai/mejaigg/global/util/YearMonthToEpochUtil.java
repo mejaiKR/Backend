@@ -1,6 +1,5 @@
 package mejai.mejaigg.global.util;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -18,10 +17,6 @@ public class YearMonthToEpochUtil {
 		// UTC 기준으로 Instant로 변환하고, 에포크 초로 변환
 		return localDateTime.toInstant(ZoneOffset.UTC).getEpochSecond();
 	}
-	
-	public static int getNowEpochSecond() {
-		return (int)Instant.now().getEpochSecond();
-	}
 
 	public static int getNowYear() {
 		return YearMonth.now().getYear();
@@ -29,10 +24,6 @@ public class YearMonthToEpochUtil {
 
 	public static int getNowMonth() {
 		return YearMonth.now().getMonthValue();
-	}
-
-	public static String getNowYearMonth() {
-		return YearMonth.now().toString();
 	}
 
 	public static int getNowDay() {

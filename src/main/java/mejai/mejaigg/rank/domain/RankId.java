@@ -21,5 +21,5 @@ public class RankId implements Serializable {
 	private Long id;
 
 	@Column(name = "queue_type")
-	private String queueType;// ex) RANKED_SOLO_5x5 , RANKED_FLEX_SR
+	private String queueType; // ex) RANKED_SOLO_5x5 , RANKED_FLEX_SR
 }
