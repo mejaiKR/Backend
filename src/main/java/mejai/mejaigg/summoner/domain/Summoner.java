@@ -10,6 +10,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -34,7 +35,7 @@ import mejai.mejaigg.searchhistory.domain.SearchHistory;
 public class Summoner extends BaseEntity {
 	@Id
 	@Column(name = "id")
-	@GeneratedValue // ID 자동 생성 전략 사용
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
 	private Long id;
 
 	@Column(name = "summoner_name", nullable = false)
@@ -43,7 +44,7 @@ public class Summoner extends BaseEntity {
 	@Column(name = "tag_line")
 	private String tagLine;
 
-	@Column(name = "puuid", nullable = false)
+	@Column(name = "puuid", nullable = false, unique = true)
 	private String puuid;
 
 	//Encrypted account ID, Max length 56 characters.
