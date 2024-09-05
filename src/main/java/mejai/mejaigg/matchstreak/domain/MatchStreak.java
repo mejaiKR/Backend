@@ -38,7 +38,7 @@ public class MatchStreak extends BaseEntity implements Comparable<MatchStreak> {
 	private int allGameCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "search_hisotry_id")
+	@JoinColumn(name = "search_history_id")
 	@Setter
 	private SearchHistory searchHistory;
 
