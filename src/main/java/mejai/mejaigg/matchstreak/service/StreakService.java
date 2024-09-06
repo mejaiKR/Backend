@@ -6,12 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.global.exception.RestApiException;
 import mejai.mejaigg.global.util.YearMonthToEpochUtil;
 import mejai.mejaigg.matchstreak.domain.MatchStreak;
@@ -35,9 +35,7 @@ public class StreakService {
 	private final SearchHistoryRepository searchHistoryRepository;
 	private final MatchStreakRepository matchStreakRepository;
 	private final RiotService riotService;
-
-	@Value("${variables.resourceURL:https://ddragon.leagueoflegends.com/cdn/11.16.1/img/profileicon/}")
-	private String resourceURL;
+	private final RiotProperties riotProperties;
 
 	/**
 	 * 소환사의 게임 횟수 및 승패 조회 (단순 조회만 수행)
@@ -101,7 +99,7 @@ public class StreakService {
 		List<UserStreakDto> userStreakDtos = new ArrayList<>();
 		for (MatchStreak matchDateStreak : matchDateStreaks) {
 			UserStreakDto userStreakDto = new UserStreakDto();
-			userStreakDto.setByMatchDateStreak(matchDateStreak, resourceURL);
+			userStreakDto.setByMatchDateStreak(matchDateStreak, riotProperties.getResourceUrl());
 			userStreakDtos.add(userStreakDto);
 		}
 		return userStreakDtos;
