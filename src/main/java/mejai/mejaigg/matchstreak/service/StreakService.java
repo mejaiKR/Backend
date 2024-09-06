@@ -115,8 +115,10 @@ public class StreakService {
 			startDay = 1;
 		String[] monthHistories = getMonthHistories(dateYM, puuid, startDay, dateYM.lengthOfMonth());
 		int historyLen = monthHistories.length;
-		for (int i = startDay; i < dateYM.lengthOfMonth() || historyLen != 0; i++) {
+		for (int i = startDay; i < dateYM.lengthOfMonth(); i++) {
 			try {
+				if (historyLen <= 0)
+					break;
 				monthHistories = getMonthHistories(dateYM, puuid, i, i + 1);
 				if (monthHistories == null || monthHistories.length == 0)
 					continue;
@@ -130,7 +132,7 @@ public class StreakService {
 					historyLen -= monthHistories.length;
 				matchStreakRepository.save(matchDateStreak);
 			} catch (Exception e) {
-				log.error("Http Error" + e.getMessage());
+				log.error("Http Error: " + e.getMessage());
 				searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(), i);
 				return;
 			}
