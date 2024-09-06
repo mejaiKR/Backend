@@ -4,16 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.summoner.domain.Summoner;
 
-@Getter
-@Setter
 @Schema(description = "소환사 프로필 조회 응답 모델")
 @NoArgsConstructor
+@Data
 public class UserProfileDto {
 	@Schema(description = "소환사 이름", example = "hide on bush")
 	private String userName;
