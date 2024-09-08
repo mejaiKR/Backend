@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import mejai.mejaigg.summoner.domain.Summoner;
 
-public interface SummonerRepository extends JpaRepository<Summoner, String>, SummonerCustom {
+public interface SummonerRepository extends JpaRepository<Summoner, Long>, SummonerCustom {
 
-	Optional<Summoner> findById(String puuid);
+	Optional<Summoner> findById(Long id);
 
 	Optional<Summoner> findBySummonerNameAndTagLineAllIgnoreCase(String name, String tag);
 }
