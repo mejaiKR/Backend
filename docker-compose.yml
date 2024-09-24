@@ -10,6 +10,8 @@ services:
       - POSTGRES_PASSWORD=compose-postgres
     ports:
       - "5432:5432"
+    volumes:
+      - postgres-mejai-data:/var/lib/postgresql/data
     # 서비스 명
   pgadmin:
     # 사용할 이미지
@@ -43,3 +45,5 @@ services:
       SPRING_DATASOURCE_PASSWORD: compose-postgres
 
 
+volumes:
+  postgres-mejai-data:
