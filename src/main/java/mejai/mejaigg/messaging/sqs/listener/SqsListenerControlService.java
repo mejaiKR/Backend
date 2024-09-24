@@ -30,5 +30,4 @@ public class SqsListenerControlService implements ApplicationContextAware {
 		container.start();
 		log.info("SQS Listener has been started.");
 	}
-	
 }
