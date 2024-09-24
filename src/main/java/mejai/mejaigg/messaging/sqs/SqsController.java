@@ -27,7 +27,6 @@ import mejai.mejaigg.summoner.dto.response.UserStreakDto;
 public class SqsController {
 
 	private final MessageSender messageSender;
-	private final SqsListenerControlService listenerControlService;
 	private final ObjectMapper objectMapper;
 
 	@GetMapping("/post")
@@ -53,13 +52,13 @@ public class SqsController {
 
 	@PostMapping("/start")
 	public String startListener() {
-		listenerControlService.startListener();
+		SqsListenerControlService.requestStart();
 		return "SQS Listener started.";
 	}
 
 	@PostMapping("/stop")
 	public String stopListener() {
-		listenerControlService.stopListener();
+		SqsListenerControlService.requestStop();
 		return "SQS Listener stopped.";
 	}
 }

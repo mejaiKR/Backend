@@ -1,5 +1,7 @@
 package mejai.mejaigg.messaging.sqs.listener;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import io.awspring.cloud.sqs.listener.SqsMessageListenerContainer;
@@ -9,17 +11,23 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SqsListenerControlService {
-	private final SqsMessageListenerContainer<Object> sqsMessageListenerContainer;
+public class SqsListenerControlService implements ApplicationContextAware {
+	private static ApplicationContext context;
 
-	public void stopListener() {
-		sqsMessageListenerContainer.stop();
-		log.info("SQS Listener has been stopped.");
+	@Override
+	public void setApplicationContext(ApplicationContext ctx) {
+		context = ctx;
 	}
 
-	public void startListener() {
-		sqsMessageListenerContainer.start();
+	public static void requestStop() {
+		SqsMessageListenerContainer<?> container = context.getBean(SqsMessageListenerContainer.class);
+		container.stop();
+		log.info("SQS Listener has been stopped due to an error during message processing.");
+	}
+
+	public static void requestStart() {
+		SqsMessageListenerContainer<?> container = context.getBean(SqsMessageListenerContainer.class);
+		container.start();
 		log.info("SQS Listener has been started.");
 	}
-
 }

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.rank.dto.RankDto;
-import mejai.mejaigg.rank.repository.RankRepository;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
@@ -28,7 +27,6 @@ public class ProfileService {
 
 	private final RiotService riotService;
 	private final SummonerRepository summonerRepository;
-	private final RankRepository rankRepository;
 	private final RiotProperties riotProperties;
 
 	/**
@@ -94,12 +92,15 @@ public class ProfileService {
 	public UserProfileDto refreshUserProfileByNameTag(String name, String tag) {
 		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag).orElse(null);
 		if (summoner == null) {
+			log.info("유저가 없어 초기화를 진행합니다.");
 			summoner = initializeSummonerData(name, tag);
 		} else {
 			if (summoner.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now()))
 				log.info("2시간이 지나지 않아 강제 업데이트를 할 수 없습니다.");
-			else
+			else {
+				log.info("2시간이 지나 강제 업데이트를 진행합니다.");
 				updateUserDetails(summoner);
+			}
 		}
 		UserProfileDto userProfileDto = new UserProfileDto();
 		userProfileDto.setBySummoner(summoner, riotProperties.getResourceUrl());
