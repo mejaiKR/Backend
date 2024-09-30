@@ -75,8 +75,10 @@ public class StreakService {
 			if (history.isDone()
 				|| (yearMonth.equals(YearMonth.now()) && history.getUpdatedAt()
 				.plusHours(2)
-				.isBefore(LocalDateTime.now())))
+				.isBefore(LocalDateTime.now()))) {
+				log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
 				return getUserStreakDtoList(history);
+			}
 			String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
 			if (monthHistories == null || monthHistories.length == 0) { // 빈 히스토리인 경우
 				searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
@@ -107,6 +109,7 @@ public class StreakService {
 
 	private void updateStreakData(SearchHistory history, YearMonth dateYM, String puuid) {
 		int startDay = history.getLastSuccessDay();
+		history.setUpdatedAt(LocalDateTime.now());
 		if (startDay >= dateYM.lengthOfMonth()) {
 			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
 			return;
@@ -145,5 +148,6 @@ public class StreakService {
 				31);
 			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
 		}
+		searchHistoryRepository.save(history);
 	}
 }
