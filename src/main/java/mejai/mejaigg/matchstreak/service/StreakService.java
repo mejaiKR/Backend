@@ -77,6 +77,8 @@ public class StreakService {
 				.plusHours(2)
 				.isBefore(LocalDateTime.now()))) {
 				log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
+				history.setUpdatedAt(LocalDateTime.now());
+				searchHistoryRepository.save(history);
 				return getUserStreakDtoList(history);
 			}
 			String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
