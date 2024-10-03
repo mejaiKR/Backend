@@ -127,6 +127,7 @@ public class ProfileService {
 		);
 		summoner.updateBySummonerDto(summonerDto);
 		summoner.setRanks(ranks);
+		summoner.setUpdatedAt(LocalDateTime.now());
 		summonerRepository.save(summoner); // 사용자를 저장하여 변경 사항을 반영
 	}
 }
