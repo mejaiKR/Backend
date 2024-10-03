@@ -70,13 +70,12 @@ public class StreakService {
 				.date(yearMonth)
 				.build();
 			searchHistoryRepository.save(history);
-		} else {
-			//이미 검색이 끝났거나, 이번달 기록인데 아직 2시간이 안 지났거나
-			if (history.isDone()
-				|| (yearMonth.equals(YearMonth.now()) && history.getUpdatedAt()
-				.plusHours(2)
-				.isBefore(LocalDateTime.now()))) {
+		} else { //이번달 기록인데 아직 2시간이 안 지났거나
+			if (yearMonth.equals(YearMonth.now())
+				&& history.getUpdatedAt().plusHours(2).isBefore(LocalDateTime.now())) {
 				log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
+				return getUserStreakDtoList(history);
+			} else if (history.isDone()) { //이미 검색이 끝났거나
 				history.setUpdatedAt(LocalDateTime.now());
 				searchHistoryRepository.save(history);
 				return getUserStreakDtoList(history);
