@@ -64,7 +64,7 @@ public class StreakService {
 		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
 			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
 		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, yearMonth).orElse(null);
-		if (history == null) {
+		if (history == null) { //해당 달의 기록이 없는 경우
 			history = SearchHistory.builder()
 				.summoner(user)
 				.date(yearMonth)
@@ -74,17 +74,15 @@ public class StreakService {
 			if (yearMonth.equals(YearMonth.now())
 				&& history.getUpdatedAt().plusHours(2).isBefore(LocalDateTime.now())) {
 				log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
-				return getUserStreakDtoList(history);
 			} else if (history.isDone()) { //이미 검색이 끝났거나
 				history.setUpdatedAt(LocalDateTime.now());
 				searchHistoryRepository.save(history);
-				return getUserStreakDtoList(history);
+			} else {
+				String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
+				if (monthHistories == null || monthHistories.length == 0) // 빈 히스토리인 경우
+					searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
 			}
-			String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
-			if (monthHistories == null || monthHistories.length == 0) { // 빈 히스토리인 경우
-				searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
-				return getUserStreakDtoList(history);
-			}
+			return getUserStreakDtoList(history);
 		}
 		updateStreakData(history, yearMonth, user.getPuuid());
 		// //mathData 저장
