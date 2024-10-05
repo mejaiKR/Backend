@@ -116,13 +116,12 @@ public class ProfileService {
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(summoner.getPuuid());
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
 		List<Rank> ranks = summoner.getRanks();
+		summoner.setRankByRankDtos(rankDtos);
 		ranks.forEach(rank ->
 			rank.updateByRankDto(rankDtos.stream()
 				.filter(rankDto -> rankDto.getQueueType().equals(rank.getId().getQueueType()))
 				.findFirst()
-				.orElseThrow(
-					() -> new IllegalArgumentException("Rank 정보가 없습니다.") // Rank 정보가 없으면 예외를 던집니다.
-				)
+				.orElse(null)
 			)
 		);
 		summoner.updateBySummonerDto(summonerDto);

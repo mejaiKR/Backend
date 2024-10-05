@@ -82,6 +82,8 @@ public class Rank extends BaseEntity {
 	private boolean inactive; //휴식 여부
 
 	public void updateByRankDto(RankDto rankDto) {
+		if (rankDto == null)
+			return;
 		this.tier = rankDto.getTier();
 		this.rank = rankDto.getRank();
 		this.leaguePoints = rankDto.getLeaguePoints();
