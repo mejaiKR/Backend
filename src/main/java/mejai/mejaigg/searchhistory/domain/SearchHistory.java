@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.matchstreak.domain.MatchStreak;
 import mejai.mejaigg.summoner.domain.Summoner;
@@ -39,6 +40,7 @@ public class SearchHistory extends BaseEntity {
 
 	@Column(name = "done", nullable = false)
 	@ColumnDefault("false")
+	@Setter
 	private boolean done;
 
 	@Column(name = "year_month", nullable = false)

@@ -76,12 +76,12 @@ public class StreakService {
 				log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
 			} else if (history.isDone()) { //이미 검색이 끝났거나
 				history.setUpdatedAt(LocalDateTime.now());
-				searchHistoryRepository.save(history);
 			} else {
 				String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
 				if (monthHistories == null || monthHistories.length == 0) // 빈 히스토리인 경우
-					searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
+					history.setDone(true);
 			}
+			searchHistoryRepository.save(history);
 			return getUserStreakDtoList(history);
 		}
 		updateStreakData(history, yearMonth, user.getPuuid());
