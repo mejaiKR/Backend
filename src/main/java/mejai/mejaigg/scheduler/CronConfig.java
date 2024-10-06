@@ -12,7 +12,7 @@ import mejai.mejaigg.messaging.sqs.listener.SqsListenerControlService;
 @Component
 public class CronConfig {
 	@Scheduled(cron = "0 * * * * *")  // 1분마다 실행
-	public void test() {
+	public void cron() {
 		SqsListenerControlService.requestStart();
 	}
 }
