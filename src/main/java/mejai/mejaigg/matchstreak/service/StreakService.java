@@ -39,6 +39,7 @@ public class StreakService {
 
 	/**
 	 * 소환사의 게임 횟수 및 승패 조회 (단순 조회만 수행)
+	 *
 	 * @param request 소환사 아이디, 태그, 년도, 월
 	 * @return 소환사의 게임 횟수 및 승패 조회 결과
 	 */
@@ -55,6 +56,7 @@ public class StreakService {
 
 	/**
 	 * 소환사의 게임 횟수 및 승패 업데이트 (라이엇 API를 통해 매치 히스토리를 가져와서 업데이트)
+	 *
 	 * @param request 소환사 아이디, 태그, 년도, 월
 	 * @return 소환사의 게임 횟수 및 승패 업데이트 결과
 	 */
@@ -64,32 +66,23 @@ public class StreakService {
 		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
 			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
 		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, yearMonth).orElse(null);
+
 		if (history == null) { //해당 달의 기록이 없는 경우
 			history = SearchHistory.builder()
 				.summoner(user)
 				.date(yearMonth)
 				.build();
-			searchHistoryRepository.save(history);
-		} else { //이번달 기록인데 아직 2시간이 안 지났거나
-			if (yearMonth.equals(YearMonth.now())
-				&& history.getUpdatedAt().plusHours(2).isBefore(LocalDateTime.now())) {
-				log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
-			} else if (history.isDone()) { //이미 검색이 끝났거나
-				history.setUpdatedAt(LocalDateTime.now());
-			} else {
-				if (yearMonth.equals(YearMonth.now())) {
-					String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1,
-						yearMonth.lengthOfMonth());
-					if (monthHistories == null || monthHistories.length == 0) // 빈 히스토리인 경우
-						history.setDone(true);
-					updateStreakData(history, yearMonth, user.getPuuid());
-				}
-			}
-			searchHistoryRepository.save(history);
+			updateStreakData(history, yearMonth, user.getPuuid());
 			return getUserStreakDtoList(history);
 		}
+		//이번달 기록인데 아직 2시간이 안 지났거나
+		if (yearMonth.equals(YearMonth.now())
+			&& history.getUpdatedAt().plusHours(2).isBefore(LocalDateTime.now())) {
+			log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
+			return getUserStreakDtoList(history);
+		}
+
 		updateStreakData(history, yearMonth, user.getPuuid());
-		// //mathData 저장
 		return getUserStreakDtoList(history);
 	}
 
@@ -112,7 +105,6 @@ public class StreakService {
 
 	private void updateStreakData(SearchHistory history, YearMonth dateYM, String puuid) {
 		int startDay = history.getLastSuccessDay();
-		history.setUpdatedAt(LocalDateTime.now());
 		if (startDay >= dateYM.lengthOfMonth()) {
 			history.setDone(true);
 			searchHistoryRepository.save(history);
