@@ -77,9 +77,13 @@ public class StreakService {
 			} else if (history.isDone()) { //이미 검색이 끝났거나
 				history.setUpdatedAt(LocalDateTime.now());
 			} else {
-				String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1, yearMonth.lengthOfMonth());
-				if (monthHistories == null || monthHistories.length == 0) // 빈 히스토리인 경우
-					history.setDone(true);
+				if (yearMonth.equals(YearMonth.now())) {
+					String[] monthHistories = getMonthHistories(yearMonth, user.getPuuid(), 1,
+						yearMonth.lengthOfMonth());
+					if (monthHistories == null || monthHistories.length == 0) // 빈 히스토리인 경우
+						history.setDone(true);
+					updateStreakData(history, yearMonth, user.getPuuid());
+				}
 			}
 			searchHistoryRepository.save(history);
 			return getUserStreakDtoList(history);
@@ -110,7 +114,8 @@ public class StreakService {
 		int startDay = history.getLastSuccessDay();
 		history.setUpdatedAt(LocalDateTime.now());
 		if (startDay >= dateYM.lengthOfMonth()) {
-			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
+			history.setDone(true);
+			searchHistoryRepository.save(history);
 			return;
 		}
 		if (startDay == 0)
