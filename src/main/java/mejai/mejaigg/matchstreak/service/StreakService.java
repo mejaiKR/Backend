@@ -140,17 +140,17 @@ public class StreakService {
 				matchStreakRepository.save(matchDateStreak);
 			} catch (Exception e) {
 				log.error("Http Error: " + e.getMessage());
-				searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(), i);
+				history.setLastSuccessDay(i);
+				searchHistoryRepository.save(history);
 				return;
 			}
 		}
 
 		if (dateYM.equals(YearMonth.now())) { // 만약 이번달인 경우
-			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(), YearMonthToEpochUtil.getNowDay());
+			history.setLastSuccessDay(YearMonthToEpochUtil.getNowDay());
 		} else {
-			searchHistoryRepository.updateLastSuccessDateByHistoryId(history.getId(),
-				31);
-			searchHistoryRepository.updateIsDoneByHistoryId(history.getId(), true);
+			history.setLastSuccessDay(dateYM.lengthOfMonth());
+			history.setDone(true);
 		}
 		searchHistoryRepository.save(history);
 	}

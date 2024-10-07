@@ -48,6 +48,7 @@ public class SearchHistory extends BaseEntity {
 
 	@Column(name = "last_success_day", nullable = false)
 	@ColumnDefault("0")
+	@Setter
 	private int lastSuccessDay; // 마지막으로 api 콜이 성공한 날짜.
 
 	@ManyToOne(fetch = FetchType.LAZY)
