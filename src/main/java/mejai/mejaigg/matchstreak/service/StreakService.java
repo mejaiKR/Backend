@@ -75,9 +75,8 @@ public class StreakService {
 			updateStreakData(history, yearMonth, user.getPuuid());
 			return getUserStreakDtoList(history);
 		}
-		//이번달 기록인데 아직 2시간이 안 지났거나
-		if (yearMonth.equals(YearMonth.now())
-			&& history.getUpdatedAt().plusHours(2).isBefore(LocalDateTime.now())) {
+
+		if (history.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
 			log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
 			return getUserStreakDtoList(history);
 		}
@@ -140,10 +139,9 @@ public class StreakService {
 
 		if (dateYM.equals(YearMonth.now())) { // 만약 이번달인 경우
 			history.setLastSuccessDay(YearMonthToEpochUtil.getNowDay());
-		} else {
-			history.setLastSuccessDay(dateYM.lengthOfMonth());
-			history.setDone(true);
 		}
+		history.setLastSuccessDay(dateYM.lengthOfMonth());
+		history.setDone(true);
 		searchHistoryRepository.save(history);
 	}
 }
