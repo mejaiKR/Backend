@@ -139,9 +139,10 @@ public class StreakService {
 
 		if (dateYM.equals(YearMonth.now())) { // 만약 이번달인 경우
 			history.setLastSuccessDay(YearMonthToEpochUtil.getNowDay());
+		} else {
+			history.setLastSuccessDay(dateYM.lengthOfMonth());
+			history.setDone(true);
 		}
-		history.setLastSuccessDay(dateYM.lengthOfMonth());
-		history.setDone(true);
 		searchHistoryRepository.save(history);
 	}
 }
