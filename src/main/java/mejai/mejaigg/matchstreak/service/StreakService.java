@@ -106,6 +106,7 @@ public class StreakService {
 		int startDay = history.getLastSuccessDay();
 		if (startDay >= dateYM.lengthOfMonth()) {
 			history.setDone(true);
+			history.setUpdatedAt(LocalDateTime.now());
 			searchHistoryRepository.save(history);
 			return;
 		}
@@ -143,6 +144,7 @@ public class StreakService {
 			history.setLastSuccessDay(dateYM.lengthOfMonth());
 			history.setDone(true);
 		}
+		history.setUpdatedAt(LocalDateTime.now());
 		searchHistoryRepository.save(history);
 	}
 }
