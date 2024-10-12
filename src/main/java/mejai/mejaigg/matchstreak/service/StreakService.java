@@ -76,7 +76,7 @@ public class StreakService {
 			return getUserStreakDtoList(history);
 		}
 
-		if (history.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
+		if (history.getUpdatedAt().plusMinutes(1).isAfter(LocalDateTime.now())) {
 			log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
 			return getUserStreakDtoList(history);
 		}
