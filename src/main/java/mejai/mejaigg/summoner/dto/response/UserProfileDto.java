@@ -1,18 +1,21 @@
 package mejai.mejaigg.summoner.dto.response;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.summoner.domain.Summoner;
 
+import java.util.LinkedList;
+import java.util.List;
+
 @Schema(description = "소환사 프로필 조회 응답 모델")
 @NoArgsConstructor
 @Data
 public class UserProfileDto {
+	@Schema(description = "소환사 DB Id", example = "1")
+	private Long id;
+
 	@Schema(description = "소환사 이름", example = "hide on bush")
 	private String userName;
 
@@ -28,7 +31,7 @@ public class UserProfileDto {
 	@Schema(description = "소환사 랭크 정보", example = "[{'tier':'CHALLENGER','rank':'I','leaguePoints':704,'wins':220,'losses':184,'tierIcon':'http://localhost:8080/emblem/Challenger.png'}]")
 	private List<RankResponseDto> rank = new LinkedList<>();
 
-	public void setBySummoner(Summoner summoner, String resourceUrl) {
+	public UserProfileDto(Summoner summoner, String resourceUrl) {
 		List<Rank> ranks = summoner.getRanks();
 		Rank soloRank = ranks.stream().filter(rank -> rank.getId().getQueueType().equals("RANKED_SOLO_5x5")).findFirst()
 			.orElseThrow(IllegalArgumentException::new);
