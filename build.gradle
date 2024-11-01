@@ -71,7 +71,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.0'
     runtimeOnly 'com.h2database:h2'
 
-    compileOnly("org.springframework.boot:spring-boot-devtools") // 서버 안 꺼도 되게
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     // Querydsl 추가
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
@@ -97,6 +97,8 @@ dependencies {
     // sqs
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.0-M1'
+
+    implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.8.3'
 }
 
 tasks.named('test') {

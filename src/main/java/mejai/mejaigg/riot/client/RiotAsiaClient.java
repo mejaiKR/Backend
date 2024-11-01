@@ -1,5 +1,10 @@
 package mejai.mejaigg.riot.client;
 
+import feign.FeignException;
+import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.riot.dto.AccountDto;
+import mejai.mejaigg.riot.exception.ClientErrorCode;
+import mejai.mejaigg.riot.exception.ClientException;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.retry.annotation.Backoff;
@@ -9,13 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.server.ServerErrorException;
-
-import feign.FeignException;
-import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.riot.dto.AccountDto;
-import mejai.mejaigg.riot.dto.match.MatchDto;
-import mejai.mejaigg.riot.exception.ClientErrorCode;
-import mejai.mejaigg.riot.exception.ClientException;
 
 @FeignClient(
 	name = "RiotAsiaClient",
@@ -31,7 +29,7 @@ public interface RiotAsiaClient {
 	)
 	@GetMapping("/riot/account/v1/accounts/by-riot-id/{summonerName}/{tag}")
 	AccountDto getAccountByNameAndTag(@RequestParam("api_key") String riotKey, @PathVariable String summonerName,
-		@PathVariable String tag);
+									  @PathVariable String tag);
 
 	@Retryable(
 		value = {ServerErrorException.class}, // 재시도할 예외 지정
@@ -40,9 +38,9 @@ public interface RiotAsiaClient {
 	)
 	@GetMapping("/lol/match/v5/matches/by-puuid/{puuid}/ids")
 	String[] getMatchHistoryByPuuid(@RequestParam("api_key") String riotKey, @PathVariable String puuid,
-		@RequestParam("startTime") Long startTime,
-		@RequestParam("endTime") Long endTime, @RequestParam("start") Long start,
-		@RequestParam("count") int count);
+									@RequestParam("startTime") Long startTime,
+									@RequestParam("endTime") Long endTime, @RequestParam("start") Long start,
+									@RequestParam("count") int count);
 
 	@Retryable(
 		value = {ServerErrorException.class}, // 재시도할 예외 지정
@@ -50,7 +48,7 @@ public interface RiotAsiaClient {
 		backoff = @Backoff(delay = 2000) // 재시도 간격
 	)
 	@GetMapping("/lol/match/v5/matches/{matchId}")
-	MatchDto getMatchDtoByMatchId(@RequestParam("api_key") String riotKey, @PathVariable String matchId);
+	String getMatchByMatchId(@RequestParam("api_key") String riotKey, @PathVariable String matchId);
 
 	@Slf4j
 	@Component

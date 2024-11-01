@@ -51,12 +51,13 @@ public class ProfileService {
 	 * 소환사 정보를 초기화합니다.
 	 * 처음 검색 때 사용하는 함수입니다.
 	 * 3번의 라이엇 API 호출을 통해 소환사 정보를 가져옵니다.
+	 * Todo: riot service로 분리 ㄱ
 	 *
 	 * @param name 소환사 이름
 	 * @param tag  소환사 태그
 	 * @return 초기화된 소환사 정보
 	 */
-	private Summoner initializeSummonerData(String name, String tag) {
+	public Summoner initializeSummonerData(String name, String tag) {
 		Summoner summoner;
 		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());

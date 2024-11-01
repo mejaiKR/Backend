@@ -1,19 +1,21 @@
 package mejai.mejaigg.riot.service;
 
-import java.util.Set;
-
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Service;
-
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.client.RiotAsiaClient;
 import mejai.mejaigg.riot.client.RiotKrClient;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
-import mejai.mejaigg.riot.dto.match.MatchDto;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @EnableConfigurationProperties(RiotProperties.class)
@@ -43,8 +45,17 @@ public class RiotService {
 			count);
 	}
 
-	public MatchDto getMatchDtoByMatchId(String matchId) {
-		return riotAsiaClient.getMatchDtoByMatchId(riotProperties.getApiKey(), matchId);
+	public List<String> getMatchIds(String puuid) {
+		return List.of(getMatchHistoryByPuuid(puuid, null, null, null, 100));
 	}
 
+	public List<String> getMatches(List<String> matchIds) {
+		List<String> matches = new ArrayList<>();
+		for (String matchId : matchIds) {
+			String matchResponse = riotAsiaClient.getMatchByMatchId(riotProperties.getApiKey(), matchId);
+			matches.add(matchResponse);
+		}
+
+		return matches;
+	}
 }
