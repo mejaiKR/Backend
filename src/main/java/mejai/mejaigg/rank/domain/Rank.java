@@ -1,11 +1,25 @@
 package mejai.mejaigg.rank.domain;
 
-import jakarta.persistence.*;
-import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.summoner.domain.Summoner;
-import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Builder

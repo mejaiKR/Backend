@@ -1,14 +1,19 @@
 package mejai.mejaigg.watch.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.watch.dto.PostWatchSummonerDto;
 import mejai.mejaigg.watch.dto.SummonerRequest;
-import mejai.mejaigg.watch.dto.watch_summoner.GetWatchSummonerDto;
-import mejai.mejaigg.watch.dto.watch_summoner.SummonerDto;
+import mejai.mejaigg.watch.dto.watch.GetWatchSummonerDto;
+import mejai.mejaigg.watch.dto.watch.SummonerDto;
 import mejai.mejaigg.watch.service.WatchService;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor

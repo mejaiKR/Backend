@@ -1,5 +1,12 @@
 package mejai.mejaigg.riot.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.stereotype.Service;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.global.config.RiotProperties;
@@ -8,12 +15,6 @@ import mejai.mejaigg.riot.client.RiotAsiaClient;
 import mejai.mejaigg.riot.client.RiotKrClient;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Service

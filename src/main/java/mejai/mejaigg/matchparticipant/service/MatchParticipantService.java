@@ -1,19 +1,21 @@
-package mejai.mejaigg.match_participant.service;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.match_participant.domain.MatchParticipant;
-import mejai.mejaigg.match_participant.repository.MatchParticipantRepository;
-import mejai.mejaigg.riot.service.RiotService;
-import org.springframework.stereotype.Service;
+package mejai.mejaigg.matchparticipant.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.matchparticipant.domain.MatchParticipant;
+import mejai.mejaigg.matchparticipant.repository.MatchParticipantRepository;
+import mejai.mejaigg.riot.service.RiotService;
 
 @Service
 @Slf4j

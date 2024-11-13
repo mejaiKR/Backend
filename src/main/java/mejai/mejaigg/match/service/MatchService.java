@@ -1,18 +1,20 @@
 package mejai.mejaigg.match.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.match.domain.Match;
 import mejai.mejaigg.match.repository.MatchRepository;
-import mejai.mejaigg.match_participant.service.MatchParticipantService;
+import mejai.mejaigg.matchparticipant.service.MatchParticipantService;
 import mejai.mejaigg.riot.service.RiotService;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @Slf4j
@@ -35,7 +37,7 @@ public class MatchService {
 				JsonNode infoNode = matchNode.path("info");
 				JsonNode participantsNode = infoNode.path("participants");
 				if (infoNode.isObject()) {
-					((ObjectNode) infoNode).remove("participants");
+					((ObjectNode)infoNode).remove("participants");
 				}
 
 				Match match = Match.parseJsonData(matchNode, metadataNode, infoNode);

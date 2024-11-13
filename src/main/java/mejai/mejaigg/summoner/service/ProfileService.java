@@ -1,5 +1,12 @@
 package mejai.mejaigg.summoner.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.global.config.RiotProperties;
@@ -11,12 +18,6 @@ import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.response.UserProfileDto;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j

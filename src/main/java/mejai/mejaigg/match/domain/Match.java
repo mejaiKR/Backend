@@ -1,17 +1,26 @@
 package mejai.mejaigg.match.domain;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+
+import org.hibernate.annotations.Type;
+
 import com.fasterxml.jackson.databind.JsonNode;
+
 import io.hypersistence.utils.hibernate.type.json.JsonType;
-import jakarta.persistence.*;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 @Entity
 @Table(name = "match_record")
@@ -75,11 +84,15 @@ public class Match {
 		return Match.builder()
 			.mapId(infoData.get("mapId").asInt())
 			.queueId(infoData.get("queueId").asInt())
-			.gameCreation(LocalDateTime.ofInstant(Instant.ofEpochMilli(infoData.get("gameCreation").asLong()), ZoneId.systemDefault()))
+			.gameCreation(LocalDateTime.ofInstant(Instant.ofEpochMilli(infoData.get("gameCreation").asLong()),
+				ZoneId.systemDefault()))
 			.gameDuration(infoData.get("gameDuration").asLong())
-			.gameEndTimestamp(LocalDateTime.ofInstant(Instant.ofEpochMilli(infoData.get("gameEndTimestamp").asLong()), ZoneId.systemDefault()))
+			.gameEndTimestamp(LocalDateTime.ofInstant(Instant.ofEpochMilli(infoData.get("gameEndTimestamp").asLong()),
+				ZoneId.systemDefault()))
 			.gameId(infoData.get("gameId").asLong())
-			.gameStartTimestamp(LocalDateTime.ofInstant(Instant.ofEpochMilli(infoData.get("gameStartTimestamp").asLong()), ZoneId.systemDefault()))
+			.gameStartTimestamp(
+				LocalDateTime.ofInstant(Instant.ofEpochMilli(infoData.get("gameStartTimestamp").asLong()),
+					ZoneId.systemDefault()))
 			.gameMode(infoData.get("gameMode").asText())
 			.gameName(infoData.get("gameName").asText())
 			.gameType(infoData.get("gameType").asText())

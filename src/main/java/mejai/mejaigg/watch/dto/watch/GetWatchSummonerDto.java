@@ -1,10 +1,10 @@
-package mejai.mejaigg.watch.dto.watch_summoner;
+package mejai.mejaigg.watch.dto.watch;
+
+import java.util.List;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Schema(description = "소환사 감시 등록 응답 모델")

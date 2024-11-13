@@ -1,10 +1,10 @@
-package mejai.mejaigg.watch.dto.watch_summoner;
+package mejai.mejaigg.watch.dto.watch;
+
+import java.time.LocalTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.time.LocalTime;
 
 @AllArgsConstructor
 @Data
