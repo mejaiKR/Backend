@@ -3,7 +3,6 @@ package mejai.mejaigg.summoner.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.global.config.RiotProperties;
-import mejai.mejaigg.global.exception.RestApiException;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.AccountDto;
@@ -11,7 +10,6 @@ import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.response.UserProfileDto;
-import mejai.mejaigg.summoner.exception.SummonerErrorCode;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,16 +39,17 @@ public class ProfileService {
 	 */
 	@Transactional
 	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
-		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag).orElse(null);
-		if (summoner == null) {
-			summoner = initializeSummonerData(name, tag);
-		}
+		Summoner summoner = findOrCreateSummoner(name, tag);
 
 		return new UserProfileDto(summoner, riotProperties.getResourceUrl());
 	}
 
-	public Summoner findSummoner(Long id) {
-		return summonerRepository.findById(id).orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
+	public Summoner findOrCreateSummoner(String name, String tag) {
+		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag).orElse(null);
+		if (summoner == null) {
+			summoner = initializeSummonerData(name, tag);
+		}
+		return summoner;
 	}
 
 	/**

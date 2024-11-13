@@ -46,8 +46,14 @@ public class WatchService {
 		return new PostWatchSummonerDto(summoner.getId());
 	}
 
-	public GetWatchSummonerDto getSummonerRecord(Long id) {
-		Summoner summoner = profileService.findSummoner(id);
+	public SummonerDto getSummoner(String summonerName, String tag) {
+		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
+
+		return new SummonerDto(summoner, riotProperties.getResourceUrl());
+	}
+
+	public GetWatchSummonerDto getSummonerRecord(String summonerName, String tag) {
+		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
 		List<MatchParticipant> matchesLog = matchParticipantService.findMatchesOneWeek(summoner.getPuuid());
 
 		SummonerDto summonerDto = new SummonerDto(summoner, riotProperties.getResourceUrl());
@@ -117,5 +123,4 @@ public class WatchService {
 			.filter(matchParticipant -> matchParticipant.getMatch().getGameCreation().toLocalDate().isEqual(day))
 			.toList();
 	}
-
 }

@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.watch.dto.PostWatchSummonerDto;
 import mejai.mejaigg.watch.dto.SummonerRequest;
 import mejai.mejaigg.watch.dto.watch_summoner.GetWatchSummonerDto;
+import mejai.mejaigg.watch.dto.watch_summoner.SummonerDto;
 import mejai.mejaigg.watch.service.WatchService;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,9 +25,15 @@ public class WatchController {
 		return watchService.watchSummoner(request.getSummonerName(), request.getTag());
 	}
 
-	@GetMapping("/summoner/{id}")
+	@GetMapping("/summoner/")
 	@Operation(summary = "소환사 감시 조회", description = "소환사 감시 정보를 조회합니다.")
-	public GetWatchSummonerDto getWatchSummoner(@PathVariable Long id) {
-		return watchService.getSummonerRecord(id);
+	public GetWatchSummonerDto getWatchSummoner(SummonerRequest request) {
+		return watchService.getSummonerRecord(request.getSummonerName(), request.getTag());
+	}
+
+	@GetMapping("/summoner/search")
+	@Operation(summary = "소환사를 조회합니다.", description = "소환사명과 태그로 소환사를 검색합니다.")
+	public SummonerDto getSearchSummoner(SummonerRequest request) {
+		return watchService.getSummoner(request.getSummonerName(), request.getTag());
 	}
 }
