@@ -18,8 +18,7 @@ import mejai.mejaigg.watch.service.WatchService;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000", "https://mejai.vercel.app"},
-	methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
+@CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
 @Tag(name = "watch", description = "소환사 감시 API")
 @RequestMapping("/app/watch")
 public class WatchController {
