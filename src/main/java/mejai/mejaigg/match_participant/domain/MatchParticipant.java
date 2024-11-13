@@ -25,7 +25,7 @@ public class MatchParticipant {
 	@Column(name = "match_id", nullable = false)
 	private Long matchId;
 
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "match_id", nullable = false, insertable = false, updatable = false)
 	private Match match;
 

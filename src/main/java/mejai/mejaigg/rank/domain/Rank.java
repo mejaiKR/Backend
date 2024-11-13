@@ -1,25 +1,11 @@
 package mejai.mejaigg.rank.domain;
 
-import org.hibernate.annotations.ColumnDefault;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.summoner.domain.Summoner;
+import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Builder
@@ -94,6 +80,10 @@ public class Rank extends BaseEntity {
 		this.veteran = rankDto.isVeteran();
 		this.freshBlood = rankDto.isFreshBlood();
 		this.inactive = rankDto.isInactive();
+	}
+
+	public String getIconUrl(String resourceUrl) {
+		return resourceUrl + "emblem/" + tier + ".png";
 	}
 }
 

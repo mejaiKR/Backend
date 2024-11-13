@@ -1,30 +1,18 @@
 package mejai.mejaigg.summoner.domain;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import lombok.*;
 import mejai.mejaigg.global.jpa.BaseEntity;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.rank.domain.RankId;
 import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -120,5 +108,19 @@ public class Summoner extends BaseEntity {
 
 	public void addSearchHistory(SearchHistory searchHistory) {
 		this.searchHistory.add(searchHistory);
+	}
+
+	public Rank getSoloRank() {
+		return ranks.stream()
+			.filter(rank -> rank.getId().getQueueType().equals("RANKED_SOLO_5x5"))
+			.findFirst()
+			.orElseThrow(IllegalArgumentException::new);
+	}
+
+	public Rank getFlexRank() {
+		return ranks.stream()
+			.filter(rank -> rank.getId().getQueueType().equals("RANKED_FLEX_SR"))
+			.findFirst()
+			.orElseThrow(IllegalArgumentException::new);
 	}
 }

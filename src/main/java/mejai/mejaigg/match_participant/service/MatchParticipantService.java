@@ -9,6 +9,8 @@ import mejai.mejaigg.match_participant.repository.MatchParticipantRepository;
 import mejai.mejaigg.riot.service.RiotService;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,5 +49,17 @@ public class MatchParticipantService {
 				log.error("MatchParticipant parsing error : {}", e.getMessage());
 			}
 		}
+	}
+
+	public List<MatchParticipant> findMatchesOneWeek(String puuid) {
+		// 이번주 월요일 ~ 오늘까지의 데이터만 조회
+		LocalDateTime today = LocalDateTime.now();
+		LocalDateTime monday = today.with(DayOfWeek.MONDAY)
+			.withHour(0)
+			.withMinute(0)
+			.withSecond(0)
+			.withNano(0);
+
+		return matchParticipantRepository.findByPuuidAndMatch_GameCreationGreaterThanEqual(puuid, monday);
 	}
 }
