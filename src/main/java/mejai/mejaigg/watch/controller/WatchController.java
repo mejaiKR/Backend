@@ -30,7 +30,7 @@ public class WatchController {
 		return watchService.watchSummoner(request.getSummonerName(), request.getTag());
 	}
 
-	@GetMapping("/summoner/")
+	@GetMapping("/summoner")
 	@Operation(summary = "소환사 감시 조회", description = "소환사 감시 정보를 조회합니다.")
 	public GetWatchSummonerDto getWatchSummoner(SummonerRequest request) {
 		return watchService.getSummonerRecord(request.getSummonerName(), request.getTag());
