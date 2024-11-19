@@ -11,6 +11,8 @@ public class SummonerDto {
 
 	private String tag;
 
+	private String profileIcon;
+
 	@Schema(description = "관계", example = "애인, 가족, 친구")
 	private String relationship;
 
@@ -29,6 +31,7 @@ public class SummonerDto {
 
 		this.summonerName = summoner.getSummonerName();
 		this.tag = summoner.getTagLine();
+		this.profileIcon = resourceUrl + "profileIcon/" + summoner.getProfileIconId() + ".png";
 		this.relationship = "비밀임";
 		this.soloRankTier = soloRank.getTier() + " " + soloRank.getRank();
 		this.soloRankIconUrl = soloRank.getIconUrl(resourceUrl);
