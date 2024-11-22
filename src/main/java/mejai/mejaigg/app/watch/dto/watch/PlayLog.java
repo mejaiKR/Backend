@@ -1,4 +1,4 @@
-package mejai.mejaigg.watch.dto.watch;
+package mejai.mejaigg.app.watch.dto.watch;
 
 import java.time.LocalTime;
 
@@ -8,7 +8,7 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class PlayLogDto {
+public class PlayLog {
 	@Schema(description = "게임 시작 시간", example = "hh:mm:ss.nnn")
 	private LocalTime startTime;
 

@@ -1,4 +1,4 @@
-package mejai.mejaigg.watch.service;
+package mejai.mejaigg.app.watch.service;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
@@ -11,6 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.app.user.domain.AppUser;
+import mejai.mejaigg.app.user.domain.Relationship;
+import mejai.mejaigg.app.user.service.UserService;
+import mejai.mejaigg.app.watch.dto.CreateSummonerResponse;
+import mejai.mejaigg.app.watch.dto.SearchSummonerResponse;
+import mejai.mejaigg.app.watch.dto.watch.DayLog;
+import mejai.mejaigg.app.watch.dto.watch.PlayLog;
+import mejai.mejaigg.app.watch.dto.watch.WatchSummoner;
+import mejai.mejaigg.app.watch.dto.watch.WatchSummonerResponse;
 import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.match.domain.Match;
 import mejai.mejaigg.match.service.MatchService;
@@ -19,11 +28,6 @@ import mejai.mejaigg.matchparticipant.service.MatchParticipantService;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 import mejai.mejaigg.summoner.service.ProfileService;
-import mejai.mejaigg.watch.dto.PostWatchSummonerDto;
-import mejai.mejaigg.watch.dto.watch.DayLogDto;
-import mejai.mejaigg.watch.dto.watch.GetWatchSummonerDto;
-import mejai.mejaigg.watch.dto.watch.PlayLogDto;
-import mejai.mejaigg.watch.dto.watch.SummonerDto;
 
 @Service
 @Slf4j
@@ -34,9 +38,11 @@ public class WatchService {
 	private final MatchService matchService;
 	private final MatchParticipantService matchParticipantService;
 	private final RiotProperties riotProperties;
+	private final UserService userService;
 
 	@Transactional
-	public PostWatchSummonerDto watchSummoner(String summonerName, String tag) {
+	public CreateSummonerResponse watchSummoner(long userId, String summonerName, String tag,
+		Relationship relationship) {
 		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(summonerName, tag)
 			.orElse(null);
 		if (summoner == null) {
@@ -45,29 +51,35 @@ public class WatchService {
 
 		matchService.createMatches(summoner.getPuuid());
 
-		return new PostWatchSummonerDto(summoner.getId());
+		userService.addWatchSummoner(userId, summoner, relationship);
+
+		return new CreateSummonerResponse(summoner.getId());
 	}
 
-	public SummonerDto getSummoner(String summonerName, String tag) {
+	public SearchSummonerResponse getSummoner(String summonerName, String tag) {
 		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
 
-		return new SummonerDto(summoner, riotProperties.getResourceUrl());
+		return new SearchSummonerResponse(summoner, riotProperties.getResourceUrl());
 	}
 
-	public GetWatchSummonerDto getSummonerRecord(String summonerName, String tag) {
-		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
+	public WatchSummonerResponse getSummonerRecord(Long userId) {
+		AppUser user = userService.findUserById(userId);
+		Summoner summoner = user.getWatchSummoner();
+		if (summoner == null) {
+			throw new IllegalArgumentException("소환사를 감시하고 있지 않습니다.");
+		}
 		List<MatchParticipant> matchesLog = matchParticipantService.findMatchesOneWeek(summoner.getPuuid());
 
-		SummonerDto summonerDto = new SummonerDto(summoner, riotProperties.getResourceUrl());
-		DayLogDto today = createDayLogDto(matchesLog);
-		List<PlayLogDto> todayPlayLog = createTodayPlayLog(matchesLog);
-		List<DayLogDto> thisWeek = createWeekLog(matchesLog);
+		WatchSummoner summonerDto = new WatchSummoner(user, riotProperties.getResourceUrl());
+		DayLog today = createDayLogDto(matchesLog);
+		List<PlayLog> todayPlayLog = createTodayPlayLog(matchesLog);
+		List<DayLog> thisWeek = createWeekLog(matchesLog);
 
-		return new GetWatchSummonerDto(summonerDto, today, todayPlayLog, thisWeek);
+		return new WatchSummonerResponse(summonerDto, today, todayPlayLog, thisWeek);
 	}
 
-	private List<PlayLogDto> createTodayPlayLog(List<MatchParticipant> matchesLog) {
-		List<PlayLogDto> todayPlayLog = new ArrayList<>();
+	private List<PlayLog> createTodayPlayLog(List<MatchParticipant> matchesLog) {
+		List<PlayLog> todayPlayLog = new ArrayList<>();
 
 		List<MatchParticipant> todayLogs = toDayMatchParticipants(matchesLog, LocalDate.now());
 		for (MatchParticipant matchParticipant : todayLogs) {
@@ -75,14 +87,14 @@ public class WatchService {
 			LocalTime gameStartTime = match.getGameStartTimestamp().toLocalTime();
 			LocalTime gameEndTime = match.getGameEndTimestamp().toLocalTime();
 
-			todayPlayLog.add(new PlayLogDto(gameStartTime, gameEndTime, matchParticipant.getWin()));
+			todayPlayLog.add(new PlayLog(gameStartTime, gameEndTime, matchParticipant.getWin()));
 		}
 
 		return todayPlayLog;
 	}
 
-	private List<DayLogDto> createWeekLog(List<MatchParticipant> matchesLog) {
-		List<DayLogDto> weekLog = new ArrayList<>();
+	private List<DayLog> createWeekLog(List<MatchParticipant> matchesLog) {
+		List<DayLog> weekLog = new ArrayList<>();
 
 		LocalDate today = LocalDate.now();
 		LocalDate monday = today.with(DayOfWeek.MONDAY);
@@ -94,13 +106,13 @@ public class WatchService {
 				.mapToLong(Match::getGameDuration)
 				.sum();
 
-			weekLog.add(new DayLogDto(playCount, playTime));
+			weekLog.add(new DayLog(playCount, playTime));
 		}
 
 		return weekLog;
 	}
 
-	private DayLogDto createDayLogDto(List<MatchParticipant> matchesLog) {
+	private DayLog createDayLogDto(List<MatchParticipant> matchesLog) {
 		// if game creation time is today
 		LocalDate today = LocalDate.now();
 		List<Match> todayMatches = toDayMatches(matchesLog, today);
@@ -110,7 +122,7 @@ public class WatchService {
 			.mapToLong(Match::getGameDuration)
 			.sum();
 
-		return new DayLogDto(playCount, playTime);
+		return new DayLog(playCount, playTime);
 	}
 
 	private List<Match> toDayMatches(List<MatchParticipant> matchesLog, LocalDate day) {

@@ -1,12 +1,13 @@
-package mejai.mejaigg.watch.dto.watch;
+package mejai.mejaigg.app.watch.dto.watch;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import mejai.mejaigg.app.user.domain.AppUser;
 import mejai.mejaigg.rank.domain.Rank;
 import mejai.mejaigg.summoner.domain.Summoner;
 
 @Data
-public class SummonerDto {
+public class WatchSummoner {
 	private String summonerName;
 
 	private String tag;
@@ -25,7 +26,8 @@ public class SummonerDto {
 
 	private String flexRankIconUrl;
 
-	public SummonerDto(Summoner summoner, String resourceUrl) {
+	public WatchSummoner(AppUser user, String resourceUrl) {
+		Summoner summoner = user.getWatchSummoner();
 		Rank soloRank = summoner.getSoloRank();
 		Rank flexRank = summoner.getFlexRank();
 

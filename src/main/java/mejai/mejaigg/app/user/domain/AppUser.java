@@ -44,4 +44,9 @@ public class AppUser {
 
 	public AppUser() {
 	}
+
+	public void addWatchSummoner(Summoner summoner, Relationship relationship) {
+		this.watchSummoner = summoner;
+		this.relationship = relationship;
+	}
 }

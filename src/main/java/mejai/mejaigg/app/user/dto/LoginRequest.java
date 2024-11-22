@@ -1,5 +1,7 @@
 package mejai.mejaigg.app.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.Getter;
@@ -16,4 +18,10 @@ public class LoginRequest {
 		+ "구글: google",
 		example = "kakao")
 	private SocialType socialType;
+
+	@JsonCreator
+	public LoginRequest(String socialId, String socialType) {
+		this.socialId = socialId;
+		this.socialType = SocialType.of(socialType);
+	}
 }
