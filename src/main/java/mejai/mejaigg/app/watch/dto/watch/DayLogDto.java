@@ -1,4 +1,4 @@
-package mejai.mejaigg.watch.dto.watch;
+package mejai.mejaigg.app.watch.dto.watch;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
