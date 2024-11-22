@@ -33,6 +33,7 @@ public class WatchController {
 	@Operation(summary = "소환사 감시 등록", description = """
 			소환사를 감시합니다.
 			소환사명과 태그, 관계를 입력하세요.
+			해당 소환사의 최근 100개의 전적을 불러옵니다.
 
 			관계 목록:
 			애인, 친구, 동료, 자녀, 라이벌, 스트리머

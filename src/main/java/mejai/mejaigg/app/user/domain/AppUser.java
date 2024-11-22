@@ -49,4 +49,8 @@ public class AppUser {
 		this.watchSummoner = summoner;
 		this.relationship = relationship;
 	}
+
+	public String getRelationship() {
+		return relationship.getRelationship();
+	}
 }

@@ -34,7 +34,7 @@ public class WatchSummoner {
 		this.summonerName = summoner.getSummonerName();
 		this.tag = summoner.getTagLine();
 		this.profileIcon = resourceUrl + "profileIcon/" + summoner.getProfileIconId() + ".png";
-		this.relationship = "비밀임";
+		this.relationship = user.getRelationship();
 		this.soloRankTier = soloRank.getTier() + " " + soloRank.getRank();
 		this.soloRankIconUrl = soloRank.getIconUrl(resourceUrl);
 		this.flexRankTier = flexRank.getTier() + " " + flexRank.getRank();
