@@ -22,7 +22,7 @@ import mejai.mejaigg.app.watch.service.WatchService;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
+@CrossOrigin(origins = {"*"}, methods = {RequestMethod.GET, RequestMethod.PUT, RequestMethod.OPTIONS})
 @Tag(name = "watch", description = "소환사 감시 API")
 @RequestMapping("/app/watch")
 public class WatchController {
@@ -38,7 +38,7 @@ public class WatchController {
 			애인, 친구, 동료, 자녀, 라이벌, 스트리머
 		""")
 	@JwtAuth
-	public CreateSummonerResponse putkWatchSummoner(@RequestAttribute("id") Long userId,
+	public CreateSummonerResponse putWatchSummoner(@RequestAttribute("id") Long userId,
 		@RequestBody WatchSummonerRequest request) {
 		return watchService.watchSummoner(userId,
 			request.getSummonerName(),
