@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,7 +42,9 @@ public class WatchService {
 	private final UserService userService;
 
 	@Transactional
-	public CreateSummonerResponse watchSummoner(long userId, String summonerName, String tag,
+	public CreateSummonerResponse watchSummoner(long userId,
+		String summonerName,
+		String tag,
 		Relationship relationship) {
 		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(summonerName, tag)
 			.orElse(null);
@@ -54,6 +57,15 @@ public class WatchService {
 		userService.addWatchSummoner(userId, summoner, relationship);
 
 		return new CreateSummonerResponse(summoner.getId());
+	}
+
+	@Scheduled(cron = "0 0 0/1 * * *")
+	@Transactional
+	public void renewal() {
+		List<Summoner> watchSummoners = userService.findAllWatchSummoner();
+		for (Summoner summoner : watchSummoners) {
+			matchService.createMatches(summoner.getPuuid());
+		}
 	}
 
 	public SearchSummonerResponse getSummoner(String summonerName, String tag) {
