@@ -46,11 +46,7 @@ public class WatchService {
 		String summonerName,
 		String tag,
 		Relationship relationship) {
-		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(summonerName, tag)
-			.orElse(null);
-		if (summoner == null) {
-			summoner = profileService.initializeSummonerData(summonerName, tag);
-		}
+		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
 
 		matchService.createMatches(summoner.getPuuid());
 

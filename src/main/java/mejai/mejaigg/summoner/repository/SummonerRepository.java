@@ -11,4 +11,6 @@ public interface SummonerRepository extends JpaRepository<Summoner, Long>, Summo
 	Optional<Summoner> findById(Long id);
 
 	Optional<Summoner> findBySummonerNameAndTagLineAllIgnoreCase(String name, String tag);
+
+	Optional<Summoner> findByNormalizedSummonerNameAndNormalizedTagLine(String name, String tag);
 }

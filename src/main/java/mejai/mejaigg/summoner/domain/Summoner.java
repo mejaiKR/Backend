@@ -13,6 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -41,8 +43,14 @@ public class Summoner extends BaseEntity {
 	@Column(name = "summoner_name", nullable = false)
 	private String summonerName;
 
+	@Column(name = "normalized_summoner_name", nullable = false)
+	private String normalizedSummonerName;
+
 	@Column(name = "tag_line")
 	private String tagLine;
+
+	@Column(name = "normalized_tag_line", nullable = false)
+	private String normalizedTagLine;
 
 	@Column(name = "puuid", nullable = false, unique = true)
 	private String puuid;
@@ -71,6 +79,13 @@ public class Summoner extends BaseEntity {
 	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL)
 	@Builder.Default
 	private Set<SearchHistory> searchHistory = new HashSet<>();
+
+	@PrePersist
+	@PreUpdate
+	private void normalizeSummonerNameAndTagLine() {
+		this.normalizedSummonerName = summonerName.replace(" ", "").toLowerCase();
+		this.normalizedTagLine = tagLine.toLowerCase();
+	}
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {
 		this.summonerId = summonerDto.getId();

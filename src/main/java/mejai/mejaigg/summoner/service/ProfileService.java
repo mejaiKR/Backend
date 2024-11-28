@@ -46,7 +46,10 @@ public class ProfileService {
 	}
 
 	public Summoner findOrCreateSummoner(String name, String tag) {
-		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag).orElse(null);
+		name = name.replace(" ", "").toLowerCase();
+		tag = tag.toLowerCase();
+
+		Summoner summoner = summonerRepository.findByNormalizedSummonerNameAndNormalizedTagLine(name, tag).orElse(null);
 		if (summoner == null) {
 			summoner = initializeSummonerData(name, tag);
 		}
@@ -94,9 +97,13 @@ public class ProfileService {
 	 * @param tag  소환사 태그
 	 * @return 갱신된 소환사 정보
 	 */
+	//Todo: findOrCreateSummoner에서 전부 처리하도록 리팩토링
 	@Transactional
 	public UserProfileDto refreshUserProfileByNameTag(String name, String tag) {
-		Summoner summoner = summonerRepository.findBySummonerNameAndTagLineAllIgnoreCase(name, tag).orElse(null);
+		name = name.replace(" ", "").toLowerCase();
+		tag = tag.toLowerCase();
+
+		Summoner summoner = summonerRepository.findByNormalizedSummonerNameAndNormalizedTagLine(name, tag).orElse(null);
 		if (summoner == null) {
 			log.info("유저가 없어 초기화를 진행합니다.");
 			summoner = initializeSummonerData(name, tag);
