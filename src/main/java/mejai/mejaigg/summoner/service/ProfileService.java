@@ -46,10 +46,11 @@ public class ProfileService {
 	}
 
 	public Summoner findOrCreateSummoner(String name, String tag) {
-		name = name.replace(" ", "").toLowerCase();
-		tag = tag.toLowerCase();
+		String normalizeName = name.replace(" ", "").toLowerCase();
+		String normalizeTag = tag.toLowerCase();
 
-		Summoner summoner = summonerRepository.findByNormalizedSummonerNameAndNormalizedTagLine(name, tag).orElse(null);
+		Summoner summoner = summonerRepository.findByNormalizedSummonerNameAndNormalizedTagLine(normalizeName,
+			normalizeTag).orElse(null);
 		if (summoner == null) {
 			summoner = initializeSummonerData(name, tag);
 		}
