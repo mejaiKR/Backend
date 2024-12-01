@@ -49,9 +49,11 @@ public class ProfileService {
 		String normalizeName = name.replace(" ", "").toLowerCase();
 		String normalizeTag = tag.toLowerCase();
 
-		Summoner summoner = summonerRepository.findByNormalizedSummonerNameAndNormalizedTagLine(normalizeName,
-			normalizeTag).orElse(null);
+		Summoner summoner = summonerRepository
+			.findByNormalizedSummonerNameAndNormalizedTagLine(normalizeName, normalizeTag)
+			.orElse(null);
 		if (summoner == null) {
+			log.info("소환사 정보가 없어 새로 생성합니다.");
 			summoner = initializeSummonerData(name, tag);
 		}
 		return summoner;
@@ -98,23 +100,15 @@ public class ProfileService {
 	 * @param tag  소환사 태그
 	 * @return 갱신된 소환사 정보
 	 */
-	//Todo: findOrCreateSummoner에서 전부 처리하도록 리팩토링
 	@Transactional
 	public UserProfileDto refreshUserProfileByNameTag(String name, String tag) {
-		name = name.replace(" ", "").toLowerCase();
-		tag = tag.toLowerCase();
+		Summoner summoner = findOrCreateSummoner(name, tag);
 
-		Summoner summoner = summonerRepository.findByNormalizedSummonerNameAndNormalizedTagLine(name, tag).orElse(null);
-		if (summoner == null) {
-			log.info("유저가 없어 초기화를 진행합니다.");
-			summoner = initializeSummonerData(name, tag);
+		if (summoner.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
+			log.info("2시간이 지나지 않아 강제 업데이트를 할 수 없습니다.");
 		} else {
-			if (summoner.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
-				log.info("2시간이 지나지 않아 강제 업데이트를 할 수 없습니다.");
-			} else {
-				log.info("2시간이 지나 강제 업데이트를 진행합니다.");
-				updateUserDetails(summoner);
-			}
+			log.info("2시간이 지나 강제 업데이트를 진행합니다.");
+			updateUserDetails(summoner);
 		}
 
 		return new UserProfileDto(summoner, riotProperties.getResourceUrl());
