@@ -30,7 +30,10 @@ public class UserController {
 		"""
 	)
 	public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-		return userService.loginOrSignUp(loginRequest.getSocialId(), loginRequest.getSocialType());
+		return userService.loginOrSignUp(
+			loginRequest.getSocialId(),
+			loginRequest.getSocialType(),
+			loginRequest.getAuthCode());
 	}
 
 	@PostMapping("/refresh")

@@ -2,7 +2,8 @@ package mejai.mejaigg.app.user.domain;
 
 public enum SocialType {
 	APPLE("apple"),
-	KAKAO("kakao");
+	KAKAO("kakao"),
+	GOOGLE("google");
 
 	private final String type;
 

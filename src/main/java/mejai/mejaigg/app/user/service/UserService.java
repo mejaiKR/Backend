@@ -25,7 +25,7 @@ public class UserService {
 	private final AppUserRepository appUserRepository;
 	private final JwtProvider jwtProvider;
 
-	public LoginResponse loginOrSignUp(String socialId, SocialType socialType) {
+	public LoginResponse loginOrSignUp(String socialId, SocialType socialType, String authCode) {
 		AppUser appUser = appUserRepository.findAppUserBySocialIdAndSocialType(socialId, socialType)
 			.orElseGet(() -> appUserRepository.save(new AppUser(socialId, socialType)));
 
