@@ -1,5 +1,6 @@
 package mejai.mejaigg.app.watch.controller;
 
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,12 +15,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.app.jwt.JwtAuth;
-import mejai.mejaigg.app.watch.dto.CreateSummonerResponse;
-import mejai.mejaigg.app.watch.dto.GetWatchSummonerRequest;
-import mejai.mejaigg.app.watch.dto.PutWatchSummonerRequest;
-import mejai.mejaigg.app.watch.dto.SearchSummonerResponse;
-import mejai.mejaigg.app.watch.dto.SummonerRequest;
-import mejai.mejaigg.app.watch.dto.watch.WatchSummonerResponse;
+import mejai.mejaigg.app.watch.dto.request.GetWatchSummonerRequest;
+import mejai.mejaigg.app.watch.dto.request.PutWatchSummonerRequest;
+import mejai.mejaigg.app.watch.dto.request.SummonerRequest;
+import mejai.mejaigg.app.watch.dto.response.CreateSummonerResponse;
+import mejai.mejaigg.app.watch.dto.response.SearchSummonerResponse;
+import mejai.mejaigg.app.watch.dto.response.WatchSummonerDetailsResponse;
+import mejai.mejaigg.app.watch.dto.response.watch.WatchSummonerResponse;
 import mejai.mejaigg.app.watch.service.WatchService;
 
 @RestController
@@ -69,14 +71,25 @@ public class WatchController {
 	@JwtAuth
 	public WatchSummonerResponse getWatchSummoner(
 		@RequestAttribute("id") Long userId,
-		GetWatchSummonerRequest request
+		@ParameterObject GetWatchSummonerRequest request
 	) {
+		System.out.println("startDate : " + request.getStartDate());
 		return watchService.getSummonerRecord(userId, request.getStartDate());
+	}
+
+	@GetMapping("/summoner/detail")
+	@Operation(summary = "소환사 감시 상세 조회", description = "감시중인 소환사의 전적을 상세 조회합니다.")
+	@JwtAuth
+	public WatchSummonerDetailsResponse getWatchSummonerDetails(
+		@RequestAttribute("id") Long userId,
+		@ParameterObject GetWatchSummonerRequest request
+	) {
+		return watchService.getSummonerRecordDetail(userId, request.getStartDate());
 	}
 
 	@GetMapping("/summoner/search")
 	@Operation(summary = "소환사 검색", description = "소환사명과 태그로 소환사를 검색합니다.")
-	public SearchSummonerResponse getSearchSummoner(SummonerRequest request) {
+	public SearchSummonerResponse getSearchSummoner(@ParameterObject SummonerRequest request) {
 		return watchService.getSummoner(request.getSummonerName(), request.getTag());
 	}
 }

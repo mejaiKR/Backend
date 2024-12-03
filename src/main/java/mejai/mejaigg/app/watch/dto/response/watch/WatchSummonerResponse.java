@@ -1,4 +1,4 @@
-package mejai.mejaigg.app.watch.dto.watch;
+package mejai.mejaigg.app.watch.dto.response.watch;
 
 import java.util.List;
 
