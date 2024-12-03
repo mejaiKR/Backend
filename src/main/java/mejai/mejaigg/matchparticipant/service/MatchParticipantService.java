@@ -1,7 +1,9 @@
 package mejai.mejaigg.matchparticipant.service;
 
 import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,15 +55,11 @@ public class MatchParticipantService {
 		}
 	}
 
-	public List<MatchParticipant> findMatchesOneWeek(String puuid) {
-		// 이번주 월요일 ~ 오늘까지의 데이터만 조회
-		LocalDateTime today = LocalDateTime.now();
-		LocalDateTime monday = today.with(DayOfWeek.MONDAY)
-			.withHour(0)
-			.withMinute(0)
-			.withSecond(0)
-			.withNano(0);
+	public List<MatchParticipant> findMatchesOneWeek(String puuid, LocalDate startDate) {
+		// 월요일 ~ 일요일까지 데이터만 조회
+		LocalDateTime monday = LocalDateTime.of(startDate.with(DayOfWeek.MONDAY), LocalTime.MIN);
+		LocalDateTime sunday = LocalDateTime.of(startDate.with(DayOfWeek.SUNDAY), LocalTime.MAX);
 
-		return matchParticipantRepository.findByPuuidAndMatch_GameCreationGreaterThanEqual(puuid, monday);
+		return matchParticipantRepository.findByPuuidAndMatch_GameCreationBetween(puuid, monday, sunday);
 	}
 }

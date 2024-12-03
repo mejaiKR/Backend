@@ -81,13 +81,13 @@ public class WatchService {
 		return new SearchSummonerResponse(summoner, riotProperties.getResourceUrl());
 	}
 
-	public WatchSummonerResponse getSummonerRecord(Long userId) {
+	public WatchSummonerResponse getSummonerRecord(Long userId, LocalDate startDate) {
 		AppUser user = userService.findUserById(userId);
 		Summoner summoner = user.getWatchSummoner();
 		if (summoner == null) {
 			throw new IllegalArgumentException("소환사를 감시하고 있지 않습니다.");
 		}
-		List<MatchParticipant> matchesLog = matchParticipantService.findMatchesOneWeek(summoner.getPuuid());
+		List<MatchParticipant> matchesLog = matchParticipantService.findMatchesOneWeek(summoner.getPuuid(), startDate);
 
 		WatchSummoner summonerDto = new WatchSummoner(user, riotProperties.getResourceUrl());
 		DayLog today = createDayLogDto(matchesLog);

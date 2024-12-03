@@ -10,5 +10,9 @@ import mejai.mejaigg.matchparticipant.domain.MatchParticipant;
 public interface MatchParticipantRepository extends JpaRepository<MatchParticipant, Long> {
 	List<MatchParticipant> findMatchesByPuuid(String puuid);
 
-	List<MatchParticipant> findByPuuidAndMatch_GameCreationGreaterThanEqual(String puuid, LocalDateTime gameCreation);
+	List<MatchParticipant> findByPuuidAndMatch_GameCreationBetween(
+		String puuid,
+		LocalDateTime startDate,
+		LocalDateTime endDate
+	);
 }

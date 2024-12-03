@@ -8,7 +8,7 @@ import mejai.mejaigg.app.user.domain.Relationship;
 
 @Data
 @Schema(description = "소환사 식별자")
-public class WatchSummonerRequest {
+public class PutWatchSummonerRequest {
 	@NotBlank
 	@Size(min = 1, max = 30)
 	@Schema(description = "소환사명", example = "hide on bush")

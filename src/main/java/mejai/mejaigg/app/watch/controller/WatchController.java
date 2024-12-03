@@ -15,9 +15,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.app.jwt.JwtAuth;
 import mejai.mejaigg.app.watch.dto.CreateSummonerResponse;
+import mejai.mejaigg.app.watch.dto.GetWatchSummonerRequest;
+import mejai.mejaigg.app.watch.dto.PutWatchSummonerRequest;
 import mejai.mejaigg.app.watch.dto.SearchSummonerResponse;
 import mejai.mejaigg.app.watch.dto.SummonerRequest;
-import mejai.mejaigg.app.watch.dto.WatchSummonerRequest;
 import mejai.mejaigg.app.watch.dto.watch.WatchSummonerResponse;
 import mejai.mejaigg.app.watch.service.WatchService;
 
@@ -40,12 +41,16 @@ public class WatchController {
 			애인, 친구, 동료, 자녀, 라이벌, 스트리머
 		""")
 	@JwtAuth
-	public CreateSummonerResponse putWatchSummoner(@RequestAttribute("id") Long userId,
-		@RequestBody WatchSummonerRequest request) {
-		return watchService.watchSummoner(userId,
+	public CreateSummonerResponse putWatchSummoner(
+		@RequestAttribute("id") Long userId,
+		@RequestBody PutWatchSummonerRequest request
+	) {
+		return watchService.watchSummoner(
+			userId,
 			request.getSummonerName(),
 			request.getTag(),
-			request.getRelationship());
+			request.getRelationship()
+		);
 	}
 
 	@PostMapping("/summoner/refresh")
@@ -56,10 +61,17 @@ public class WatchController {
 	}
 
 	@GetMapping("/summoner")
-	@Operation(summary = "소환사 감시 조회", description = "소환사 감시 정보를 조회합니다.")
+	@Operation(summary = "소환사 감시 조회", description = """
+		감시중인 소환사의 월요일 ~ 일요일 전적을 조회합니다.
+		날짜를 입력하지 않으면 오늘을 기준으로 조회합니다.
+		날짜를 입력한다면 해당 날짜의 주간 전적을 조회합니다.
+		""")
 	@JwtAuth
-	public WatchSummonerResponse getWatchSummoner(@RequestAttribute("id") Long userId) {
-		return watchService.getSummonerRecord(userId);
+	public WatchSummonerResponse getWatchSummoner(
+		@RequestAttribute("id") Long userId,
+		GetWatchSummonerRequest request
+	) {
+		return watchService.getSummonerRecord(userId, request.getStartDate());
 	}
 
 	@GetMapping("/summoner/search")
