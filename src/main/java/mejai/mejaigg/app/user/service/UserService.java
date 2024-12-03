@@ -25,7 +25,10 @@ public class UserService {
 		AppUser appUser = appUserRepository.findAppUserBySocialIdAndSocialType(socialId, socialType)
 			.orElseGet(() -> appUserRepository.save(new AppUser(socialId, socialType)));
 
-		return new LoginResponse(jwtProvider.generateToken(appUser.getId()));
+		return new LoginResponse(
+			jwtProvider.generateAccessToken(appUser.getId()),
+			jwtProvider.generateRefreshToken(appUser.getId())
+		);
 	}
 
 	public void addWatchSummoner(long userId, Summoner summoner, Relationship relationship) {

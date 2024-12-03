@@ -19,14 +19,26 @@ public class JwtProvider {
 	@Value("${jwt.secret}")
 	private String secretKey; //
 
-	@Value("${jwt.expiration}")
-	private long expiration; // 예: 36000000 (10시간)
+	@Value("${jwt.access-token-expiration}")
+	private long accessTokenExpiration;
 
-	public String generateToken(long id) {
+	@Value("${jwt.refresh-token-expiration}")
+	private long refreshTokenExpiration;
+
+	public String generateAccessToken(long id) {
 		return Jwts.builder()
 			.subject(String.valueOf(id))
 			.issuedAt(new Date(System.currentTimeMillis()))
-			.expiration(new Date(System.currentTimeMillis() + expiration))
+			.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+			.signWith(signKey())
+			.compact();
+	}
+
+	public String generateRefreshToken(long id) {
+		return Jwts.builder()
+			.subject(String.valueOf(id))
+			.issuedAt(new Date(System.currentTimeMillis()))
+			.expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
 			.signWith(signKey())
 			.compact();
 	}
