@@ -64,6 +64,17 @@ public class WatchService {
 		}
 	}
 
+	public CreateSummonerResponse refreshWatchSummoner(Long userId) {
+		AppUser user = userService.findUserById(userId);
+		Summoner summoner = user.getWatchSummoner();
+		if (summoner == null) {
+			throw new IllegalArgumentException("소환사를 감시하고 있지 않습니다.");
+		}
+
+		matchService.createMatches(summoner.getPuuid());
+		return new CreateSummonerResponse(summoner.getId());
+	}
+
 	public SearchSummonerResponse getSummoner(String summonerName, String tag) {
 		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
 
@@ -145,4 +156,5 @@ public class WatchService {
 			.filter(matchParticipant -> matchParticipant.getMatch().getGameCreation().toLocalDate().isEqual(day))
 			.toList();
 	}
+
 }

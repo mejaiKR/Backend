@@ -2,6 +2,7 @@ package mejai.mejaigg.app.watch.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,6 +46,13 @@ public class WatchController {
 			request.getSummonerName(),
 			request.getTag(),
 			request.getRelationship());
+	}
+
+	@PostMapping("/summoner/refresh")
+	@Operation(summary = "소환사 감시 갱신", description = "소환사 감시 정보를 갱신합니다.")
+	@JwtAuth
+	public CreateSummonerResponse postRefreshWatchSummoner(@RequestAttribute("id") Long userId) {
+		return watchService.refreshWatchSummoner(userId);
 	}
 
 	@GetMapping("/summoner")
