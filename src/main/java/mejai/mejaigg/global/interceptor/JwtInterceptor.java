@@ -1,9 +1,12 @@
 package mejai.mejaigg.global.interceptor;
 
+import java.io.IOException;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +18,9 @@ import mejai.mejaigg.app.jwt.JwtProvider;
 @Slf4j
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
+
+	private static final String TOKEN_INVALID_MESSAGE = "토큰이 유효하지 않습니다.";
+	private static final String TOKEN_EXPIRED_MESSAGE = "토큰이 만료되었습니다.";
 
 	private final JwtProvider jwtProvider;
 
@@ -33,32 +39,49 @@ public class JwtInterceptor implements HandlerInterceptor {
 			return true;
 		}
 
-		String authHeader = request.getHeader("Authorization");
-		if (isJwtToken(request, authHeader)) {
-			return true;
-		}
-
-		// 인증 실패 시 응답
-		response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		response.getWriter().write("Unauthorized");
-		return false;
+		return validateJwtToken(request, response);
 	}
 
-	private boolean isJwtToken(HttpServletRequest request, String authHeader) {
-		if (authHeader == null) {
-			return false;
-		}
-		if (!authHeader.startsWith("Bearer ")) {
+	private boolean validateJwtToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String token = extractToken(request);
+
+		if (token == null) {
+			sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, TOKEN_INVALID_MESSAGE);
 			return false;
 		}
 
-		String token = authHeader.substring(7);
-		if (!jwtProvider.isValidateToken(token)) {
+		try {
+			jwtProvider.isValidateToken(token);
+		} catch (ExpiredJwtException e) {
+			// 토큰이 만료되었다면 403
+			sendErrorResponse(response, HttpServletResponse.SC_FORBIDDEN, TOKEN_EXPIRED_MESSAGE);
+			return false;
+		} catch (Exception e) {
+			// 토큰이 유효하지 않다면 401
+			sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, TOKEN_INVALID_MESSAGE);
 			return false;
 		}
 
 		Long id = jwtProvider.extractId(token);
 		request.setAttribute("id", id);
 		return true;
+	}
+
+	private String extractToken(HttpServletRequest request) {
+		String authHeader = request.getHeader("Authorization");
+
+		if (authHeader == null || authHeader.isEmpty()) {
+			return null;
+		}
+		if (!authHeader.startsWith("Bearer ")) {
+			return null;
+		}
+
+		return authHeader.substring(7);
+	}
+
+	private void sendErrorResponse(HttpServletResponse response, int status, String message) throws IOException {
+		response.setStatus(status);
+		response.getWriter().write(message);
 	}
 }
