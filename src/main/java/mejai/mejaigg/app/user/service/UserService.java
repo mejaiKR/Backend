@@ -3,14 +3,18 @@ package mejai.mejaigg.app.user.service;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.app.jwt.JwtProvider;
 import mejai.mejaigg.app.user.domain.AppUser;
 import mejai.mejaigg.app.user.domain.Relationship;
 import mejai.mejaigg.app.user.domain.SocialType;
 import mejai.mejaigg.app.user.dto.LoginResponse;
+import mejai.mejaigg.app.user.dto.RefreshResponse;
 import mejai.mejaigg.app.user.repository.AppUserRepository;
 import mejai.mejaigg.summoner.domain.Summoner;
 
@@ -48,5 +52,17 @@ public class UserService {
 			.filter(Objects::nonNull)
 			.distinct()
 			.toList();
+	}
+
+	public RefreshResponse refresh(String refreshToken) {
+		try {
+			Long id = jwtProvider.extractId(refreshToken);
+
+			return new RefreshResponse(jwtProvider.generateAccessToken(id));
+		} catch (ExpiredJwtException e) {
+			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다.");
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
+		}
 	}
 }

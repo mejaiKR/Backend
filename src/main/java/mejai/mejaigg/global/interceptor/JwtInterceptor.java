@@ -25,9 +25,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 	private final JwtProvider jwtProvider;
 
 	@Override
-	public boolean preHandle(HttpServletRequest request,
+	public boolean preHandle(
+		HttpServletRequest request,
 		HttpServletResponse response,
-		Object handler) throws Exception {
+		Object handler
+	) throws Exception {
 		if (!(handler instanceof HandlerMethod)) {
 			return true;
 		}
@@ -39,11 +41,11 @@ public class JwtInterceptor implements HandlerInterceptor {
 			return true;
 		}
 
-		return validateJwtToken(request, response);
+		return extractJwtToken(request, response);
 	}
 
-	private boolean validateJwtToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String token = extractToken(request);
+	private boolean extractJwtToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String token = extractHeader(request);
 
 		if (token == null) {
 			sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, TOKEN_INVALID_MESSAGE);
@@ -51,7 +53,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 		}
 
 		try {
-			jwtProvider.isValidateToken(token);
+			Long id = jwtProvider.extractId(token);
+			request.setAttribute("id", id);
+			return true;
 		} catch (ExpiredJwtException e) {
 			// 토큰이 만료되었다면 403
 			sendErrorResponse(response, HttpServletResponse.SC_FORBIDDEN, TOKEN_EXPIRED_MESSAGE);
@@ -61,13 +65,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 			sendErrorResponse(response, HttpServletResponse.SC_UNAUTHORIZED, TOKEN_INVALID_MESSAGE);
 			return false;
 		}
-
-		Long id = jwtProvider.extractId(token);
-		request.setAttribute("id", id);
-		return true;
 	}
 
-	private String extractToken(HttpServletRequest request) {
+	private String extractHeader(HttpServletRequest request) {
 		String authHeader = request.getHeader("Authorization");
 
 		if (authHeader == null || authHeader.isEmpty()) {

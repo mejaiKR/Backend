@@ -43,16 +43,12 @@ public class JwtProvider {
 			.compact();
 	}
 
-	public void isValidateToken(String token) throws JwtException {
-		Jwts.parser().verifyWith(signKey()).build().parseSignedClaims(token);
-	}
-
 	private SecretKey signKey() {
 		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
-	public Long extractId(String token) {
+	public Long extractId(String token) throws JwtException {
 		String id = Jwts.parser().verifyWith(signKey()).build().parseSignedClaims(token).getPayload().getSubject();
 
 		return Long.parseLong(id);
