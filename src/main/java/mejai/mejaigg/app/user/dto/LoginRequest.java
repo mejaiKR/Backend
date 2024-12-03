@@ -13,10 +13,7 @@ public class LoginRequest {
 	@Schema(description = "소셜 ID", example = "1")
 	private String socialId;
 
-	@Schema(description = "소셜 타입"
-		+ "카카오: kakao"
-		+ "구글: google",
-		example = "kakao")
+	@Schema(description = "소셜 타입", example = "kakao")
 	private SocialType socialType;
 
 	@JsonCreator
