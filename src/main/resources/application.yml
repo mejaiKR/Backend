@@ -14,3 +14,13 @@ springdoc:
     disable-swagger-default-url: true
     display-request-duration: true
     operations-sorter: alpha
+
+logging:
+  file:
+    name: mejai-%d{yyyy-MM-dd-hh-mm}.log
+  logback:
+    rollingpolicy:
+      clean-history-on-start: off
+      file-name-pattern: ~/logs/mejai-%d{yyyy-MM-dd-hh-mm}.log
+      max-history: 7
+      max-file-size: 10MB
