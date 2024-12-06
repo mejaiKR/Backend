@@ -1,5 +1,7 @@
 package mejai.mejaigg.app.watch.dto.response.watch;
 
+import java.time.LocalDateTime;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import mejai.mejaigg.app.user.domain.AppUser;
@@ -26,6 +28,8 @@ public class WatchSummoner {
 
 	private String flexRankIconUrl;
 
+	private LocalDateTime lastUpdatedWatchSummoner;
+
 	public WatchSummoner(AppUser user, String resourceUrl) {
 		Summoner summoner = user.getWatchSummoner();
 		Rank soloRank = summoner.getSoloRank();
@@ -39,5 +43,6 @@ public class WatchSummoner {
 		this.soloRankIconUrl = soloRank.getIconUrl(resourceUrl);
 		this.flexRankTier = flexRank.getTier() + " " + flexRank.getRank();
 		this.flexRankIconUrl = flexRank.getIconUrl(resourceUrl);
+		this.lastUpdatedWatchSummoner = user.getLastUpdatedWatchSummoner();
 	}
 }
