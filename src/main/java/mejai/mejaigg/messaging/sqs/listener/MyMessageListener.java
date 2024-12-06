@@ -33,9 +33,11 @@ public class MyMessageListener implements MessageListener<Object> {
 
 			// 메시지 타입에 따라 처리
 			if (payload.contains("year") && payload.contains("month")) {
+				log.info("Streak message received.");
 				UserStreakRequest request = objectMapper.readValue(payload, UserStreakRequest.class);
 				streakService.refreshStreak(request);
 			} else {
+				log.info("Profile message received.");
 				UserProfileRequest request = objectMapper.readValue(payload, UserProfileRequest.class);
 				profileService.refreshUserProfileByNameTag(request.getId(),
 					request.getTag());

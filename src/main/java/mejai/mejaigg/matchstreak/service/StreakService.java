@@ -65,8 +65,8 @@ public class StreakService {
 		YearMonth yearMonth = YearMonth.of(request.getYear(), request.getMonth());
 		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
 			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
+		log.info("{} {} 스트릭 업데이트를 시작", user.getSummonerName(), yearMonth);
 		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, yearMonth).orElse(null);
-		log.info(user.getSummonerName() + " " + yearMonth + " 스트릭 업데이트를 시작");
 
 		if (history == null) { //해당 달의 기록이 없는 경우
 			history = SearchHistory.builder()
