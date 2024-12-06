@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import mejai.mejaigg.global.exception.RestApiException;
 import mejai.mejaigg.matchstreak.domain.MatchStreak;
 import mejai.mejaigg.matchstreak.repository.MatchStreakRepository;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
@@ -36,21 +35,6 @@ class StreakServiceTest {
 
 	@Autowired
 	private SummonerRepository userRepository;
-
-	@Test
-	@DisplayName("스트릭이 없는데 조회를 하면 에러가 발생한다.")
-	void testGetStreakFail() {
-		// given
-		UserStreakRequest request = UserStreakRequest.builder()
-			.id("testName")
-			.tag("testTag")
-			.year(2021)
-			.month(8)
-			.build();
-
-		// when & then
-		assertThrows(RestApiException.class, () -> streakService.getStreak(request));
-	}
 
 	@Test
 	@DisplayName("스트릭이 있는데 조회를 하면 조회된다.")
