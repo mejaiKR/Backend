@@ -65,4 +65,8 @@ public class UserService {
 			throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "토큰이 유효하지 않습니다.");
 		}
 	}
+
+	public void delete(Long userId) {
+		appUserRepository.deleteById(userId);
+	}
 }

@@ -18,6 +18,7 @@ import mejai.mejaigg.app.user.domain.AppUser;
 import mejai.mejaigg.app.user.domain.Relationship;
 import mejai.mejaigg.app.user.service.UserService;
 import mejai.mejaigg.app.watch.dto.response.CreateSummonerResponse;
+import mejai.mejaigg.app.watch.dto.response.RefreshWatchSummonerResponse;
 import mejai.mejaigg.app.watch.dto.response.SearchSummonerResponse;
 import mejai.mejaigg.app.watch.dto.response.WatchSummonerDetailsResponse;
 import mejai.mejaigg.app.watch.dto.response.watch.DayLog;
@@ -66,7 +67,7 @@ public class WatchService {
 	}
 
 	@Transactional
-	public CreateSummonerResponse refreshWatchSummoner(Long userId) {
+	public RefreshWatchSummonerResponse refreshWatchSummoner(Long userId) {
 		AppUser user = userService.findUserById(userId);
 		Summoner summoner = user.getWatchSummoner();
 		if (summoner == null) {
@@ -78,7 +79,8 @@ public class WatchService {
 
 		matchService.createMatches(summoner.getPuuid());
 		user.refreshWatchSummoner();
-		return new CreateSummonerResponse(summoner.getId());
+
+		return new RefreshWatchSummonerResponse(user.getLastUpdatedWatchSummoner());
 	}
 
 	public SearchSummonerResponse getSummoner(String summonerName, String tag) {

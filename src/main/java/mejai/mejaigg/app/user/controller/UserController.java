@@ -2,6 +2,7 @@ package mejai.mejaigg.app.user.controller;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import mejai.mejaigg.app.jwt.JwtAuth;
 import mejai.mejaigg.app.user.dto.LoginRequest;
 import mejai.mejaigg.app.user.dto.LoginResponse;
 import mejai.mejaigg.app.user.dto.RefreshResponse;
@@ -40,5 +42,13 @@ public class UserController {
 	@Operation(summary = "refresh token 검증", description = "refresh token을 검증하고 유효하다면 새로운 access token을 발급합니다.")
 	public RefreshResponse refresh(@RequestBody String refreshToken) {
 		return userService.refresh(refreshToken);
+	}
+
+	//회원탈퇴 api
+	@PostMapping("/delete")
+	@Operation(summary = "회원탈퇴", description = "회원 탈퇴를 합니다.")
+	@JwtAuth
+	public void delete(@RequestAttribute("id") Long userId) {
+		userService.delete(userId);
 	}
 }

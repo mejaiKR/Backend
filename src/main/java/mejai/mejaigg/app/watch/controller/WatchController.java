@@ -19,6 +19,7 @@ import mejai.mejaigg.app.watch.dto.request.GetWatchSummonerRequest;
 import mejai.mejaigg.app.watch.dto.request.PutWatchSummonerRequest;
 import mejai.mejaigg.app.watch.dto.request.SummonerRequest;
 import mejai.mejaigg.app.watch.dto.response.CreateSummonerResponse;
+import mejai.mejaigg.app.watch.dto.response.RefreshWatchSummonerResponse;
 import mejai.mejaigg.app.watch.dto.response.SearchSummonerResponse;
 import mejai.mejaigg.app.watch.dto.response.WatchSummonerDetailsResponse;
 import mejai.mejaigg.app.watch.dto.response.watch.WatchSummonerResponse;
@@ -58,7 +59,7 @@ public class WatchController {
 	@PostMapping("/summoner/refresh")
 	@Operation(summary = "소환사 감시 갱신", description = "소환사 감시 정보를 갱신합니다.")
 	@JwtAuth
-	public CreateSummonerResponse postRefreshWatchSummoner(@RequestAttribute("id") Long userId) {
+	public RefreshWatchSummonerResponse postRefreshWatchSummoner(@RequestAttribute("id") Long userId) {
 		return watchService.refreshWatchSummoner(userId);
 	}
 
