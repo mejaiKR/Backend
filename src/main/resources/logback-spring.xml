@@ -8,7 +8,7 @@
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>logs/mejai.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/mejai-%d{yyyy-MM-dd-HH-mm}.log</fileNamePattern>
+            <fileNamePattern>logs/mejai-%d{yyyy-MM}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
             <totalSizeCap>70MB</totalSizeCap>
         </rollingPolicy>
