@@ -23,15 +23,14 @@ import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
 import mejai.mejaigg.summoner.dto.response.UserStreakDto;
-import mejai.mejaigg.summoner.exception.SummonerErrorCode;
-import mejai.mejaigg.summoner.repository.SummonerRepository;
+import mejai.mejaigg.summoner.service.ProfileService;
 
 @Service
 @Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StreakService {
-	private final SummonerRepository userRepository;
+	private final ProfileService profileService;
 	private final SearchHistoryRepository searchHistoryRepository;
 	private final MatchStreakRepository matchStreakRepository;
 	private final RiotService riotService;
@@ -46,10 +45,9 @@ public class StreakService {
 	public List<UserStreakDto> getStreak(UserStreakRequest request) {
 		int year = request.getYear();
 		int month = request.getMonth();
-		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
-			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
+		Summoner summoner = profileService.findOrCreateSummoner(request.getId(), request.getTag());
 		YearMonth date = YearMonth.of(year, month);
-		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, date)
+		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(summoner, date)
 			.orElseThrow(() -> new RestApiException(StreakErrorCode.STREAK_NOT_FOUND));
 		return getUserStreakDtoList(history);
 	}
@@ -63,17 +61,15 @@ public class StreakService {
 	@Transactional(readOnly = false)
 	public List<UserStreakDto> refreshStreak(UserStreakRequest request) {
 		YearMonth yearMonth = YearMonth.of(request.getYear(), request.getMonth());
-		Summoner user = userRepository.findBySummonerNameAndTagLineAllIgnoreCase(request.getId(), request.getTag())
-			.orElseThrow(() -> new RestApiException(SummonerErrorCode.SUMMONER_NOT_FOUND));
-		log.info("{} {} 스트릭 업데이트를 시작", user.getSummonerName(), yearMonth);
-		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(user, yearMonth).orElse(null);
+		Summoner summoner = profileService.findOrCreateSummoner(request.getId(), request.getTag());
+		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(summoner, yearMonth).orElse(null);
 
 		if (history == null) { //해당 달의 기록이 없는 경우
 			history = SearchHistory.builder()
-				.summoner(user)
+				.summoner(summoner)
 				.date(yearMonth)
 				.build();
-			updateStreakData(history, yearMonth, user.getPuuid());
+			updateStreakData(history, yearMonth, summoner.getPuuid());
 			return getUserStreakDtoList(history);
 		}
 
@@ -82,7 +78,7 @@ public class StreakService {
 			return getUserStreakDtoList(history);
 		}
 
-		updateStreakData(history, yearMonth, user.getPuuid());
+		updateStreakData(history, yearMonth, summoner.getPuuid());
 		return getUserStreakDtoList(history);
 	}
 
