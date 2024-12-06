@@ -73,7 +73,6 @@ public class WatchController {
 		@RequestAttribute("id") Long userId,
 		@ParameterObject GetWatchSummonerRequest request
 	) {
-		System.out.println("startDate : " + request.getStartDate());
 		return watchService.getSummonerRecord(userId, request.getStartDate());
 	}
 
