@@ -1,5 +1,7 @@
 package mejai.mejaigg.app.user.domain;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum SocialType {
 	APPLE("apple"),
 	KAKAO("kakao"),
@@ -11,6 +13,7 @@ public enum SocialType {
 		this.type = type;
 	}
 
+	@JsonCreator(mode = JsonCreator.Mode.DELEGATING)
 	public static SocialType of(String type) {
 		for (SocialType socialType : values()) {
 			if (socialType.type.equals(type)) {

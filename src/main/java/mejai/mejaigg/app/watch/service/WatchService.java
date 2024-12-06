@@ -6,9 +6,11 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +30,12 @@ import mejai.mejaigg.match.service.MatchService;
 import mejai.mejaigg.matchparticipant.domain.MatchParticipant;
 import mejai.mejaigg.matchparticipant.service.MatchParticipantService;
 import mejai.mejaigg.summoner.domain.Summoner;
-import mejai.mejaigg.summoner.repository.SummonerRepository;
 import mejai.mejaigg.summoner.service.ProfileService;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class WatchService {
-	private final SummonerRepository summonerRepository;
 	private final ProfileService profileService;
 	private final MatchService matchService;
 	private final MatchParticipantService matchParticipantService;
@@ -65,14 +65,19 @@ public class WatchService {
 		}
 	}
 
+	@Transactional
 	public CreateSummonerResponse refreshWatchSummoner(Long userId) {
 		AppUser user = userService.findUserById(userId);
 		Summoner summoner = user.getWatchSummoner();
 		if (summoner == null) {
 			throw new IllegalArgumentException("소환사를 감시하고 있지 않습니다.");
 		}
+		if (!user.canRefreshWatchSummoner()) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "소환사 감시 갱신은 1시간에 한 번만 가능합니다.");
+		}
 
 		matchService.createMatches(summoner.getPuuid());
+		user.refreshWatchSummoner();
 		return new CreateSummonerResponse(summoner.getId());
 	}
 

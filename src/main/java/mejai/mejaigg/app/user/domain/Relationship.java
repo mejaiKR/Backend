@@ -19,7 +19,7 @@ public enum Relationship {
 		this.relationship = relationship;
 	}
 
-	@JsonCreator
+	@JsonCreator(mode = JsonCreator.Mode.DELEGATING)
 	public static Relationship of(String relationship) {
 		for (Relationship r : values()) {
 			if (r.relationship.equals(relationship)) {
