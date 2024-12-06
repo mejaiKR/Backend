@@ -58,17 +58,14 @@ public class MyMessageListener implements MessageListener<Object> {
 				// TOO_MANY_REQUESTS 에러에 대한 처리 로직
 				log.info("Too many requests. Waiting for a while.");
 				SqsListenerControlService.requestStop();
-
-			} else { // 그 외의 경우에는 잘못된 형식이 온 것이므로 큐에서 제거.
-				String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
-				deleteMessage(receiptHandle);
+				return;
 			}
+			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
+			deleteMessage(receiptHandle);
 		} catch (Exception e) {
-			// 예외 처리
 			log.warn("Failed to process message: " + e.getMessage());
-			SqsListenerControlService.requestStop();
-			log.info("SQS Listener has been stopped.");
-			//TODO: 스캐줄러 걸어서 특정 시간 이후에 켜주기
+			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
+			deleteMessage(receiptHandle);
 		}
 	}
 
