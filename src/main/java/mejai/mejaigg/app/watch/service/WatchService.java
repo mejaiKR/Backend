@@ -74,7 +74,7 @@ public class WatchService {
 			throw new IllegalArgumentException("소환사를 감시하고 있지 않습니다.");
 		}
 		if (!user.canRefreshWatchSummoner()) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "소환사 감시 갱신은 1시간에 한 번만 가능합니다.");
+			throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "소환사 감시 갱신은 1시간에 한 번만 가능합니다.");
 		}
 
 		matchService.createMatches(summoner.getPuuid());
