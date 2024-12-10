@@ -58,7 +58,7 @@ public class UserService {
 		try {
 			Long id = jwtProvider.extractId(refreshToken);
 
-			return new RefreshResponse(jwtProvider.generateAccessToken(id));
+			return new RefreshResponse(jwtProvider.generateAccessToken(id), jwtProvider.generateRefreshToken(id));
 		} catch (ExpiredJwtException e) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다.");
 		} catch (Exception e) {
