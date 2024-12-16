@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.app.jwt.JwtAuth;
 import mejai.mejaigg.app.user.dto.LoginRequest;
 import mejai.mejaigg.app.user.dto.LoginResponse;
+import mejai.mejaigg.app.user.dto.RefreshRequest;
 import mejai.mejaigg.app.user.dto.RefreshResponse;
 import mejai.mejaigg.app.user.service.UserService;
 
@@ -40,8 +41,8 @@ public class UserController {
 
 	@PostMapping("/refresh")
 	@Operation(summary = "refresh token 검증", description = "refresh token을 검증하고 유효하다면 새로운 access token을 발급합니다.")
-	public RefreshResponse refresh(@RequestBody String refreshToken) {
-		return userService.refresh(refreshToken);
+	public RefreshResponse refresh(@RequestBody RefreshRequest refreshRequest) {
+		return userService.refresh(refreshRequest.getRefreshToken());
 	}
 
 	//회원탈퇴 api
