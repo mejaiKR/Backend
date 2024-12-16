@@ -13,4 +13,6 @@ public class LoginRequest {
 	private SocialType socialType;
 
 	private String authCode;
+
+	private String idToken;
 }
