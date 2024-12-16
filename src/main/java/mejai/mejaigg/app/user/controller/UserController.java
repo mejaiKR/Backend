@@ -42,6 +42,7 @@ public class UserController {
 	@PostMapping("/refresh")
 	@Operation(summary = "refresh token 검증", description = "refresh token을 검증하고 유효하다면 새로운 access token을 발급합니다.")
 	public RefreshResponse refresh(@RequestBody RefreshRequest refreshRequest) {
+		System.out.println(refreshRequest.getRefreshToken());
 		return userService.refresh(refreshRequest.getRefreshToken());
 	}
 
