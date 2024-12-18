@@ -11,12 +11,6 @@ public class OidcPayload {
 	private Long exp;
 	private Long authTime;
 
-	@Override
-	public String toString() {
-		return "OidcPayload [iss=" + iss + ", aud=" + aud + ", sub=" + sub + ", iat=" + iat + ", exp=" + exp
-			+ ", authTime=" + authTime + "]";
-	}
-
 	public void validate(String appKey, String issuer) {
 		Long now = System.currentTimeMillis() / 1000;
 		if (exp < now) {

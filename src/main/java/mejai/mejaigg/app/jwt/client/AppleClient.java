@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import mejai.mejaigg.app.jwt.dto.JwksResponse;
 
 @FeignClient(
-	name = "kakao",
-	url = "https://kauth.kakao.com"
+	name = "apple",
+	url = "https://appleid.apple.com"
 )
-public interface KakaoClient extends JwksClient {
+public interface AppleClient extends JwksClient {
 	@Cacheable(cacheNames = "apiCache")
-	@GetMapping("/.well-known/jwks.json")
+	@GetMapping("/auth/keys")
 	JwksResponse getJwks();
 }
