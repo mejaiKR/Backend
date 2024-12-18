@@ -4,32 +4,28 @@ import java.util.Date;
 
 import javax.crypto.SecretKey;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.app.jwt.config.JwtProperties;
 
-@Component
+@Service
 @Slf4j
-public class JwtProvider {
-	@Value("${jwt.secret}")
-	private String secretKey; //
+@RequiredArgsConstructor
+public class JwtService {
 
-	@Value("${jwt.access-token-expiration}")
-	private long accessTokenExpiration;
-
-	@Value("${jwt.refresh-token-expiration}")
-	private long refreshTokenExpiration;
+	private final JwtProperties jwtProperties;
 
 	public String generateAccessToken(long id) {
 		return Jwts.builder()
 			.subject(String.valueOf(id))
 			.issuedAt(new Date(System.currentTimeMillis()))
-			.expiration(new Date(System.currentTimeMillis() + accessTokenExpiration))
+			.expiration(new Date(System.currentTimeMillis() + jwtProperties.getAccessTokenExpiration()))
 			.signWith(signKey())
 			.compact();
 	}
@@ -38,19 +34,24 @@ public class JwtProvider {
 		return Jwts.builder()
 			.subject(String.valueOf(id))
 			.issuedAt(new Date(System.currentTimeMillis()))
-			.expiration(new Date(System.currentTimeMillis() + refreshTokenExpiration))
+			.expiration(new Date(System.currentTimeMillis() + jwtProperties.getRefreshTokenExpiration()))
 			.signWith(signKey())
 			.compact();
 	}
 
-	private SecretKey signKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-		return Keys.hmacShaKeyFor(keyBytes);
-	}
-
 	public Long extractId(String token) throws JwtException {
-		String id = Jwts.parser().verifyWith(signKey()).build().parseSignedClaims(token).getPayload().getSubject();
+		String id = Jwts.parser()
+			.verifyWith(signKey())
+			.build()
+			.parseSignedClaims(token)
+			.getPayload()
+			.getSubject();
 
 		return Long.parseLong(id);
+	}
+
+	private SecretKey signKey() {
+		byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
 }

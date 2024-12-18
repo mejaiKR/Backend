@@ -12,7 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.app.jwt.JwtAuth;
-import mejai.mejaigg.app.jwt.JwtProvider;
+import mejai.mejaigg.app.jwt.JwtService;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -22,7 +22,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 	private static final String TOKEN_INVALID_MESSAGE = "토큰이 유효하지 않습니다.";
 	private static final String TOKEN_EXPIRED_MESSAGE = "토큰이 만료되었습니다.";
 
-	private final JwtProvider jwtProvider;
+	private final JwtService jwtService;
 
 	@Override
 	public boolean preHandle(
@@ -53,7 +53,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 		}
 
 		try {
-			Long id = jwtProvider.extractId(token);
+			Long id = jwtService.extractId(token);
 			request.setAttribute("id", id);
 			return true;
 		} catch (ExpiredJwtException e) {
