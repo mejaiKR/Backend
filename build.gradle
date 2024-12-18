@@ -98,8 +98,13 @@ dependencies {
     implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
     implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs:3.2.0-M1'
 
+    // jwt
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.8.3'
     implementation 'io.jsonwebtoken:jjwt:0.12.6'
+
+    // cache
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
 }
 
 tasks.named('test') {
