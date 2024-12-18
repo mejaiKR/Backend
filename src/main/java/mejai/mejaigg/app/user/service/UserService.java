@@ -9,7 +9,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
-import mejai.mejaigg.app.jwt.JwtProvider;
+import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.app.jwt.JwtService;
+import mejai.mejaigg.app.jwt.OidcService;
 import mejai.mejaigg.app.user.domain.AppUser;
 import mejai.mejaigg.app.user.domain.Relationship;
 import mejai.mejaigg.app.user.domain.SocialType;
@@ -20,18 +22,21 @@ import mejai.mejaigg.summoner.domain.Summoner;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService {
 
 	private final AppUserRepository appUserRepository;
-	private final JwtProvider jwtProvider;
+	private final JwtService jwtService;
+	private final OidcService oidcService;
 
-	public LoginResponse loginOrSignUp(String socialId, SocialType socialType, String authCode) {
+	public LoginResponse loginOrSignUp(SocialType socialType, String idToken) {
+		String socialId = oidcService.extractSocialId(socialType, idToken);
 		AppUser appUser = appUserRepository.findAppUserBySocialIdAndSocialType(socialId, socialType)
 			.orElseGet(() -> appUserRepository.save(new AppUser(socialId, socialType)));
 
 		return new LoginResponse(
-			jwtProvider.generateAccessToken(appUser.getId()),
-			jwtProvider.generateRefreshToken(appUser.getId())
+			jwtService.generateAccessToken(appUser.getId()),
+			jwtService.generateRefreshToken(appUser.getId())
 		);
 	}
 
@@ -56,9 +61,9 @@ public class UserService {
 
 	public RefreshResponse refresh(String refreshToken) {
 		try {
-			Long id = jwtProvider.extractId(refreshToken);
+			Long id = jwtService.extractId(refreshToken);
 
-			return new RefreshResponse(jwtProvider.generateAccessToken(id), jwtProvider.generateRefreshToken(id));
+			return new RefreshResponse(jwtService.generateAccessToken(id), jwtService.generateRefreshToken(id));
 		} catch (ExpiredJwtException e) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN, "토큰이 만료되었습니다.");
 		} catch (Exception e) {

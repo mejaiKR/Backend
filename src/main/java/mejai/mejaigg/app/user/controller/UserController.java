@@ -33,16 +33,12 @@ public class UserController {
 		"""
 	)
 	public LoginResponse login(@RequestBody LoginRequest loginRequest) {
-		return userService.loginOrSignUp(
-			loginRequest.getSocialId(),
-			loginRequest.getSocialType(),
-			loginRequest.getAuthCode());
+		return userService.loginOrSignUp(loginRequest.getSocialType(), loginRequest.getIdToken());
 	}
 
 	@PostMapping("/refresh")
 	@Operation(summary = "refresh token 검증", description = "refresh token을 검증하고 유효하다면 새로운 access token을 발급합니다.")
 	public RefreshResponse refresh(@RequestBody RefreshRequest refreshRequest) {
-		System.out.println(refreshRequest.getRefreshToken());
 		return userService.refresh(refreshRequest.getRefreshToken());
 	}
 
