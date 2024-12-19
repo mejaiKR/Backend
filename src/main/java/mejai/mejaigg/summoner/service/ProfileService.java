@@ -38,25 +38,20 @@ public class ProfileService {
 	 * @param tag  소환사 태그
 	 * @return 소환사 정보
 	 */
-	@Transactional
 	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
 		Summoner summoner = findOrCreateSummoner(name, tag);
 
 		return new UserProfileDto(summoner, riotProperties.getResourceUrl());
 	}
 
+	@Transactional
 	public Summoner findOrCreateSummoner(String name, String tag) {
 		String normalizeName = name.replace(" ", "").toLowerCase();
 		String normalizeTag = tag.toLowerCase();
 
-		Summoner summoner = summonerRepository
+		return summonerRepository
 			.findByNormalizedSummonerNameAndNormalizedTagLine(normalizeName, normalizeTag)
-			.orElse(null);
-		if (summoner == null) {
-			log.info("소환사 정보가 없어 새로 생성합니다.");
-			summoner = initializeSummonerData(name, tag);
-		}
-		return summoner;
+			.orElseGet(() -> initializeSummonerData(name, tag));
 	}
 
 	/**
@@ -70,6 +65,7 @@ public class ProfileService {
 	 * @return 초기화된 소환사 정보
 	 */
 	public Summoner initializeSummonerData(String name, String tag) {
+		log.info("소환사 정보가 없어 새로 생성합니다.");
 		Summoner summoner;
 		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
