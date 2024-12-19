@@ -102,7 +102,7 @@ public class OidcService {
 	private Jws<Claims> verifyIdToken(JsonWebKey publicKey, String token) {
 		try {
 			return Jwts.parser()
-				.verifyWith(generatePublicKey(publicKey.getN(), publicKey.getE()))
+				.verifyWith(generatePublicKey(publicKey.getModulus(), publicKey.getExponent()))
 				.build()
 				.parseSignedClaims(token);
 		} catch (JwtException e) {
@@ -113,16 +113,16 @@ public class OidcService {
 	}
 
 	private PublicKey generatePublicKey(
-		String modulus,
-		String exponent
+		String rawModulus,
+		String rawExponent
 	) throws NoSuchAlgorithmException, InvalidKeySpecException {
-		byte[] modulusBytes = Base64.getUrlDecoder().decode(modulus);
-		byte[] exponentBytes = Base64.getUrlDecoder().decode(exponent);
+		byte[] modulusBytes = Base64.getUrlDecoder().decode(rawModulus);
+		byte[] exponentBytes = Base64.getUrlDecoder().decode(rawExponent);
 
-		BigInteger n = new BigInteger(1, modulusBytes);
-		BigInteger e = new BigInteger(1, exponentBytes);
+		BigInteger modulus = new BigInteger(1, modulusBytes);
+		BigInteger exponent = new BigInteger(1, exponentBytes);
 
-		RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(n, e);
+		RSAPublicKeySpec publicKeySpec = new RSAPublicKeySpec(modulus, exponent);
 		KeyFactory keyFactory = KeyFactory.getInstance("RSA");
 		return keyFactory.generatePublic(publicKeySpec);
 	}
