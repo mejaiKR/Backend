@@ -31,13 +31,13 @@ import mejai.mejaigg.match.service.MatchService;
 import mejai.mejaigg.matchparticipant.domain.MatchParticipant;
 import mejai.mejaigg.matchparticipant.service.MatchParticipantService;
 import mejai.mejaigg.summoner.domain.Summoner;
-import mejai.mejaigg.summoner.service.ProfileService;
+import mejai.mejaigg.summoner.service.SummonerService;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class WatchService {
-	private final ProfileService profileService;
+	private final SummonerService summonerService;
 	private final MatchService matchService;
 	private final MatchParticipantService matchParticipantService;
 	private final RiotProperties riotProperties;
@@ -48,7 +48,7 @@ public class WatchService {
 		String summonerName,
 		String tag,
 		Relationship relationship) {
-		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
+		Summoner summoner = summonerService.findOrCreateSummoner(summonerName, tag);
 
 		matchService.createMatches(summoner.getPuuid());
 
@@ -84,7 +84,7 @@ public class WatchService {
 	}
 
 	public SearchSummonerResponse getSummoner(String summonerName, String tag) {
-		Summoner summoner = profileService.findOrCreateSummoner(summonerName, tag);
+		Summoner summoner = summonerService.findOrCreateSummoner(summonerName, tag);
 
 		return new SearchSummonerResponse(summoner, riotProperties.getResourceUrl());
 	}

@@ -7,16 +7,16 @@ import lombok.Data;
 
 @Data
 @Schema(description = "소환사 정보 조회 요청")
-public class UserProfileRequest {
+public class SummonerProfileRequest {
 
 	@NotBlank
 	@Size(min = 1, max = 30)
 	@Schema(description = "소환사 아이디", example = "hide on bush")
-	private String id;
+	private String summonerName;
 
 	@NotBlank
 	@Size(min = 2, max = 10)
-	@Schema(description = "소환사 태그", example = "Kr1")
+	@Schema(description = "소환사 태그", example = "KR1")
 	private String tag = "Kr1";
 
 }

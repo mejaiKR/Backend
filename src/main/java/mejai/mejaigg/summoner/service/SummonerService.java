@@ -16,14 +16,15 @@ import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.summoner.domain.Summoner;
-import mejai.mejaigg.summoner.dto.response.UserProfileDto;
+import mejai.mejaigg.summoner.dto.response.RenewalStatusResponse;
+import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @Service
 @Slf4j
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
-public class ProfileService {
+@Transactional(readOnly = true)
+public class SummonerService {
 
 	private final RiotService riotService;
 	private final SummonerRepository summonerRepository;
@@ -38,10 +39,11 @@ public class ProfileService {
 	 * @param tag  소환사 태그
 	 * @return 소환사 정보
 	 */
-	public UserProfileDto getUserProfileByNameTag(String name, String tag) {
+	@Transactional
+	public SummonerProfileResponse getSummonerProfileByNameTag(String name, String tag) {
 		Summoner summoner = findOrCreateSummoner(name, tag);
 
-		return new UserProfileDto(summoner, riotProperties.getResourceUrl());
+		return new SummonerProfileResponse(summoner, riotProperties.getResourceUrl());
 	}
 
 	@Transactional
@@ -58,19 +60,18 @@ public class ProfileService {
 	 * 소환사 정보를 초기화합니다.
 	 * 처음 검색 때 사용하는 함수입니다.
 	 * 3번의 라이엇 API 호출을 통해 소환사 정보를 가져옵니다.
-	 * Todo: riot service로 분리 ㄱ
 	 *
 	 * @param name 소환사 이름
 	 * @param tag  소환사 태그
 	 * @return 초기화된 소환사 정보
 	 */
-	public Summoner initializeSummonerData(String name, String tag) {
+	private Summoner initializeSummonerData(String name, String tag) {
 		log.info("소환사 정보가 없어 새로 생성합니다.");
-		Summoner summoner;
 		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
-		summoner = Summoner.builder()
+
+		Summoner summoner = Summoner.builder()
 			.summonerName(accountDto.getGameName())
 			.tagLine(accountDto.getTagLine())
 			.puuid(accountDto.getPuuid())
@@ -83,8 +84,7 @@ public class ProfileService {
 			.build();
 		summoner.setRankByRankDtos(rankDtos);
 		// rankRepository.saveAll(summoner.getRanks());
-		summonerRepository.save(summoner);
-		return summoner;
+		return summonerRepository.save(summoner);
 	}
 
 	/**
@@ -97,7 +97,7 @@ public class ProfileService {
 	 * @return 갱신된 소환사 정보
 	 */
 	@Transactional
-	public UserProfileDto refreshUserProfileByNameTag(String name, String tag) {
+	public SummonerProfileResponse renewalSummonerProfileByNameTag(String name, String tag) {
 		Summoner summoner = findOrCreateSummoner(name, tag);
 
 		if (summoner.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
@@ -107,7 +107,13 @@ public class ProfileService {
 			updateUserDetails(summoner);
 		}
 
-		return new UserProfileDto(summoner, riotProperties.getResourceUrl());
+		return new SummonerProfileResponse(summoner, riotProperties.getResourceUrl());
+	}
+
+	public RenewalStatusResponse getProfileRenewalStatus(String summonerName, String tag) {
+		Summoner summoner = findOrCreateSummoner(summonerName, tag);
+
+		return new RenewalStatusResponse(summoner.getUpdatedAt());
 	}
 
 	/**
@@ -131,7 +137,7 @@ public class ProfileService {
 		summoner.updateBySummonerDto(summonerDto);
 		summoner.setRanks(ranks);
 		summoner.setUpdatedAt(LocalDateTime.now());
-		summonerRepository.save(summoner); // 사용자를 저장하여 변경 사항을 반영
+		summonerRepository.save(summoner);
 	}
 }
 
