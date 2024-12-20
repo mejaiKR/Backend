@@ -1,9 +1,11 @@
 package mejai.mejaigg.global.logging;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.web.util.ContentCachingRequestWrapper;
+import org.springframework.web.util.ContentCachingResponseWrapper;
 
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
@@ -12,26 +14,75 @@ import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 
-// @Component
+@Slf4j
+@Component
 public class HttpLoggingFilter implements Filter {
-	private static final Logger LOGGER = LoggerFactory.getLogger(HttpLoggingFilter.class);
-
 	@Override
-	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
 		IOException,
 		ServletException {
-		HttpServletRequest request = (HttpServletRequest)servletRequest;
-		HttpServletResponse response = (HttpServletResponse)servletResponse;
-		// 요청 로깅
-		LOGGER.info("[HTTP] Request URI: {} Param : {} Method : {}", request.getRequestURI(),
-			request.getQueryString(),
-			request.getMethod());
-		// 요청에서 특정 헤더 로깅
-		// 예: LOGGER.debug("Authorization: {}", request.getHeader("Authorization"));
+		HttpServletRequest httpRequest = (HttpServletRequest)request;
+		HttpServletResponse httpResponse = (HttpServletResponse)response;
 
-		//응답 로깅
-		filterChain.doFilter(request, response);
-		LOGGER.info("[HTTP] Response: {} {}", response.getStatus(), response.getContentType());
+		ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(httpRequest);
+		ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(httpResponse);
+
+		try {
+			chain.doFilter(requestWrapper, responseWrapper);
+		} finally {
+			logRequest(requestWrapper);
+			logResponse(requestWrapper, responseWrapper);
+			responseWrapper.copyBodyToResponse();
+		}
+	}
+
+	private void logRequest(ContentCachingRequestWrapper request) throws IOException {
+		String requestBody = "";
+		if (request.getContentType() != null && request.getContentType().contains("application/json")) {
+			byte[] content = request.getContentAsByteArray();
+			if (content.length > 0) {
+				requestBody = new String(content, StandardCharsets.UTF_8);
+			}
+		}
+
+		log.info("REQUEST: {} {} - Headers: {}, Body: {}",
+			request.getMethod(),
+			request.getRequestURI(),
+			getHeaders(request),
+			requestBody
+		);
+	}
+
+	private void logResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) {
+		String responseBody = "";
+		if (response.getContentType() != null && response.getContentType().contains("application/json")) {
+			byte[] content = response.getContentAsByteArray();
+			if (content.length > 0) {
+				responseBody = new String(content, StandardCharsets.UTF_8);
+			}
+		}
+
+		log.info("RESPONSE: {} - Status: {}, Headers: {}, Body: {}",
+			request.getRequestURI(),
+			response.getStatus(),
+			getHeaders(response),
+			responseBody
+		);
+	}
+
+	private String getHeaders(HttpServletRequest request) {
+		StringBuilder headerString = new StringBuilder();
+		request.getHeaderNames().asIterator().forEachRemaining(headerName ->
+			headerString.append(headerName).append(": ").append(request.getHeader(headerName)).append(", "));
+		return headerString.toString();
+	}
+
+	private String getHeaders(HttpServletResponse response) {
+		StringBuilder headerString = new StringBuilder();
+		response.getHeaderNames().forEach(headerName ->
+			headerString.append(headerName).append(": ").append(response.getHeader(headerName)).append(", "));
+		return headerString.toString();
 	}
 }
