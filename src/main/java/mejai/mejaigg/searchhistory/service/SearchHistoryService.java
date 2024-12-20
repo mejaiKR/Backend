@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
-import mejai.mejaigg.searchhistory.dto.SearchRankingDto;
+import mejai.mejaigg.searchhistory.dto.RankingResponse;
 import mejai.mejaigg.searchhistory.dto.TopUserDTO;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
@@ -16,18 +16,13 @@ import mejai.mejaigg.summoner.repository.SummonerRepository;
 @RequiredArgsConstructor
 public class SearchHistoryService {
 
-	private final SummonerRepository userRepository;
+	private final SummonerRepository summonerRepository;
 
 	@Transactional
-	public SearchRankingDto getRanking(int year, int month) {
+	public RankingResponse getRanking(int year, int month) {
 		YearMonth dateYM = YearMonth.of(year, month);
-		SearchRankingDto searchRankingDto = new SearchRankingDto();
-		searchRankingDto.setYear(String.valueOf(year));
-		searchRankingDto.setMonth(String.valueOf(month));
-
-		List<TopUserDTO> top10UsersWithGameCountByMonth = userRepository.findTop10UsersWithGameCountByMonth(dateYM);
-		searchRankingDto.setTopRanking(top10UsersWithGameCountByMonth);
-		return searchRankingDto;
+		List<TopUserDTO> top10UsersWithGameCountByMonth = summonerRepository.findTop10UsersWithGameCountByMonth(dateYM);
+		return new RankingResponse(top10UsersWithGameCountByMonth);
 	}
 
 }

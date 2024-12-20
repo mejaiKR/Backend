@@ -13,12 +13,12 @@ import mejai.mejaigg.global.validation.FutureDate;
 @FutureDate
 @Schema(description = "소환사 게임 횟수 및 승패 조회 요청")
 @Builder
-public class UserStreakRequest {
+public class SummonerStreakRequest {
 
 	@Schema(description = "소환사 아이디", example = "hide on bush")
 	@NotBlank
 	@Size(min = 1, max = 30)
-	private String id;
+	private String summonerName;
 
 	@Schema(description = "소환사 태그", example = "Kr1")
 	@NotBlank
@@ -26,7 +26,7 @@ public class UserStreakRequest {
 	@Builder.Default
 	private String tag = "Kr1";
 
-	@Schema(description = "조회할 년도", example = "2021")
+	@Schema(description = "조회할 년도", example = "2024")
 	@Min(2021)
 	private int year;
 
@@ -34,5 +34,4 @@ public class UserStreakRequest {
 	@Min(1)
 	@Max(12)
 	private int month;
-
 }

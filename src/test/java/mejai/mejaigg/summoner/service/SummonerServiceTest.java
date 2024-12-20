@@ -24,12 +24,12 @@ import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.response.RankResponseDto;
-import mejai.mejaigg.summoner.dto.response.UserProfileDto;
+import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @SpringBootTest
 @DisplayName("소환사 프로필 서비스 테스트")
-class ProfileServiceTest {
+class SummonerServiceTest {
 
 	@MockBean
 	private RiotService riotService;
@@ -38,7 +38,7 @@ class ProfileServiceTest {
 	private RiotProperties riotProperties;
 
 	@Autowired
-	private ProfileService profileService;
+	private SummonerService summonerService;
 
 	@Autowired
 	SummonerRepository summonerRepository;
@@ -71,13 +71,13 @@ class ProfileServiceTest {
 		summoner.setRankByRankDtos(new HashSet<>());
 		summonerRepository.save(summoner);
 		// when
-		UserProfileDto userProfileByNameTag = profileService.getUserProfileByNameTag(name, tag);
+		SummonerProfileResponse userProfileByNameTag = summonerService.getSummonerProfileByNameTag(name, tag);
 		List<RankResponseDto> rank = userProfileByNameTag.getRank();
 		// then
 		assertNotNull(userProfileByNameTag);
 		assertNotNull(rank);
-		assertEquals(name, userProfileByNameTag.getUserName());
-		assertEquals(tag, userProfileByNameTag.getTagLine());
+		assertEquals(name, userProfileByNameTag.getSummonerName());
+		assertEquals(tag, userProfileByNameTag.getTag());
 		assertEquals(2, rank.size());
 		assertEquals("RANKED_SOLO_5x5", rank.get(0).getQueueType());
 		assertEquals(TierType.UNRANKED, rank.get(0).getTier());
@@ -129,13 +129,13 @@ class ProfileServiceTest {
 			.build();
 
 		// when
-		UserProfileDto userProfileDto = profileService.getUserProfileByNameTag(name, tag);
-		List<RankResponseDto> rank = userProfileDto.getRank();
+		SummonerProfileResponse summonerProfileResponse = summonerService.getSummonerProfileByNameTag(name, tag);
+		List<RankResponseDto> rank = summonerProfileResponse.getRank();
 		// then
-		assertNotNull(userProfileDto);
+		assertNotNull(summonerProfileResponse);
 		assertNotNull(rank);
-		assertEquals(name, userProfileDto.getUserName());
-		assertEquals(tag, userProfileDto.getTagLine());
+		assertEquals(name, summonerProfileResponse.getSummonerName());
+		assertEquals(tag, summonerProfileResponse.getTag());
 		assertEquals(2, rank.size());
 		assertEquals("RANKED_SOLO_5x5", rank.get(0).getQueueType());
 		assertEquals(TierType.UNRANKED, rank.get(0).getTier());
@@ -163,15 +163,15 @@ class ProfileServiceTest {
 		existingSummoner.setRankByRankDtos(new HashSet<>());
 		summonerRepository.save(existingSummoner);
 		// when
-		UserProfileDto userProfileDto = profileService.refreshUserProfileByNameTag(name, tag);
+		SummonerProfileResponse summonerProfileResponse = summonerService.renewalSummonerProfileByNameTag(name, tag);
 
 		// then
 
 		verify(riotService, never()).getSummonerByPuuid(anyString());
 
-		assertNotNull(userProfileDto);
-		assertEquals(name, userProfileDto.getUserName());
-		assertEquals(tag, userProfileDto.getTagLine());
+		assertNotNull(summonerProfileResponse);
+		assertEquals(name, summonerProfileResponse.getSummonerName());
+		assertEquals(tag, summonerProfileResponse.getTag());
 	}
 
 	@DisplayName("2시간 이후 갱신시 라이엇으로 요청을 보낸다.")
@@ -204,10 +204,10 @@ class ProfileServiceTest {
 				.build());
 		when(riotService.getRankBySummonerId(anyString())).thenReturn(new HashSet<>());
 		// when
-		UserProfileDto userProfileDto = profileService.refreshUserProfileByNameTag(name, tag);
+		SummonerProfileResponse summonerProfileResponse = summonerService.renewalSummonerProfileByNameTag(name, tag);
 		// then
-		assertNotNull(userProfileDto);
-		assertEquals(name, userProfileDto.getUserName());
-		assertEquals(tag, userProfileDto.getTagLine());
+		assertNotNull(summonerProfileResponse);
+		assertEquals(name, summonerProfileResponse.getSummonerName());
+		assertEquals(tag, summonerProfileResponse.getTag());
 	}
 }

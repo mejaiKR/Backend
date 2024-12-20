@@ -17,8 +17,8 @@ import mejai.mejaigg.matchstreak.repository.MatchStreakRepository;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
 import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
 import mejai.mejaigg.summoner.domain.Summoner;
-import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
-import mejai.mejaigg.summoner.dto.response.UserStreakDto;
+import mejai.mejaigg.summoner.dto.request.SummonerStreakRequest;
+import mejai.mejaigg.summoner.dto.response.SummonerStreakResponse;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @SpringBootTest
@@ -34,7 +34,7 @@ class StreakServiceTest {
 	private SearchHistoryRepository searchHistoryRepository;
 
 	@Autowired
-	private SummonerRepository userRepository;
+	private SummonerRepository summonerRepository;
 
 	@Test
 	@DisplayName("스트릭이 있는데 조회를 하면 조회된다.")
@@ -50,7 +50,7 @@ class StreakServiceTest {
 			.profileIconId(1)
 			.revisionDate(1L)
 			.build();
-		userRepository.save(summoner);
+		summonerRepository.save(summoner);
 		SearchHistory searchHistory = SearchHistory.builder()
 			.summoner(summoner)
 			.date(YearMonth.of(2021, 8))
@@ -67,17 +67,22 @@ class StreakServiceTest {
 			matchStreaks.add(matchStreak);
 		}
 		matchStreakRepository.saveAll(matchStreaks);
-		UserStreakRequest request = UserStreakRequest.builder()
-			.id("testName")
+		SummonerStreakRequest request = SummonerStreakRequest.builder()
+			.summonerName("testName")
 			.tag("testTag")
 			.year(2021)
 			.month(8)
 			.build();
 
 		// when
-		List<UserStreakDto> streak = streakService.getStreak(request);
+		SummonerStreakResponse streak = streakService.getStreak(
+			request.getSummonerName(),
+			request.getTag(),
+			request.getYear(),
+			request.getMonth()
+		);
 		// then
 		assertNotNull(streak);
-		assertEquals(20, streak.size());
+		assertEquals(20, streak.getStreak().size());
 	}
 }

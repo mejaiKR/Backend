@@ -7,8 +7,7 @@ import lombok.Data;
 import mejai.mejaigg.matchstreak.domain.MatchStreak;
 
 @Data
-@Schema(description = "소환사 게임 횟수 및 승패 조회 응답 모델")
-public class UserStreakDto {
+public class SummonerStreak {
 	@Schema(description = "게임한 날짜", example = "2023-12-01")
 	private LocalDate date;
 
@@ -17,9 +16,8 @@ public class UserStreakDto {
 
 	@Schema(description = "해당 날짜에 진행된 판수에 맞는 메자이 이미지 URL", example = "http://localhost:8080/mejaiStack/1.svg")
 	private String imageUrl;
-	// private int rankCount;
 
-	public void setByMatchDateStreak(MatchStreak matchStreak, String resourceUrl) {
+	public SummonerStreak(MatchStreak matchStreak, String resourceUrl) {
 		this.date = matchStreak.getDate();
 		this.gameCount = matchStreak.getAllGameCount();
 		if (gameCount > 25) {

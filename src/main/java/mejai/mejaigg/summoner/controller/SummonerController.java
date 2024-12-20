@@ -1,61 +1,101 @@
 package mejai.mejaigg.summoner.controller;
 
-import java.util.List;
-
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.awspring.cloud.sqs.operations.SendResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mejai.mejaigg.matchstreak.service.StreakService;
+import mejai.mejaigg.messaging.sqs.sender.MessageSender;
 import mejai.mejaigg.searchhistory.dto.RankingRequestDto;
-import mejai.mejaigg.searchhistory.dto.SearchRankingDto;
+import mejai.mejaigg.searchhistory.dto.RankingResponse;
 import mejai.mejaigg.searchhistory.service.SearchHistoryService;
-import mejai.mejaigg.summoner.dto.request.UserProfileRequest;
-import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
-import mejai.mejaigg.summoner.dto.response.UserProfileDto;
-import mejai.mejaigg.summoner.dto.response.UserStreakDto;
-import mejai.mejaigg.summoner.service.ProfileService;
+import mejai.mejaigg.summoner.dto.request.SummonerProfileRequest;
+import mejai.mejaigg.summoner.dto.request.SummonerStreakRequest;
+import mejai.mejaigg.summoner.dto.response.RenewalStatusResponse;
+import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
+import mejai.mejaigg.summoner.dto.response.SummonerStreakResponse;
+import mejai.mejaigg.summoner.service.SummonerService;
 
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000", "https://mejai.vercel.app"})
-@Tag(name = "Users", description = "소환사 정보 및 게임 통계 API")
+@Tag(name = "Summoner", description = "소환사 정보 및 게임 통계 API")
+@RequestMapping("/web/summoner")
 public class SummonerController {
-	//TODO : 이 컨트롤러는 Production 에는 올라가지 않습니다.
-	private final ProfileService profileService;
+	private final SummonerService summonerService;
 	private final StreakService streakService;
 	private final SearchHistoryService searchHistoryService;
+	private final MessageSender messageSender;
 
-	@GetMapping("/users/profile")
+	@GetMapping("/profile")
 	@Operation(summary = "소환사 정보 조회", description = "주어진 소환사 ID로 프로필 정보를 조회 합니다.")
-	public UserProfileDto profile(UserProfileRequest request) {
-		return profileService.getUserProfileByNameTag(request.getId(), request.getTag());
+	public SummonerProfileResponse profile(@Valid @ParameterObject SummonerProfileRequest request) {
+		return summonerService.getSummonerProfileByNameTag(request.getSummonerName(), request.getTag());
 	}
 
-	@GetMapping("/users/profile/refresh")
-	@Operation(summary = "소환사 정보 업데이트", description = "주어진 소환사 ID로 프로필 정보를 업데이트 합니다.")
-	public UserProfileDto refreshProfile(UserProfileRequest request) {
-		return profileService.refreshUserProfileByNameTag(request.getId(), request.getTag());
+	@GetMapping("/profile/renewal")
+	@Operation(summary = "소환사 정보 업데이트 상태 조회",
+		description = """
+			/profile/renewal Post 요청을 보낸 후, 해당 요청의 상태를 조회할 수 있습니다.  \s
+			/summoner/profile 요청에서 가져온 lastUpdatedAt 값과 비교하여 최신화 되었으면 업데이트가 완료된 상태입니다.  \s
+			최신화 될 때 까지 몇초에 한 번 요청을 보내어 상태를 확인하면 됩니다.  \s
+			너무 오랜 기간동안 업데이트가 완료되지 않는다면, 다시 요청을 보내달란 메시지를 보여주세요.  \s
+			""")
+	public RenewalStatusResponse getProfileRenewalStatus(@Valid @ParameterObject SummonerProfileRequest request) {
+		return summonerService.getProfileRenewalStatus(request.getSummonerName(), request.getTag());
 	}
 
-	@GetMapping("/users/streak")
+	@PostMapping("/profile/renewal")
+	@Operation(summary = "소환사 정보 업데이트", description = "주어진 소환사 ID로 프로필 정보를 업데이트 요청을 보냅니다.")
+	public SendResult<String> renewalProfile(@RequestBody SummonerProfileRequest request) {
+		return messageSender.sendMessage(request);
+	}
+
+	@GetMapping("/streak")
 	@Operation(summary = "소환사 게임 횟수 및 승패 조회", description = "소환사가 특정 기간 동안 진행한 게임 횟수 및 승패를 업데이트 및 조회합니다.")
-	public List<UserStreakDto> streak(@Valid UserStreakRequest request) {
-		return streakService.refreshStreak(request);
+	public SummonerStreakResponse streak(@Valid @ParameterObject SummonerStreakRequest request) {
+		return streakService.getStreak(
+			request.getSummonerName(),
+			request.getTag(),
+			request.getYear(),
+			request.getMonth()
+		);
 	}
 
-	@GetMapping("/users/streak/refresh")
-	@Operation(summary = "소환사 게임 횟수 및 승패 업데이트", description = "소환사가 특정 기간 동안 진행한 게임 횟수 및 승패를 업데이트합니다.")
-	public List<UserStreakDto> refreshStreak(@Valid UserStreakRequest request) {
-		return streakService.refreshStreak(request);
+	@GetMapping("/streak/renewal")
+	@Operation(summary = "소환사 게임 횟수 및 승패 업데이트 상태 조회",
+		description = """
+			/summoner/streak/renewal 요청을 보낸 후, 해당 요청의 상태를 조회할 수 있습니다.  \s
+			/summoner/streak 요청에서 가져온 lastUpdatedAt 값과 비교하여 최신화 되었으면 업데이트가 완료된 상태입니다.  \s
+			최신화 될 때 까지 몇초에 한 번 요청을 보내어 상태를 확인하면 됩니다.  \s
+			너무 오랜 기간동안 업데이트가 완료되지 않는다면, 다시 요청을 보내달란 메시지를 보여주세요.
+			""")
+	public RenewalStatusResponse renewalStreakStatus(@Valid @ParameterObject SummonerStreakRequest request) {
+		return streakService.getStreakRenewalStatus(
+			request.getSummonerName(),
+			request.getTag(),
+			request.getYear(),
+			request.getMonth()
+		);
+	}
+
+	@PostMapping("/streak/renewal")
+	@Operation(summary = "소환사 게임 횟수 및 승패 업데이트", description = "소환사가 특정 기간 동안 진행한 게임 횟수 및 승패 업데이트 요청을 서버에 전송합니다.")
+	public SendResult<String> postRenewalStreak(@RequestBody @Valid SummonerStreakRequest request) {
+		return messageSender.sendMessage(request);
 	}
 
 	@GetMapping("/ranking")
-	public SearchRankingDto searchRanking(@Valid RankingRequestDto request) {
+	public RankingResponse getRanking(@Valid RankingRequestDto request) {
 		return searchHistoryService.getRanking(request.getYear(), request.getMonth());
 	}
 }
