@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.awspring.cloud.sqs.operations.SendResult;
@@ -27,7 +28,8 @@ import mejai.mejaigg.summoner.service.SummonerService;
 
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000", "https://mejai.vercel.app"})
+@CrossOrigin(origins = {"https://mejai.kr", "http://localhost:3000", "https://mejai.xyz"},
+	methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.OPTIONS})
 @Tag(name = "Summoner", description = "소환사 정보 및 게임 통계 API")
 @RequestMapping("/web/summoner")
 public class SummonerController {
