@@ -18,6 +18,7 @@ import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 @Slf4j
 public class SqsListenerConfig {
 	private final MyMessageListener myMessageListener;
+	private final AwsProperties awsProperties;
 
 	@Bean
 	public SqsMessageListenerContainer<Object> sqsMessageListenerContainer(SqsAsyncClient sqsAsyncClient) {
@@ -29,7 +30,7 @@ public class SqsListenerConfig {
 				.pollTimeout(Duration.ofSeconds(10))) // 폴링 타임아웃
 			.build();
 		// SqsMessageListenerContainer 생성
-		SqsMessageListenerContainer<Object> container = factory.createContainer("mejai-renewal-sqs");
+		SqsMessageListenerContainer<Object> container = factory.createContainer(awsProperties.getSqsName());
 
 		// MessageListener 설정
 		container.setMessageListener((message) -> {

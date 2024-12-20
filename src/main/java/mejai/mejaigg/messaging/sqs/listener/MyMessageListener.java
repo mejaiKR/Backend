@@ -9,6 +9,7 @@ import io.awspring.cloud.sqs.listener.MessageListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mejai.mejaigg.matchstreak.service.StreakService;
+import mejai.mejaigg.messaging.sqs.config.AwsProperties;
 import mejai.mejaigg.riot.exception.ClientErrorCode;
 import mejai.mejaigg.riot.exception.ClientException;
 import mejai.mejaigg.summoner.dto.request.UserProfileRequest;
@@ -25,6 +26,7 @@ public class MyMessageListener implements MessageListener<Object> {
 	private final ProfileService profileService;
 	private final StreakService streakService;
 	private final SqsAsyncClient sqsAsyncClient;
+	private final AwsProperties awsProperties;
 
 	@Override
 	public void onMessage(Message<Object> message) {
@@ -72,7 +74,7 @@ public class MyMessageListener implements MessageListener<Object> {
 	private void deleteMessage(String receiptHandle) {
 		// 메시지 삭제 요청
 		DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
-			.queueUrl("mejai-renewal-sqs") // SQS 큐 URL
+			.queueUrl(awsProperties.getSqsName()) // SQS 큐 URL
 			.receiptHandle(receiptHandle)
 			.build();
 
