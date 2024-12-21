@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.response.RenewalStatusResponse;
 import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
+import mejai.mejaigg.summoner.dto.response.SummonerSearchResponse;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @Service
@@ -116,6 +118,15 @@ public class SummonerService {
 		return new RenewalStatusResponse(summoner.getUpdatedAt());
 	}
 
+	public SummonerSearchResponse searchSummoner(String summonerName, int count) {
+		List<Summoner> summoners = summonerRepository.findBySummonerNameContainingAllIgnoreCaseOrderBySummonerNameDesc(
+			summonerName,
+			Limit.of(count)
+		);
+
+		return new SummonerSearchResponse(summoners);
+	}
+
 	/**
 	 * 소환사 정보를 갱신합니다.
 	 * 이건 이미 유저가 한번 검색 됐다고 생각하고 랭크와 레벨을 업데이트 하는 것 입니다.
@@ -140,4 +151,3 @@ public class SummonerService {
 		summonerRepository.save(summoner);
 	}
 }
-

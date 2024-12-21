@@ -20,9 +20,11 @@ import mejai.mejaigg.searchhistory.dto.RankingRequestDto;
 import mejai.mejaigg.searchhistory.dto.RankingResponse;
 import mejai.mejaigg.searchhistory.service.SearchHistoryService;
 import mejai.mejaigg.summoner.dto.request.SummonerProfileRequest;
+import mejai.mejaigg.summoner.dto.request.SummonerSearchRequest;
 import mejai.mejaigg.summoner.dto.request.SummonerStreakRequest;
 import mejai.mejaigg.summoner.dto.response.RenewalStatusResponse;
 import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
+import mejai.mejaigg.summoner.dto.response.SummonerSearchResponse;
 import mejai.mejaigg.summoner.dto.response.SummonerStreakResponse;
 import mejai.mejaigg.summoner.service.SummonerService;
 
@@ -100,4 +102,17 @@ public class SummonerController {
 	public RankingResponse getRanking(@Valid RankingRequestDto request) {
 		return searchHistoryService.getRanking(request.getYear(), request.getMonth());
 	}
+
+	@GetMapping("/search")
+	@Operation(summary = "소환사 검색", description = """
+		검색어와 일치하는 이름을 가진 DB에 존재하는 소환사를 조회합니다.
+
+		사용법:
+		검색어를 입력하면, 검색어와 일치하는 이름을 가진 소환사를 count만큼 조회합니다.
+		검색어는 소환사 이름의 일부분이어도 상관없습니다.
+		""")
+	public SummonerSearchResponse search(@ParameterObject SummonerSearchRequest request) {
+		return summonerService.searchSummoner(request.getSummonerName(), request.getCount());
+	}
+
 }
