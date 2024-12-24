@@ -9,11 +9,15 @@ import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import mejai.mejaigg.matchstreak.domain.MatchStreak;
 import mejai.mejaigg.matchstreak.repository.MatchStreakRepository;
+import mejai.mejaigg.rank.repository.RankRepository;
 import mejai.mejaigg.searchhistory.domain.SearchHistory;
 import mejai.mejaigg.searchhistory.repository.SearchHistoryRepository;
 import mejai.mejaigg.summoner.domain.Summoner;
@@ -23,7 +27,9 @@ import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @SpringBootTest
 @DisplayName("스트릭 테스트")
+@Transactional
 class StreakServiceTest {
+	private static final Logger log = LoggerFactory.getLogger(StreakServiceTest.class);
 	@Autowired
 	private StreakService streakService;
 
@@ -35,6 +41,9 @@ class StreakServiceTest {
 
 	@Autowired
 	private SummonerRepository summonerRepository;
+
+	@Autowired
+	private RankRepository rankRepository;
 
 	@Test
 	@DisplayName("스트릭이 있는데 조회를 하면 조회된다.")
@@ -51,6 +60,7 @@ class StreakServiceTest {
 			.revisionDate(1L)
 			.build();
 		summonerRepository.save(summoner);
+
 		SearchHistory searchHistory = SearchHistory.builder()
 			.summoner(summoner)
 			.date(YearMonth.of(2021, 8))
@@ -64,11 +74,14 @@ class StreakServiceTest {
 				.date(LocalDate.of(2021, 8, i + 1))
 				.allGameCount(10)
 				.build();
+			searchHistory.getMatchStreaks().add(matchStreak);
 			matchStreaks.add(matchStreak);
 		}
 		matchStreakRepository.saveAll(matchStreaks);
+		searchHistoryRepository.save(searchHistory);
+
 		SummonerStreakRequest request = SummonerStreakRequest.builder()
-			.summonerName("testName")
+			.id("testName")
 			.tag("testTag")
 			.year(2021)
 			.month(8)
@@ -76,13 +89,13 @@ class StreakServiceTest {
 
 		// when
 		SummonerStreakResponse streak = streakService.getStreak(
-			request.getSummonerName(),
+			request.getId(),
 			request.getTag(),
 			request.getYear(),
 			request.getMonth()
 		);
 		// then
 		assertNotNull(streak);
-		assertEquals(20, streak.getStreak().size());
+		assertEquals(20, streak.getUserGameCounts().size());
 	}
 }

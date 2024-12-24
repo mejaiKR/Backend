@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class SummonerSearchRequest {
-	private String summonerName;
+	private String id;
 	private int count = 5;
 }

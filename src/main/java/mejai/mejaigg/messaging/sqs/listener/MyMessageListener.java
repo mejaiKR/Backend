@@ -14,8 +14,6 @@ import mejai.mejaigg.riot.exception.ClientErrorCode;
 import mejai.mejaigg.riot.exception.ClientException;
 import mejai.mejaigg.summoner.dto.request.SummonerProfileRequest;
 import mejai.mejaigg.summoner.dto.request.SummonerStreakRequest;
-import mejai.mejaigg.summoner.dto.request.UserProfileRequest;
-import mejai.mejaigg.summoner.dto.request.UserStreakRequest;
 import mejai.mejaigg.summoner.service.SummonerService;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
@@ -35,44 +33,22 @@ public class MyMessageListener implements MessageListener<Object> {
 		try {
 			String payload = (String)message.getPayload(); // 메시지 페이로드를 String으로 변환
 
-			// 메시지 타입에 따라 처리
-			if (payload.contains("id")) {
-				if (payload.contains("year") && payload.contains("month")) {
-					log.info("Streak message received.");
-					UserStreakRequest request = objectMapper.readValue(payload, UserStreakRequest.class);
-					streakService.renewalStreak(
-						request.getId(),
-						request.getTag(),
-						request.getYear(),
-						request.getMonth()
-					);
-				} else {
-					log.info("Profile message received.");
-					UserProfileRequest request = objectMapper.readValue(payload, UserProfileRequest.class);
-					summonerService.renewalSummonerProfileByNameTag(
-						request.getId(),
-						request.getTag()
-					);
-				}
-			}
-			if (payload.contains("summonerName")) {
-				if (payload.contains("year") && payload.contains("month")) {
-					log.info("Streak message received.");
-					SummonerStreakRequest request = objectMapper.readValue(payload, SummonerStreakRequest.class);
-					streakService.renewalStreak(
-						request.getSummonerName(),
-						request.getTag(),
-						request.getYear(),
-						request.getMonth()
-					);
-				} else {
-					log.info("Profile message received.");
-					SummonerProfileRequest request = objectMapper.readValue(payload, SummonerProfileRequest.class);
-					summonerService.renewalSummonerProfileByNameTag(
-						request.getSummonerName(),
-						request.getTag()
-					);
-				}
+			if (payload.contains("year") && payload.contains("month")) {
+				log.info("Streak message received.");
+				SummonerStreakRequest request = objectMapper.readValue(payload, SummonerStreakRequest.class);
+				streakService.renewalStreak(
+					request.getId(),
+					request.getTag(),
+					request.getYear(),
+					request.getMonth()
+				);
+			} else {
+				log.info("Profile message received.");
+				SummonerProfileRequest request = objectMapper.readValue(payload, SummonerProfileRequest.class);
+				summonerService.renewalSummonerProfileByNameTag(
+					request.getId(),
+					request.getTag()
+				);
 			}
 
 			// ACK 처리

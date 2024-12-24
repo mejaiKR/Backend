@@ -29,7 +29,6 @@ import mejai.mejaigg.summoner.service.SummonerService;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class StreakService {
 	private final SummonerService summonerService;
 	private final SearchHistoryRepository searchHistoryRepository;
@@ -64,7 +63,7 @@ public class StreakService {
 	 * @param month 월
 	 * @return 소환사의 게임 횟수 및 승패 업데이트 결과
 	 */
-	@Transactional(readOnly = false)
+	@Transactional
 	public void renewalStreak(String summonerName, String tag, int year, int month) {
 		Summoner summoner = summonerService.findOrCreateSummoner(summonerName, tag);
 		YearMonth yearMonth = YearMonth.of(year, month);

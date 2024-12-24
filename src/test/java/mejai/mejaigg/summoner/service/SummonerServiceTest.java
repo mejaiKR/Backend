@@ -5,7 +5,6 @@ import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.transaction.annotation.Transactional;
 
 import mejai.mejaigg.global.config.RiotProperties;
 import mejai.mejaigg.rank.domain.TierType;
@@ -23,12 +23,12 @@ import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
 import mejai.mejaigg.summoner.domain.Summoner;
-import mejai.mejaigg.summoner.dto.response.RankResponseDto;
 import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
 import mejai.mejaigg.summoner.repository.SummonerRepository;
 
 @SpringBootTest
 @DisplayName("소환사 프로필 서비스 테스트")
+@Transactional
 class SummonerServiceTest {
 
 	@MockBean
@@ -71,18 +71,15 @@ class SummonerServiceTest {
 		summoner.setRankByRankDtos(new HashSet<>());
 		summonerRepository.save(summoner);
 		// when
-		SummonerProfileResponse userProfileByNameTag = summonerService.getSummonerProfileByNameTag(name, tag);
-		List<RankResponseDto> rank = userProfileByNameTag.getRank();
+		SummonerProfileResponse summonerProfile = summonerService.getSummonerProfileByNameTag(name, tag);
 		// then
-		assertNotNull(userProfileByNameTag);
-		assertNotNull(rank);
-		assertEquals(name, userProfileByNameTag.getSummonerName());
-		assertEquals(tag, userProfileByNameTag.getTag());
-		assertEquals(2, rank.size());
-		assertEquals("RANKED_SOLO_5x5", rank.get(0).getQueueType());
-		assertEquals(TierType.UNRANKED, rank.get(0).getTier());
-		assertEquals("RANKED_FLEX_SR", rank.get(1).getQueueType());
-		assertEquals(TierType.UNRANKED, rank.get(1).getTier());
+		assertNotNull(summonerProfile);
+		assertNotNull(summonerProfile.getSoloRank());
+		assertNotNull(summonerProfile.getFlexRank());
+		assertEquals(name, summonerProfile.getSummonerName());
+		assertEquals(tag, summonerProfile.getTagLine());
+		assertEquals(TierType.UNRANKED, summonerProfile.getSoloRank().getTier());
+		assertEquals(TierType.UNRANKED, summonerProfile.getFlexRank().getTier());
 	}
 
 	@Test
@@ -129,18 +126,16 @@ class SummonerServiceTest {
 			.build();
 
 		// when
-		SummonerProfileResponse summonerProfileResponse = summonerService.getSummonerProfileByNameTag(name, tag);
-		List<RankResponseDto> rank = summonerProfileResponse.getRank();
+		SummonerProfileResponse summonerProfile = summonerService.getSummonerProfileByNameTag(name, tag);
 		// then
-		assertNotNull(summonerProfileResponse);
-		assertNotNull(rank);
-		assertEquals(name, summonerProfileResponse.getSummonerName());
-		assertEquals(tag, summonerProfileResponse.getTag());
-		assertEquals(2, rank.size());
-		assertEquals("RANKED_SOLO_5x5", rank.get(0).getQueueType());
-		assertEquals(TierType.UNRANKED, rank.get(0).getTier());
-		assertEquals("RANKED_FLEX_SR", rank.get(1).getQueueType());
-		assertEquals(TierType.UNRANKED, rank.get(1).getTier());
+		assertNotNull(summonerProfile);
+		assertNotNull(summonerProfile.getSoloRank());
+		assertNotNull(summonerProfile.getFlexRank());
+		assertEquals(name, summonerProfile.getSummonerName());
+		assertEquals(tag, summonerProfile.getTagLine());
+		assertEquals(TierType.UNRANKED, summonerProfile.getSoloRank().getTier());
+		assertEquals(TierType.UNRANKED, summonerProfile.getFlexRank().getTier());
+
 	}
 
 	@Test
@@ -171,7 +166,7 @@ class SummonerServiceTest {
 
 		assertNotNull(summonerProfileResponse);
 		assertEquals(name, summonerProfileResponse.getSummonerName());
-		assertEquals(tag, summonerProfileResponse.getTag());
+		assertEquals(tag, summonerProfileResponse.getTagLine());
 	}
 
 	@DisplayName("2시간 이후 갱신시 라이엇으로 요청을 보낸다.")
@@ -208,6 +203,6 @@ class SummonerServiceTest {
 		// then
 		assertNotNull(summonerProfileResponse);
 		assertEquals(name, summonerProfileResponse.getSummonerName());
-		assertEquals(tag, summonerProfileResponse.getTag());
+		assertEquals(tag, summonerProfileResponse.getTagLine());
 	}
 }

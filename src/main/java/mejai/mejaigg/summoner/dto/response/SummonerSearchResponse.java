@@ -19,7 +19,7 @@ public class SummonerSearchResponse {
 	@Data
 	@AllArgsConstructor
 	private static class SummonerProfile {
-		private String summonerName;
+		private String id;
 		private String tag;
 	}
 }

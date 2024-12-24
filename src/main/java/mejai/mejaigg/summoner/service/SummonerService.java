@@ -6,7 +6,6 @@ import java.util.Set;
 
 import org.springframework.data.domain.Limit;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +24,6 @@ import mejai.mejaigg.summoner.repository.SummonerRepository;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class SummonerService {
 
 	private final RiotService riotService;
@@ -41,14 +39,12 @@ public class SummonerService {
 	 * @param tag  소환사 태그
 	 * @return 소환사 정보
 	 */
-	@Transactional
 	public SummonerProfileResponse getSummonerProfileByNameTag(String name, String tag) {
 		Summoner summoner = findOrCreateSummoner(name, tag);
 
 		return new SummonerProfileResponse(summoner, riotProperties.getResourceUrl());
 	}
 
-	@Transactional
 	public Summoner findOrCreateSummoner(String name, String tag) {
 		String normalizeName = name.replace(" ", "").toLowerCase();
 		String normalizeTag = tag.toLowerCase();
@@ -98,7 +94,6 @@ public class SummonerService {
 	 * @param tag  소환사 태그
 	 * @return 갱신된 소환사 정보
 	 */
-	@Transactional
 	public SummonerProfileResponse renewalSummonerProfileByNameTag(String name, String tag) {
 		Summoner summoner = findOrCreateSummoner(name, tag);
 

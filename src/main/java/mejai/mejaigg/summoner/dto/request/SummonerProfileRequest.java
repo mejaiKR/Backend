@@ -12,7 +12,7 @@ public class SummonerProfileRequest {
 	@NotBlank
 	@Size(min = 1, max = 30)
 	@Schema(description = "소환사 아이디", example = "hide on bush")
-	private String summonerName;
+	private String id;
 
 	@NotBlank
 	@Size(min = 2, max = 10)

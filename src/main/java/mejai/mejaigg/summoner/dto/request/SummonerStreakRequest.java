@@ -18,7 +18,7 @@ public class SummonerStreakRequest {
 	@Schema(description = "소환사 아이디", example = "hide on bush")
 	@NotBlank
 	@Size(min = 1, max = 30)
-	private String summonerName;
+	private String id;
 
 	@Schema(description = "소환사 태그", example = "Kr1")
 	@NotBlank

@@ -43,7 +43,7 @@ public class SummonerController {
 	@GetMapping("/profile")
 	@Operation(summary = "소환사 정보 조회", description = "주어진 소환사 ID로 프로필 정보를 조회 합니다.")
 	public SummonerProfileResponse profile(@Valid @ParameterObject SummonerProfileRequest request) {
-		return summonerService.getSummonerProfileByNameTag(request.getSummonerName(), request.getTag());
+		return summonerService.getSummonerProfileByNameTag(request.getId(), request.getTag());
 	}
 
 	@GetMapping("/profile/renewal")
@@ -55,7 +55,7 @@ public class SummonerController {
 			너무 오랜 기간동안 업데이트가 완료되지 않는다면, 다시 요청을 보내달란 메시지를 보여주세요.  \s
 			""")
 	public RenewalStatusResponse getProfileRenewalStatus(@Valid @ParameterObject SummonerProfileRequest request) {
-		return summonerService.getProfileRenewalStatus(request.getSummonerName(), request.getTag());
+		return summonerService.getProfileRenewalStatus(request.getId(), request.getTag());
 	}
 
 	@PostMapping("/profile/renewal")
@@ -68,7 +68,7 @@ public class SummonerController {
 	@Operation(summary = "소환사 게임 횟수 및 승패 조회", description = "소환사가 특정 기간 동안 진행한 게임 횟수 및 승패를 업데이트 및 조회합니다.")
 	public SummonerStreakResponse streak(@Valid @ParameterObject SummonerStreakRequest request) {
 		return streakService.getStreak(
-			request.getSummonerName(),
+			request.getId(),
 			request.getTag(),
 			request.getYear(),
 			request.getMonth()
@@ -85,7 +85,7 @@ public class SummonerController {
 			""")
 	public RenewalStatusResponse renewalStreakStatus(@Valid @ParameterObject SummonerStreakRequest request) {
 		return streakService.getStreakRenewalStatus(
-			request.getSummonerName(),
+			request.getId(),
 			request.getTag(),
 			request.getYear(),
 			request.getMonth()
@@ -112,7 +112,7 @@ public class SummonerController {
 		검색어는 소환사 이름의 일부분이어도 상관없습니다.
 		""")
 	public SummonerSearchResponse search(@ParameterObject SummonerSearchRequest request) {
-		return summonerService.searchSummoner(request.getSummonerName(), request.getCount());
+		return summonerService.searchSummoner(request.getId(), request.getCount());
 	}
 
 }

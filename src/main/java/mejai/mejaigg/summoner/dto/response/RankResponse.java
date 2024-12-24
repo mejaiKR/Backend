@@ -6,8 +6,7 @@ import mejai.mejaigg.rank.domain.RankType;
 import mejai.mejaigg.rank.domain.TierType;
 
 @Data
-public class RankResponseDto {
-	private String queueType;
+public class RankResponse {
 	private TierType tier;
 	private String tierIcon;
 	private RankType rank;
@@ -15,8 +14,7 @@ public class RankResponseDto {
 	private int wins;
 	private int losses;
 
-	public void setByRank(Rank rank, String resourceUrl) {
-		this.queueType = rank.getId().getQueueType();
+	public RankResponse(Rank rank, String resourceUrl) {
 		this.tier = rank.getTier();
 		this.tierIcon = resourceUrl + "emblem/" + rank.getTier() + ".png";
 		this.rank = rank.getRank();
