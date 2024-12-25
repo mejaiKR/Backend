@@ -1,5 +1,6 @@
 package mejai.mejaigg.app.watch.dto.response.watch;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,6 +10,9 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class PlayLog {
+	@Schema(description = "게임 시작일", example = "yyyy-MM-dd")
+	private LocalDate startDate;
+
 	@Schema(description = "게임 시작 시간", example = "hh:mm:ss.nnn")
 	private LocalTime startTime;
 

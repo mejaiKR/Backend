@@ -134,7 +134,13 @@ public class WatchService {
 			LocalTime gameStartTime = match.getGameStartTimestamp().toLocalTime();
 			LocalTime gameEndTime = match.getGameEndTimestamp().toLocalTime();
 
-			dayPlayLog.add(new PlayLog(gameStartTime, gameEndTime, matchParticipant.getWin()));
+			dayPlayLog.add(new PlayLog(
+					match.getGameCreation().toLocalDate(),
+					gameStartTime,
+					gameEndTime,
+					matchParticipant.getWin()
+				)
+			);
 		}
 
 		return dayPlayLog;
