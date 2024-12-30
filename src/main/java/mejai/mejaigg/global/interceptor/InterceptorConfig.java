@@ -1,11 +1,10 @@
-package mejai.mejaigg.global.config;
+package mejai.mejaigg.global.interceptor;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import lombok.RequiredArgsConstructor;
-import mejai.mejaigg.global.interceptor.JwtInterceptor;
 
 @RequiredArgsConstructor
 @Configuration

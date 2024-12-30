@@ -1,6 +1,7 @@
 package mejai.mejaigg.summoner.controller;
 
 import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import mejai.mejaigg.global.cache.CacheNames;
 import mejai.mejaigg.matchstreak.service.StreakService;
 import mejai.mejaigg.messaging.sqs.sender.MessageSender;
 import mejai.mejaigg.searchhistory.dto.RankingRequestDto;
@@ -99,6 +101,7 @@ public class SummonerController {
 	}
 
 	@GetMapping("/ranking")
+	@Cacheable(cacheNames = CacheNames.MEJAI_API_CACHE)
 	public RankingResponse getRanking(@Valid RankingRequestDto request) {
 		return searchHistoryService.getRanking(request.getYear(), request.getMonth());
 	}
@@ -111,6 +114,7 @@ public class SummonerController {
 		검색어를 입력하면, 검색어와 일치하는 이름을 가진 소환사를 count만큼 조회합니다.
 		검색어는 소환사 이름의 일부분이어도 상관없습니다.
 		""")
+	@Cacheable(cacheNames = CacheNames.MEJAI_API_CACHE)
 	public SummonerSearchResponse search(@ParameterObject SummonerSearchRequest request) {
 		return summonerService.searchSummoner(request.getId(), request.getCount());
 	}
