@@ -10,10 +10,10 @@ import lombok.Data;
 @Schema(description = "소환사 게임 횟수 및 승패 조회 응답 모델")
 public class SummonerStreakResponse {
 	private List<SummonerStreak> userGameCounts;
-	private LocalDateTime lastUpdateAt;
+	private LocalDateTime lastUpdatedAt;
 
 	public SummonerStreakResponse(List<SummonerStreak> userGameCounts, LocalDateTime lastUpdateAt) {
 		this.userGameCounts = userGameCounts;
-		this.lastUpdateAt = lastUpdateAt;
+		this.lastUpdatedAt = lastUpdateAt;
 	}
 }
