@@ -50,6 +50,7 @@ public class SqsController {
 	@PostMapping("/start")
 	public String startListener() {
 		SqsListenerControlService.requestStart();
+		return "SQS Listener started.";
 	}
 
 	@PostMapping("/stop")
