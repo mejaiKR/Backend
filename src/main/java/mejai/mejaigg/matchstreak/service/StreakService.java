@@ -85,7 +85,7 @@ public class StreakService {
 			.orElse(null);
 
 		if (history == null) {
-			return new RenewalStatusResponse(LocalDateTime.of(1900, 1, 1, 0, 0, 0, 0));
+			return new RenewalStatusResponse(LocalDateTime.of(1900, 1, 1, 0, 0, 0, 1000));
 		}
 
 		return new RenewalStatusResponse(history.getUpdatedAt());
