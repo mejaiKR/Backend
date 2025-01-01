@@ -12,8 +12,8 @@ public class SummonerStreakResponse {
 	private List<SummonerStreak> userGameCounts;
 	private LocalDateTime lastUpdatedAt;
 
-	public SummonerStreakResponse(List<SummonerStreak> userGameCounts, LocalDateTime lastUpdateAt) {
+	public SummonerStreakResponse(List<SummonerStreak> userGameCounts, LocalDateTime lastUpdatedAt) {
 		this.userGameCounts = userGameCounts;
-		this.lastUpdatedAt = lastUpdateAt;
+		this.lastUpdatedAt = lastUpdatedAt;
 	}
 }

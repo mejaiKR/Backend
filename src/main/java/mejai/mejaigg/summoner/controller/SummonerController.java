@@ -20,7 +20,6 @@ import mejai.mejaigg.matchstreak.service.StreakService;
 import mejai.mejaigg.messaging.sqs.sender.MessageSender;
 import mejai.mejaigg.searchhistory.dto.RankingRequestDto;
 import mejai.mejaigg.searchhistory.dto.RankingResponse;
-import mejai.mejaigg.searchhistory.service.SearchHistoryService;
 import mejai.mejaigg.summoner.dto.request.SummonerProfileRequest;
 import mejai.mejaigg.summoner.dto.request.SummonerSearchRequest;
 import mejai.mejaigg.summoner.dto.request.SummonerStreakRequest;
@@ -39,7 +38,6 @@ import mejai.mejaigg.summoner.service.SummonerService;
 public class SummonerController {
 	private final SummonerService summonerService;
 	private final StreakService streakService;
-	private final SearchHistoryService searchHistoryService;
 	private final MessageSender messageSender;
 
 	@GetMapping("/profile")
@@ -103,7 +101,7 @@ public class SummonerController {
 	@GetMapping("/ranking")
 	@Cacheable(cacheNames = CacheNames.MEJAI_API_CACHE)
 	public RankingResponse getRanking(@Valid RankingRequestDto request) {
-		return searchHistoryService.getRanking(request.getYear(), request.getMonth());
+		return summonerService.getRanking(request.getYear(), request.getMonth());
 	}
 
 	@GetMapping("/search")

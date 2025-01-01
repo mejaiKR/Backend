@@ -1,6 +1,7 @@
 package mejai.mejaigg.summoner.service;
 
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,8 @@ import mejai.mejaigg.rank.dto.RankDto;
 import mejai.mejaigg.riot.dto.AccountDto;
 import mejai.mejaigg.riot.dto.SummonerDto;
 import mejai.mejaigg.riot.service.RiotService;
+import mejai.mejaigg.searchhistory.dto.RankingResponse;
+import mejai.mejaigg.searchhistory.dto.TopUserDTO;
 import mejai.mejaigg.summoner.domain.Summoner;
 import mejai.mejaigg.summoner.dto.response.RenewalStatusResponse;
 import mejai.mejaigg.summoner.dto.response.SummonerProfileResponse;
@@ -122,6 +125,12 @@ public class SummonerService {
 		);
 
 		return new SummonerSearchResponse(summoners);
+	}
+
+	public RankingResponse getRanking(int year, int month) {
+		YearMonth dateYM = YearMonth.of(year, month);
+		List<TopUserDTO> top10UsersWithGameCountByMonth = summonerRepository.findTop10UsersWithGameCountByMonth(dateYM);
+		return new RankingResponse(top10UsersWithGameCountByMonth);
 	}
 
 	/**
