@@ -28,6 +28,6 @@ public class SqsListenerControlService implements ApplicationContextAware {
 	public static void requestStart() {
 		SqsMessageListenerContainer<?> container = context.getBean(SqsMessageListenerContainer.class);
 		container.start();
-		log.info("SQS Listener has been started.");
+		// log.info("SQS Listener has been started.");
 	}
 }
