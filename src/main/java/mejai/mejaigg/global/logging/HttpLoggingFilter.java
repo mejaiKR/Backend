@@ -56,19 +56,10 @@ public class HttpLoggingFilter implements Filter {
 	}
 
 	private void logResponse(ContentCachingRequestWrapper request, ContentCachingResponseWrapper response) {
-		String responseBody = "";
-		if (response.getContentType() != null && response.getContentType().contains("application/json")) {
-			byte[] content = response.getContentAsByteArray();
-			if (content.length > 0) {
-				responseBody = new String(content, StandardCharsets.UTF_8);
-			}
-		}
-
-		log.info("RESPONSE: {} - Status: {}, Headers: {}, Body: {}",
+		log.info("RESPONSE: {} - Status: {}, Headers: {}",
 			request.getRequestURI(),
 			response.getStatus(),
-			getHeaders(response),
-			responseBody
+			getHeaders(response)
 		);
 	}
 
