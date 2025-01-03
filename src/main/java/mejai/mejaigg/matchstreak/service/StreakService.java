@@ -131,7 +131,7 @@ public class StreakService {
 			startDay = 1;
 		String[] monthHistories = getMonthHistories(dateYM, puuid, startDay, dateYM.lengthOfMonth());
 		int historyLen = monthHistories.length;
-		for (int i = startDay; i < dateYM.lengthOfMonth(); i++) {
+		for (int i = startDay; i <= dateYM.lengthOfMonth(); i++) {
 			try {
 				if (historyLen <= 0)
 					break;
