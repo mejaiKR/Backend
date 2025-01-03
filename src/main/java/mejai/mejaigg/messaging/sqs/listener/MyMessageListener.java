@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.listener.MessageListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mejai.mejaigg.global.discord.DiscordAlarmService;
 import mejai.mejaigg.matchstreak.service.StreakService;
 import mejai.mejaigg.messaging.sqs.config.AwsProperties;
 import mejai.mejaigg.riot.exception.ClientErrorCode;
@@ -27,6 +28,7 @@ public class MyMessageListener implements MessageListener<Object> {
 	private final StreakService streakService;
 	private final SqsAsyncClient sqsAsyncClient;
 	private final AwsProperties awsProperties;
+	private final DiscordAlarmService discordAlarmService;
 
 	@Override
 	public void onMessage(Message<Object> message) {
@@ -61,17 +63,22 @@ public class MyMessageListener implements MessageListener<Object> {
 			}
 
 		} catch (ClientException e) {
-			// 특정 에러 코드가 TOO_MANY_REQUESTS인 경우에만 처리
+			// 특정 에러 코드가 TOO_MANY_REQUESTS인 경우에만 별도 처리
 			if (e.getClientErrorCode() == ClientErrorCode.TOO_MANY_REQUESTS) {
-				// TOO_MANY_REQUESTS 에러에 대한 처리 로직
 				log.info("Too many requests. Waiting for a while.");
-				SqsListenerControlService.requestStop();
+				SqsListenerControlService.requestStop(); // 필요 시 리스너 일시 중지
 				return;
 			}
+			// 디스코드 알림
+			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 ClientException");
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
 			deleteMessage(receiptHandle);
 		} catch (Exception e) {
 			log.warn("Failed to process message: " + e.getMessage());
+
+			// 디스코드 알림
+			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 일반 Exception");
+
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
 			deleteMessage(receiptHandle);
 		}
