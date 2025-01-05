@@ -100,7 +100,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<Object> handleAllException(Exception ex, WebRequest request) {
 		log.warn("handleAllException", ex);
-		// 디스코드 알림 호출 (이 부분을 추가)
 		try {
 			// 요청 URL 등 유용한 정보를 context에 담아 보낼 수 있음
 			String requestPath = createRequestFullPath(request);
@@ -156,9 +155,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.build();
 	}
 
-	/**
-	 * WebRequest에서 요청 URL을 추출 (Discord 알림에 활용)
-	 */
 	private String createRequestFullPath(WebRequest webRequest) {
 		HttpServletRequest request = ((ServletWebRequest)webRequest).getRequest();
 		String fullPath = request.getMethod() + " " + request.getRequestURL();

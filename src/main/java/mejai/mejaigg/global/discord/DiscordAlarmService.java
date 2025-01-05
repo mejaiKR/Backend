@@ -17,12 +17,7 @@ public class DiscordAlarmService {
 
 	private final DiscordClient discordClient;
 
-	/**
-	 * 예외 + 추가 설명(컨텍스트)을 받아서 디스코드로 알림을 보낸다.
-	 * 컨텍스트에는 "SQS에서 에러", "Controller에서 에러" 등 출처나 부가정보를 적어둘 수 있다.
-	 */
 	public void sendDiscordAlarm(Exception e, String context) {
-		// 실제로 DiscordClient를 통해 메시지를 전송
 		discordClient.sendAlarm(createMessage(e, context));
 	}
 
@@ -31,7 +26,6 @@ public class DiscordAlarmService {
 	 * 여기서 e에 대한 stacktrace, 현재 시간 등의 정보를 담아서 전송할 수 있음
 	 */
 	private DiscordMessage createMessage(Exception e, String context) {
-		// stack trace를 문자열로 변환
 		String stackTrace = getStackTrace(e);
 		// 너무 길 경우 자르기(디스코드 Embed 제한을 고려)
 		if (stackTrace.length() > 2000) {
@@ -39,7 +33,7 @@ public class DiscordAlarmService {
 		}
 
 		return DiscordMessage.builder()
-			.content("🚨 에러 발생 알림: " + context)  // context를 추가로 표기
+			.content("🚨 에러 발생 알림: " + context)
 			.embeds(
 				List.of(
 					DiscordMessage.Embed.builder()
@@ -55,9 +49,6 @@ public class DiscordAlarmService {
 			.build();
 	}
 
-	/**
-	 * Exception의 stack trace를 문자열로 변환
-	 */
 	private String getStackTrace(Exception e) {
 		StringWriter stringWriter = new StringWriter();
 		e.printStackTrace(new PrintWriter(stringWriter));

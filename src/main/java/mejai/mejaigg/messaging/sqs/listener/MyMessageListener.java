@@ -63,20 +63,17 @@ public class MyMessageListener implements MessageListener<Object> {
 			}
 
 		} catch (ClientException e) {
-			// 특정 에러 코드가 TOO_MANY_REQUESTS인 경우에만 별도 처리
 			if (e.getClientErrorCode() == ClientErrorCode.TOO_MANY_REQUESTS) {
 				log.info("Too many requests. Waiting for a while.");
-				SqsListenerControlService.requestStop(); // 필요 시 리스너 일시 중지
+				SqsListenerControlService.requestStop();
 				return;
 			}
-			// 디스코드 알림
 			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 ClientException");
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
 			deleteMessage(receiptHandle);
 		} catch (Exception e) {
 			log.warn("Failed to process message: " + e.getMessage());
-
-			// 디스코드 알림
+			
 			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 일반 Exception");
 
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
