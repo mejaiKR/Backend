@@ -12,7 +12,7 @@ import mejai.mejaigg.global.cache.CacheNames;
 	url = "https://kauth.kakao.com"
 )
 public interface KakaoClient extends JwksClient {
-	@Cacheable(cacheNames = CacheNames.OAUTH_API_CACHE)
+	@Cacheable(cacheNames = CacheNames.OAUTH_API_CACHE, key = "'kakao-jwks'")
 	@GetMapping("/.well-known/jwks.json")
 	JwksResponse getJwks();
 }

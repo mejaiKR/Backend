@@ -12,7 +12,7 @@ import mejai.mejaigg.global.cache.CacheNames;
 	url = "https://appleid.apple.com"
 )
 public interface AppleClient extends JwksClient {
-	@Cacheable(cacheNames = CacheNames.OAUTH_API_CACHE)
+	@Cacheable(cacheNames = CacheNames.OAUTH_API_CACHE, key = "'apple-jwks'")
 	@GetMapping("/auth/keys")
 	JwksResponse getJwks();
 }
