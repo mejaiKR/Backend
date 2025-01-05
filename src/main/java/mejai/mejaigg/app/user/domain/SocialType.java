@@ -2,6 +2,9 @@ package mejai.mejaigg.app.user.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import lombok.Getter;
+
+@Getter
 public enum SocialType {
 	APPLE("apple"),
 	KAKAO("kakao"),

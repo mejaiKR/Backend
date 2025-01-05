@@ -59,6 +59,7 @@ public class OidcService {
 	public String extractSocialId(SocialType socialType, String idToken) {
 		SocialProperties properties = socialProperties.get(socialType);
 		JwksClient client = jwksClients.get(socialType);
+		log.info("{} keys: {}", socialType.getType(), client.getJwks().getKeys());
 		if (properties == null) {
 			throw new IllegalArgumentException("지원하지 않는 소셜 타입입니다.");
 		}
