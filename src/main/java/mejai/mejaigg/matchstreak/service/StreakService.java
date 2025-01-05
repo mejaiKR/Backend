@@ -102,8 +102,11 @@ public class StreakService {
 
 	private String[] getMonthHistories(YearMonth yearMonth, String puuid, int startDay, int endDay) {
 		long startTime = YearMonthToEpochUtil.convertToEpochSeconds(yearMonth.atDay(startDay));
-		long endTime = YearMonthToEpochUtil.convertToEpochSeconds(yearMonth.atDay(endDay));
-
+		long endTime = 0;
+		if (startDay == yearMonth.lengthOfMonth())
+			endTime = YearMonthToEpochUtil.convertToEpochSeconds(yearMonth.atDay(startDay).plusDays(1));
+		else
+			endTime = YearMonthToEpochUtil.convertToEpochSeconds(yearMonth.atDay(endDay));
 		return riotService.getMatchHistoryByPuuid(puuid, startTime, endTime, 0L, 100);
 	}
 
@@ -131,7 +134,7 @@ public class StreakService {
 			startDay = 1;
 		String[] monthHistories = getMonthHistories(dateYM, puuid, startDay, dateYM.lengthOfMonth());
 		int historyLen = monthHistories.length;
-		for (int i = startDay; i < dateYM.lengthOfMonth(); i++) {
+		for (int i = startDay; i <= dateYM.lengthOfMonth(); i++) {
 			try {
 				if (historyLen <= 0)
 					break;
