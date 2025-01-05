@@ -73,7 +73,6 @@ public class MyMessageListener implements MessageListener<Object> {
 			deleteMessage(receiptHandle);
 		} catch (Exception e) {
 			log.warn("Failed to process message: " + e.getMessage());
-			
 			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 일반 Exception");
 
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
