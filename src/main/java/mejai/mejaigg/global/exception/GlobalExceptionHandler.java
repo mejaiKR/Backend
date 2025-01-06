@@ -18,7 +18,7 @@ import feign.FeignException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.global.discord.DiscordAlarmService;
+import mejai.mejaigg.global.alarm.AlarmService;
 import mejai.mejaigg.riot.exception.ClientErrorCode;
 import mejai.mejaigg.riot.exception.ClientException;
 
@@ -26,7 +26,7 @@ import mejai.mejaigg.riot.exception.ClientException;
 @Slf4j
 @RequiredArgsConstructor
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-	private final DiscordAlarmService discordAlarmService;
+	private final AlarmService alarmService;
 
 	@ExceptionHandler(RestApiException.class)
 	public ResponseEntity<Object> handleCustomException(RestApiException e) {
@@ -88,7 +88,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		MethodArgumentNotValidException e,
 		HttpHeaders headers,
 		HttpStatusCode HttpStatusCode,
-		WebRequest request) {
+		WebRequest request
+	) {
 		log.warn("handleMethodArgumentNotValid", e);
 		ErrorCode errorCode = CommonErrorCode.INVALID_PARAMETER;
 		return handleExceptionInternal(e, errorCode);
@@ -100,13 +101,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<Object> handleAllException(Exception ex, WebRequest request) {
 		log.warn("handleAllException", ex);
-		try {
-			// 요청 URL 등 유용한 정보를 context에 담아 보낼 수 있음
-			String requestPath = createRequestFullPath(request);
-			discordAlarmService.sendDiscordAlarm(ex, "GlobalExceptionHandler - 알 수 없는 예외 발생\nURL: " + requestPath);
-		} catch (Exception discordEx) {
-			log.error("Failed to send discord alarm: {}", discordEx.getMessage());
-		}
+
+		String requestPath = createRequestFullPath(request);
+		alarmService.sendAlarm(ex, "GlobalExceptionHandler - 알 수 없는 예외 발생\nURL: " + requestPath);
+
 		// 공통적인 오류 응답
 		ErrorCode errorCode = CommonErrorCode.INTERNAL_SERVER_ERROR;
 		return handleExceptionInternal(errorCode);

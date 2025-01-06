@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.awspring.cloud.sqs.listener.MessageListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mejai.mejaigg.global.discord.DiscordAlarmService;
+import mejai.mejaigg.global.alarm.AlarmService;
 import mejai.mejaigg.matchstreak.service.StreakService;
 import mejai.mejaigg.messaging.sqs.config.AwsProperties;
 import mejai.mejaigg.riot.exception.ClientErrorCode;
@@ -28,7 +28,7 @@ public class MyMessageListener implements MessageListener<Object> {
 	private final StreakService streakService;
 	private final SqsAsyncClient sqsAsyncClient;
 	private final AwsProperties awsProperties;
-	private final DiscordAlarmService discordAlarmService;
+	private final AlarmService alarmService;
 
 	@Override
 	public void onMessage(Message<Object> message) {
@@ -68,12 +68,12 @@ public class MyMessageListener implements MessageListener<Object> {
 				SqsListenerControlService.requestStop();
 				return;
 			}
-			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 ClientException");
+			alarmService.sendAlarm(e, "SQS에서 발생한 ClientException");
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
 			deleteMessage(receiptHandle);
 		} catch (Exception e) {
 			log.warn("Failed to process message: " + e.getMessage());
-			discordAlarmService.sendDiscordAlarm(e, "SQS에서 발생한 일반 Exception");
+			alarmService.sendAlarm(e, "SQS에서 발생한 일반 Exception");
 
 			String receiptHandle = message.getHeaders().get("Sqs_ReceiptHandle", String.class);
 			deleteMessage(receiptHandle);

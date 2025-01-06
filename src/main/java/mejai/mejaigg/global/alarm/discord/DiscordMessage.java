@@ -1,4 +1,4 @@
-package mejai.mejaigg.global.discord;
+package mejai.mejaigg.global.alarm.discord;
 
 import java.util.List;
 
