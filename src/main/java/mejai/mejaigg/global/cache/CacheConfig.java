@@ -27,14 +27,14 @@ public class CacheConfig {
 			.build()
 		);
 
-		CaffeineCache rankingCache = new CaffeineCache(CacheNames.MEJAI_API_CACHE, Caffeine.newBuilder()
-			.expireAfterWrite(30, TimeUnit.MINUTES)
+		CaffeineCache mejaiApiCache = new CaffeineCache(CacheNames.MEJAI_API_CACHE, Caffeine.newBuilder()
+			.expireAfterWrite(1, TimeUnit.MINUTES)
 			.maximumSize(100)
 			.recordStats()
 			.build()
 		);
 
-		cacheManager.setCaches(List.of(oauthApiCache, rankingCache));
+		cacheManager.setCaches(List.of(oauthApiCache, mejaiApiCache));
 		return cacheManager;
 	}
 }
