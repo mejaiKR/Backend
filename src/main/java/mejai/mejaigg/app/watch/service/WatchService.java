@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -142,6 +143,7 @@ public class WatchService {
 				)
 			);
 		}
+		dayPlayLog.sort(Comparator.comparing(PlayLog::getStartTime));
 
 		return dayPlayLog;
 	}
