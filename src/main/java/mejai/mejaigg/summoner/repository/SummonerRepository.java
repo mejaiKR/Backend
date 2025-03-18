@@ -17,4 +17,6 @@ public interface SummonerRepository extends JpaRepository<Summoner, Long>, Summo
 	Optional<Summoner> findByNormalizedSummonerNameAndNormalizedTagLine(String name, String tag);
 
 	List<Summoner> findBySummonerNameContainingAllIgnoreCaseOrderBySummonerNameDesc(String summonerName, Limit limit);
+
+	Optional<Summoner> findByPuuid(String puuid);
 }
