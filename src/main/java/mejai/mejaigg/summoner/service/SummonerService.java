@@ -73,19 +73,29 @@ public class SummonerService {
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
 		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
 
-		Summoner summoner = Summoner.builder()
-			.summonerName(accountDto.getGameName())
-			.tagLine(accountDto.getTagLine())
-			.puuid(accountDto.getPuuid())
-			.accountId(summonerDto.getAccountId())
-			.summonerId(summonerDto.getId())
-			.summonerLevel(summonerDto.getSummonerLevel())
-			.revisionDate(summonerDto.getRevisionDate())
-			.profileIconId(summonerDto.getProfileIconId())
-			.summonerLevel(summonerDto.getSummonerLevel())
-			.build();
-		summoner.setRankByRankDtos(rankDtos);
-		// rankRepository.saveAll(summoner.getRanks());
+		Summoner summoner = summonerRepository.findByPuuid(accountDto.getPuuid())
+			.map(existingSummoner -> {
+				// 기존 유저 업데이트: 닉네임 변경의 경우
+				existingSummoner.updateNameAndTag(name, tag);
+				existingSummoner.updateBySummonerDto(summonerDto);
+				existingSummoner.setRankByRankDtos(rankDtos);
+				return existingSummoner;
+			})
+			.orElseGet(() -> {
+				// 신규 유저 생성
+				Summoner newSummoner = Summoner.builder()
+					.summonerName(accountDto.getGameName())
+					.tagLine(accountDto.getTagLine())
+					.puuid(accountDto.getPuuid())
+					.accountId(summonerDto.getAccountId())
+					.summonerId(summonerDto.getId())
+					.summonerLevel(summonerDto.getSummonerLevel())
+					.revisionDate(summonerDto.getRevisionDate())
+					.profileIconId(summonerDto.getProfileIconId())
+					.build();
+				newSummoner.setRankByRankDtos(rankDtos);
+				return newSummoner;
+			});
 		return summonerRepository.save(summoner);
 	}
 

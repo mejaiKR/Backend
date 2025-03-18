@@ -94,6 +94,11 @@ public class Summoner extends BaseEntity {
 		this.summonerLevel = summonerDto.getSummonerLevel();
 	}
 
+	public void updateNameAndTag(String summonerName, String tagLine) {
+		this.summonerName = summonerName;
+		this.tagLine = tagLine;
+	}
+
 	public void setRanks(List<Rank> ranks) {
 		this.ranks = ranks;
 		ranks.forEach(rank -> rank.setSummoner(this));
