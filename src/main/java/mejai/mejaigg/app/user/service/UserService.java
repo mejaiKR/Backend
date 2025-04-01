@@ -1,8 +1,5 @@
 package mejai.mejaigg.app.user.service;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -49,14 +46,6 @@ public class UserService {
 
 	public AppUser findUserById(long userId) {
 		return appUserRepository.findById(userId).orElseThrow();
-	}
-
-	public List<Summoner> findAllWatchSummoner() {
-		return appUserRepository.findAll().stream()
-			.map(AppUser::getWatchSummoner)
-			.filter(Objects::nonNull)
-			.distinct()
-			.toList();
 	}
 
 	public RefreshResponse refresh(String refreshToken) {

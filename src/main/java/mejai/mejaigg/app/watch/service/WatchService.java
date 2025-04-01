@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -56,15 +55,6 @@ public class WatchService {
 		userService.addWatchSummoner(userId, summoner, relationship);
 
 		return new CreateSummonerResponse(summoner.getId());
-	}
-
-	@Scheduled(cron = "0 0 0/1 * * *")
-	@Transactional
-	public void renewal() {
-		List<Summoner> watchSummoners = userService.findAllWatchSummoner();
-		for (Summoner summoner : watchSummoners) {
-			matchService.createMatches(summoner.getPuuid());
-		}
 	}
 
 	@Transactional
