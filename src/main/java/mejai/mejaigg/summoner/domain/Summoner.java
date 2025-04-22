@@ -37,7 +37,7 @@ import mejai.mejaigg.searchhistory.domain.SearchHistory;
 public class Summoner extends BaseEntity {
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@Column(name = "summoner_name", nullable = false)

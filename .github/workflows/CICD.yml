@@ -3,9 +3,9 @@ name: CI and Deploy to Amazon EC2
 # 2 워크플로가 시작될 조건 지정
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: mejai-backend-github-action-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: my-mejai-backend-action
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-mejai-codedeploy-deployment-group
+  S3_BUCKET_NAME: mejai-github-action-s3-bucket
+  CODE_DEPLOY_APPLICATION_NAME: mejai-codedeploy-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: mejai-codedeploy-deployment-group
 permissions:
   contents: read
 on:

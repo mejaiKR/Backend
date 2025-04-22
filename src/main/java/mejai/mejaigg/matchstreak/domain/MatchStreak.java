@@ -28,7 +28,7 @@ import mejai.mejaigg.searchhistory.domain.SearchHistory;
 public class MatchStreak extends BaseEntity implements Comparable<MatchStreak> {
 
 	@Id
-	@GeneratedValue // ID 자동 생성 전략 사용
+	@GeneratedValue
 	private Long id;
 
 	@Column(name = "date", nullable = false)
