@@ -15,7 +15,7 @@ hooks:
   AfterInstall: #AfterInstall에서 기존에 실행중이던 어플리케이션 종료시키고 ApplicationStart에서 새로운 어플리케이션 실행
     - location: scripts/stop.sh
       timeout: 60
-      runas: ec2-user
+      runas: ubuntu
   ApplicationStart:
     - location: scripts/start.sh
       timeout: 60
