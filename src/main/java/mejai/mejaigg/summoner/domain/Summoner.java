@@ -15,7 +15,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
-import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -38,12 +37,7 @@ import mejai.mejaigg.searchhistory.domain.SearchHistory;
 public class Summoner extends BaseEntity {
 	@Id
 	@Column(name = "id")
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "summoner_seq")
-	@SequenceGenerator(
-		name = "summoner_seq",
-		sequenceName = "summoner_id_seq",
-		allocationSize = 1
-	)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // ID 자동 생성 전략 사용
 	private Long id;
 
 	@Column(name = "summoner_name", nullable = false)
