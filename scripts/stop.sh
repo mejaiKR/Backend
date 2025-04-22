@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT="/home/ec2-user"
+PROJECT_ROOT="/home/ubuntu"
 JAR_FILE="$PROJECT_ROOT/mejai-gg.jar"
 
 DEPLOY_LOG="$PROJECT_ROOT/deploy.log"
