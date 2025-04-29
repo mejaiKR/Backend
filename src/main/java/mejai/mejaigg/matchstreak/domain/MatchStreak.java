@@ -35,6 +35,7 @@ public class MatchStreak extends BaseEntity implements Comparable<MatchStreak> {
 	private LocalDate date; // yyyy-MM-dd
 
 	@Column(name = "game_count", nullable = false)
+	@Setter
 	private int allGameCount;
 
 	@ManyToOne(fetch = FetchType.LAZY)
