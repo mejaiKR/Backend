@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +63,6 @@ public class StreakService {
 	 * @param month 월
 	 * @return 소환사의 게임 횟수 및 승패 업데이트 결과
 	 */
-	@Transactional
 	public void renewalStreak(String summonerName, String tag, int year, int month) {
 		Summoner summoner = summonerService.findOrCreateSummoner(summonerName, tag);
 		YearMonth yearMonth = YearMonth.of(year, month);
@@ -74,7 +72,9 @@ public class StreakService {
 				return searchHistoryRepository.save(newHistory);
 			});
 
-		if (history.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
+		if (history.getCreatedAt() != history.getUpdatedAt() && history.getUpdatedAt()
+			.plusHours(2)
+			.isAfter(LocalDateTime.now())) {
 			log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
 			return;
 		}
@@ -144,11 +144,14 @@ public class StreakService {
 							.date(day)
 							.allGameCount(0)
 							.build();
-						history.addMatchDateStreak(tm);
-						return tm;
+						tm.setSearchHistory(history);
+						MatchStreak saved = matchStreakRepository.save(tm);
+						history.addMatchDateStreak(saved);
+						return saved;
 					});
 				ms.setAllGameCount(days.length);
 				history.setLastSuccessDay(i);
+				System.out.println("day = " + day);
 			} catch (Exception e) {
 				log.error("스트릭 저장중에 에러 발생" + e.getMessage());
 				searchHistoryRepository.save(history);
