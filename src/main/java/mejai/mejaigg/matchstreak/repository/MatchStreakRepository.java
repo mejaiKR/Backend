@@ -1,6 +1,7 @@
 package mejai.mejaigg.matchstreak.repository;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,10 @@ public interface MatchStreakRepository extends JpaRepository<MatchStreak, Long> 
 	Optional<MatchStreak> findByDateAndSearchHistory(LocalDate date, Long searchHistoryId);
 
 	Optional<MatchStreak> findBySearchHistoryAndDate(SearchHistory sh, LocalDate date);
+
+	List<MatchStreak> findAllBySearchHistoryAndDateBetween(
+		SearchHistory history,
+		LocalDate start,
+		LocalDate end
+	);
 }

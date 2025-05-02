@@ -5,9 +5,13 @@ import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +33,7 @@ import mejai.mejaigg.summoner.service.SummonerService;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class StreakService {
 	private final SummonerService summonerService;
 	private final SearchHistoryRepository searchHistoryRepository;
@@ -65,12 +70,10 @@ public class StreakService {
 	 */
 	public void renewalStreak(String summonerName, String tag, int year, int month) {
 		Summoner summoner = summonerService.findOrCreateSummoner(summonerName, tag);
-		YearMonth yearMonth = YearMonth.of(year, month);
-		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(summoner, yearMonth)
-			.orElseGet(() -> {
-				SearchHistory newHistory = initializeSearchHistory(summoner, yearMonth);
-				return searchHistoryRepository.save(newHistory);
-			});
+		YearMonth ym = YearMonth.of(year, month);
+		SearchHistory history = searchHistoryRepository
+			.findBySummonerAndDate(summoner, ym)
+			.orElseGet(() -> initializeSearchHistory(summoner, ym));
 
 		if (history.getCreatedAt() != history.getUpdatedAt() && history.getUpdatedAt()
 			.plusHours(2)
@@ -79,7 +82,7 @@ public class StreakService {
 			return;
 		}
 
-		updateStreakData(history, yearMonth, summoner.getPuuid());
+		updateStreakData(history, ym, summoner.getPuuid());
 	}
 
 	public RenewalStatusResponse getStreakRenewalStatus(String summonerName, String tag, int year, int month) {
@@ -100,8 +103,7 @@ public class StreakService {
 			.summoner(summoner)
 			.date(yearMonth)
 			.build();
-		updateStreakData(history, yearMonth, summoner.getPuuid());
-		return history;
+		return searchHistoryRepository.save(history);
 	}
 
 	private String[] getMonthHistories(YearMonth yearMonth, String puuid, int startDay, int endDay) {
@@ -126,39 +128,43 @@ public class StreakService {
 	}
 
 	private void updateStreakData(SearchHistory history, YearMonth ym, String puuid) {
+		LocalDate monthStart = ym.atDay(1);
+		LocalDate monthEnd = ym.atEndOfMonth();
+		//저장된 스트릭이 있을 경우, 해당 스트릭을 가져온다
+		List<MatchStreak> existing = matchStreakRepository
+			.findAllBySearchHistoryAndDateBetween(history, monthStart, monthEnd);
+		Map<LocalDate, MatchStreak> existingMap = existing.stream()
+			.collect(Collectors.toMap(MatchStreak::getDate, Function.identity()));
+
 		int start = history.getLastSuccessDay();
+		//하루하루 돌면서, 실제 게임 횟수만 계산
 		for (int i = Math.max(1, start); i <= ym.lengthOfMonth(); i++) {
 			try {
+
 				String[] days = getMonthHistories(ym, puuid, i, i + 1);
 				if (days == null || days.length == 0) { // 게임을 안 한 날도 lastSuccessDay 올림
 					history.setLastSuccessDay(i);
 					continue;
 				}
-
-				// 이미 있는지 확인 & 없으면 생성
 				LocalDate day = ym.atDay(i);
-				MatchStreak ms = matchStreakRepository
-					.findBySearchHistoryAndDate(history, day)
-					.orElseGet(() -> {
-						MatchStreak tm = MatchStreak.builder()
-							.date(day)
-							.allGameCount(0)
-							.build();
-						tm.setSearchHistory(history);
-						MatchStreak saved = matchStreakRepository.save(tm);
-						history.addMatchDateStreak(saved);
-						return saved;
-					});
-				ms.setAllGameCount(days.length);
+				MatchStreak ms = existingMap.get(day);
+				// 이미 있는지 확인 & 없으면 생성
+				if (ms == null) {
+					ms = MatchStreak.builder()
+						.date(day)
+						.allGameCount(days.length)
+						.build();
+					history.addMatchDateStreak(ms);      // cascade 로 나중에 같이 저장됨
+				} else { // 기존 업데이트
+					ms.setAllGameCount(days.length);
+				}
 				history.setLastSuccessDay(i);
-				System.out.println("day = " + day);
 			} catch (Exception e) {
 				log.error("스트릭 저장중에 에러 발생" + e.getMessage());
 				searchHistoryRepository.save(history);
 				return;
 			}
 		}
-
 		history.setDone(!ym.equals(YearMonth.now()));
 		history.setUpdatedAt(LocalDateTime.now());
 		searchHistoryRepository.save(history);
