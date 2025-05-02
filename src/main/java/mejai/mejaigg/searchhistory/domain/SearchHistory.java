@@ -7,6 +7,7 @@ import java.util.TreeSet;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -55,7 +56,9 @@ public class SearchHistory extends BaseEntity {
 	@JoinColumn(name = "summoner_id")
 	private Summoner summoner;
 
-	@OneToMany(mappedBy = "searchHistory")
+	@OneToMany(mappedBy = "searchHistory",
+		cascade = CascadeType.ALL,
+		orphanRemoval = true)
 	@Builder.Default
 	private Set<MatchStreak> matchStreaks = new HashSet<>();
 

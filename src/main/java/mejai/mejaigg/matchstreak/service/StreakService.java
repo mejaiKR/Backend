@@ -1,5 +1,6 @@
 package mejai.mejaigg.matchstreak.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -124,35 +125,29 @@ public class StreakService {
 		return new SummonerStreakResponse(summonerStreak, history.getUpdatedAt());
 	}
 
-	private void updateStreakData(SearchHistory history, YearMonth dateYM, String puuid) {
-		int startDay = history.getLastSuccessDay();
-		if (startDay >= dateYM.lengthOfMonth()) {
-			history.setDone(true);
-			history.setUpdatedAt(LocalDateTime.now());
-			searchHistoryRepository.save(history);
-			return;
-		}
-		if (startDay == 0)
-			startDay = 1;
-		for (int i = startDay; i <= dateYM.lengthOfMonth(); i++) {
+	private void updateStreakData(SearchHistory history, YearMonth ym, String puuid) {
+		int start = history.getLastSuccessDay();
+		for (int i = Math.max(1, start); i <= ym.lengthOfMonth(); i++) {
 			try {
-				String[] dayHistories = getMonthHistories(dateYM, puuid, i, i + 1);
-				if (dayHistories == null || dayHistories.length == 0) { // 게임을 안 한 날도 lastSuccessDay 올림
+				String[] days = getMonthHistories(ym, puuid, i, i + 1);
+				if (days == null || days.length == 0) { // 게임을 안 한 날도 lastSuccessDay 올림
 					history.setLastSuccessDay(i);
 					continue;
 				}
 
-				// 이미 있는지 확인
-				int finalI = i;
-				MatchStreak streak = matchStreakRepository
-					.findBySearchHistoryAndDate(history, dateYM.atDay(i))
-					.orElseGet(() -> MatchStreak.builder()
-						.date(dateYM.atDay(finalI))
-						.searchHistory(history)
-						.build());
-				// 값 갱신 후 저장
-				streak.setAllGameCount(dayHistories.length);
-				matchStreakRepository.save(streak);
+				// 이미 있는지 확인 & 없으면 생성
+				LocalDate d = ym.atDay(i);
+				MatchStreak ms = matchStreakRepository
+					.findBySearchHistoryAndDate(history, d)
+					.orElseGet(() -> {
+						MatchStreak m = MatchStreak.builder()
+							.date(d)
+							.allGameCount(0)
+							.build();
+						history.addMatchDateStreak(m);
+						return m;
+					});
+				ms.setAllGameCount(days.length);
 				history.setLastSuccessDay(i);
 			} catch (Exception e) {
 				log.error("스트릭 저장중에 에러 발생" + e.getMessage());
@@ -161,11 +156,7 @@ public class StreakService {
 			}
 		}
 
-		if (dateYM.equals(YearMonth.now())) { // 만약 이번달인 경우
-			history.setDone(false);
-		} else {
-			history.setDone(true);
-		}
+		history.setDone(!ym.equals(YearMonth.now()));
 		history.setUpdatedAt(LocalDateTime.now());
 		searchHistoryRepository.save(history);
 	}
