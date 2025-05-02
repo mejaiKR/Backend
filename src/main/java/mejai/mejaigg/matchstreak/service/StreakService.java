@@ -136,16 +136,16 @@ public class StreakService {
 				}
 
 				// 이미 있는지 확인 & 없으면 생성
-				LocalDate d = ym.atDay(i);
+				LocalDate day = ym.atDay(i);
 				MatchStreak ms = matchStreakRepository
-					.findBySearchHistoryAndDate(history, d)
+					.findBySearchHistoryAndDate(history, day)
 					.orElseGet(() -> {
-						MatchStreak m = MatchStreak.builder()
-							.date(d)
+						MatchStreak tm = MatchStreak.builder()
+							.date(day)
 							.allGameCount(0)
 							.build();
-						history.addMatchDateStreak(m);
-						return m;
+						history.addMatchDateStreak(tm);
+						return tm;
 					});
 				ms.setAllGameCount(days.length);
 				history.setLastSuccessDay(i);
