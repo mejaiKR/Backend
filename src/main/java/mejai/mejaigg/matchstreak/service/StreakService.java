@@ -68,7 +68,10 @@ public class StreakService {
 		Summoner summoner = summonerService.findOrCreateSummoner(summonerName, tag);
 		YearMonth yearMonth = YearMonth.of(year, month);
 		SearchHistory history = searchHistoryRepository.findBySummonerAndDate(summoner, yearMonth)
-			.orElseGet(() -> initializeSearchHistory(summoner, yearMonth));
+			.orElseGet(() -> {
+				SearchHistory newHistory = initializeSearchHistory(summoner, yearMonth);
+				return searchHistoryRepository.save(newHistory);
+			});
 
 		if (history.getUpdatedAt().plusHours(2).isAfter(LocalDateTime.now())) {
 			log.info("스트릭 업데이트를 한지 2시간 밖에 지나지 않았습니다");
