@@ -9,9 +9,7 @@ public class TestUtil {
 	public static Summoner createTestUser() {
 		return Summoner.builder()
 			.puuid("puuid1")
-			.accountId("accountId1")
 			.tagLine("tagLine1")
-			.summonerId("summonerId1")
 			.summonerLevel(1L)
 			.summonerName("summonerName1")
 			.revisionDate(1L)

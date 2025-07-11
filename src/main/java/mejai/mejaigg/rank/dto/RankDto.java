@@ -7,16 +7,16 @@ import mejai.mejaigg.rank.domain.TierType;
 @Data
 public class RankDto {
 	private String leagueId;
+	private String puuid;
 	private String queueType;
 	private TierType tier;
 	private RankType rank;
-	private String summonerId;
-	private String summonerName;
 	private Long leaguePoints;
 	private int wins;
 	private int losses;
-	private boolean veteran;
-	private boolean inactive;
-	private boolean freshBlood;
 	private boolean hotStreak;
+	private boolean veteran;
+	private boolean freshBlood;
+	private boolean inactive;
+	private MiniSeriesDTO miniSeries;
 }

@@ -53,8 +53,6 @@ class StreakServiceTest {
 			.summonerName("testName")
 			.tagLine("testTag")
 			.puuid("testPuuid")
-			.summonerId("testSummonerId")
-			.accountId("testAccountId")
 			.summonerLevel(1L)
 			.profileIconId(1)
 			.revisionDate(1L)

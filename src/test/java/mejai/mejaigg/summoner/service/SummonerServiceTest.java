@@ -61,8 +61,6 @@ class SummonerServiceTest {
 			.summonerName(name)
 			.tagLine(tag)
 			.puuid("testPuuid")
-			.accountId("testAccountId")
-			.summonerId("testSummonerId")
 			.revisionDate(123456789L)
 			.profileIconId(123)
 			.summonerLevel(10L)
@@ -92,8 +90,6 @@ class SummonerServiceTest {
 			.summonerName(name)
 			.tagLine(tag)
 			.puuid("refreshPuuid")
-			.accountId("refreshAccountId")
-			.summonerId("refreshSummonerId")
 			.revisionDate(123456789L)
 			.profileIconId(123)
 			.summonerLevel(10L)
@@ -106,19 +102,15 @@ class SummonerServiceTest {
 				.puuid(existingSummoner.getPuuid()).build());
 		when(riotService.getSummonerByPuuid(eq(existingSummoner.getPuuid()))).thenReturn(
 			SummonerDto.builder()
-				.id(existingSummoner.getSummonerId())
-				.accountId(existingSummoner.getAccountId())
 				.puuid(existingSummoner.getPuuid())
 				.summonerLevel(existingSummoner.getSummonerLevel())
 				.profileIconId(existingSummoner.getProfileIconId())
 				.revisionDate(existingSummoner.getRevisionDate())
 				.build());
-		when(riotService.getRankBySummonerId(eq(existingSummoner.getSummonerId()))).thenReturn(rankDtos);
+		when(riotService.getRankByPuuuid(eq(existingSummoner.getPuuid()))).thenReturn(rankDtos);
 		//when
 		existingSummoner.setUpdatedAt(LocalDateTime.now().minusHours(3));
 		SummonerDto summonerDto = SummonerDto.builder()
-			.id("refreshedId")
-			.accountId("refreshedAccountId")
 			.puuid("refreshPuuid")
 			.summonerLevel(10L)
 			.profileIconId(123)
@@ -151,8 +143,6 @@ class SummonerServiceTest {
 			.revisionDate(123456789L)
 			.profileIconId(123)
 			.summonerLevel(10L)
-			.summonerId("noUpdateSummonerId")
-			.accountId("noUpdateAccountId")
 			.build();
 		existingSummoner.setUpdatedAt(LocalDateTime.now().minusMinutes(30));
 		existingSummoner.setRankByRankDtos(new HashSet<>());
@@ -182,16 +172,12 @@ class SummonerServiceTest {
 			.revisionDate(123456789L)
 			.profileIconId(123)
 			.summonerLevel(10L)
-			.summonerId("forcedUpdateSummonerId")
-			.accountId("forcedUpdateAccountId")
 			.build();
 		existingSummoner.setUpdatedAt(LocalDateTime.now().minusHours(3));
 		existingSummoner.setRankByRankDtos(new HashSet<>());
 		summonerRepository.save(existingSummoner);
 		when(riotService.getSummonerByPuuid(anyString())).thenReturn(
 			SummonerDto.builder()
-				.id("forcedUpdateSummonerId")
-				.accountId("forcedUpdateAccountId")
 				.puuid("forcedUpdatePuuid")
 				.summonerLevel(10L)
 				.profileIconId(123)

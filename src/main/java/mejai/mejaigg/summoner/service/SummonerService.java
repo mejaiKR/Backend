@@ -71,8 +71,7 @@ public class SummonerService {
 		log.info("소환사 정보가 없어 새로 생성합니다.");
 		AccountDto accountDto = riotService.getAccountByNameAndTag(name, tag);
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(accountDto.getPuuid());
-		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
-
+		Set<RankDto> rankDtos = riotService.getRankByPuuuid(accountDto.getPuuid());
 		Summoner summoner = summonerRepository.findByPuuid(accountDto.getPuuid())
 			.map(existingSummoner -> {
 				// 기존 유저 업데이트: 닉네임 변경의 경우
@@ -87,8 +86,6 @@ public class SummonerService {
 					.summonerName(accountDto.getGameName())
 					.tagLine(accountDto.getTagLine())
 					.puuid(accountDto.getPuuid())
-					.accountId(summonerDto.getAccountId())
-					.summonerId(summonerDto.getId())
 					.summonerLevel(summonerDto.getSummonerLevel())
 					.revisionDate(summonerDto.getRevisionDate())
 					.profileIconId(summonerDto.getProfileIconId())
@@ -151,7 +148,7 @@ public class SummonerService {
 	 */
 	private void updateUserDetails(Summoner summoner) {
 		SummonerDto summonerDto = riotService.getSummonerByPuuid(summoner.getPuuid());
-		Set<RankDto> rankDtos = riotService.getRankBySummonerId(summonerDto.getId());
+		Set<RankDto> rankDtos = riotService.getRankByPuuuid(summoner.getPuuid());
 		List<Rank> ranks = summoner.getRanks();
 		summoner.setRankByRankDtos(rankDtos);
 		ranks.forEach(rank ->

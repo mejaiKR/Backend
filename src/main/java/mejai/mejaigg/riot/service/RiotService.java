@@ -41,6 +41,10 @@ public class RiotService {
 		return riotKrClient.getRankBySummonerId(riotProperties.getApiKey(), summonerId);
 	}
 
+	public Set<RankDto> getRankByPuuuid(String puuid) {
+		return riotKrClient.getRankByPuuuid(riotProperties.getApiKey(), puuid);
+	}
+
 	public String[] getMatchHistoryByPuuid(String puuid, Long startTime, Long endTime, Long start, int count) {
 		return riotAsiaClient.getMatchHistoryByPuuid(riotProperties.getApiKey(), puuid, startTime, endTime, start,
 			count);

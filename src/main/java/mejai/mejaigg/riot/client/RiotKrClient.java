@@ -34,6 +34,7 @@ public interface RiotKrClient {
 	@GetMapping("/lol/summoner/v4/summoners/by-puuid/{puuid}")
 	SummonerDto getSummonerByPuuuid(@RequestParam("api_key") String riotKey, @PathVariable String puuid);
 
+	@Deprecated
 	@Retryable(
 		value = {ServerErrorException.class}, // 재시도할 예외 지정
 		maxAttempts = 3, // 최대 재시도 횟수
@@ -41,6 +42,9 @@ public interface RiotKrClient {
 	)
 	@GetMapping("/lol/league/v4/entries/by-summoner/{summonerId}")
 	Set<RankDto> getRankBySummonerId(@RequestParam("api_key") String riotKey, @PathVariable String summonerId);
+
+	@GetMapping("/lol/league/v4/entries/by-puuid/{puuid}")
+	Set<RankDto> getRankByPuuuid(@RequestParam("api_key") String riotKey, @PathVariable String puuid);
 
 	@Deprecated
 	@GetMapping("/lol/summoner/v4/summoners/by-name/{name}")

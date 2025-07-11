@@ -19,9 +19,7 @@ public class RankService {
 	private final RiotService riotService;
 
 	public void updateUserRanks(Summoner user) {
-		Set<RankDto> rankDtos = riotService.getRankBySummonerId(user.getSummonerId());
-
-		// 랭크 DTO로부터 랭크 객체를 업데이트
+		Set<RankDto> rankDtos = riotService.getRankByPuuuid(user.getPuuid());
 		updateRank(user, rankDtos, "RANKED_SOLO_5x5");
 		updateRank(user, rankDtos, "RANKED_FLEX_SR");
 	}
