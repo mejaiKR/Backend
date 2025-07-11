@@ -55,13 +55,6 @@ public class Summoner extends BaseEntity {
 	@Column(name = "puuid", nullable = false, unique = true)
 	private String puuid;
 
-	//Encrypted account ID, Max length 56 characters.
-	@Column(name = "account_id", length = 70, nullable = false)
-	private String accountId;
-
-	@Column(name = "summoner_id", nullable = false)
-	private String summonerId;
-
 	//Date summoner was last modified specified as epoch milliseconds.
 	@Column(name = "revision_date", nullable = false)
 	private Long revisionDate;
@@ -88,7 +81,6 @@ public class Summoner extends BaseEntity {
 	}
 
 	public void updateBySummonerDto(SummonerDto summonerDto) {
-		this.summonerId = summonerDto.getId();
 		this.revisionDate = summonerDto.getRevisionDate();
 		this.profileIconId = summonerDto.getProfileIconId();
 		this.summonerLevel = summonerDto.getSummonerLevel();
