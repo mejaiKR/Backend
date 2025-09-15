@@ -107,7 +107,7 @@ class SummonerServiceTest {
 				.profileIconId(existingSummoner.getProfileIconId())
 				.revisionDate(existingSummoner.getRevisionDate())
 				.build());
-		when(riotService.getRankByPuuuid(eq(existingSummoner.getPuuid()))).thenReturn(rankDtos);
+		when(riotService.getRankByPuuid(eq(existingSummoner.getPuuid()))).thenReturn(rankDtos);
 		//when
 		existingSummoner.setUpdatedAt(LocalDateTime.now().minusHours(3));
 		SummonerDto summonerDto = SummonerDto.builder()

@@ -25,10 +25,6 @@ public class RiotService {
 	private final RiotAsiaClient riotAsiaClient;
 	private final RiotProperties riotProperties;
 
-	public SummonerDto getSummonerByName(String name) {
-		return riotKrClient.getSummerByName(riotProperties.getApiKey(), name);
-	}
-
 	public SummonerDto getSummonerByPuuid(String puuid) {
 		return riotKrClient.getSummonerByPuuuid(riotProperties.getApiKey(), puuid);
 	}
@@ -41,8 +37,8 @@ public class RiotService {
 		return riotKrClient.getRankBySummonerId(riotProperties.getApiKey(), summonerId);
 	}
 
-	public Set<RankDto> getRankByPuuuid(String puuid) {
-		return riotKrClient.getRankByPuuuid(riotProperties.getApiKey(), puuid);
+	public Set<RankDto> getRankByPuuid(String puuid) {
+		return riotKrClient.getRankByPuuid(riotProperties.getApiKey(), puuid);
 	}
 
 	public String[] getMatchHistoryByPuuid(String puuid, Long startTime, Long endTime, Long start, int count) {

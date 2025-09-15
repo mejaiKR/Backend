@@ -44,11 +44,11 @@ public interface RiotKrClient {
 	Set<RankDto> getRankBySummonerId(@RequestParam("api_key") String riotKey, @PathVariable String summonerId);
 
 	@GetMapping("/lol/league/v4/entries/by-puuid/{puuid}")
-	Set<RankDto> getRankByPuuuid(@RequestParam("api_key") String riotKey, @PathVariable String puuid);
+	Set<RankDto> getRankByPuuid(@RequestParam("api_key") String riotKey, @PathVariable String puuid);
 
 	@Deprecated
 	@GetMapping("/lol/summoner/v4/summoners/by-name/{name}")
-	SummonerDto getSummerByName(@RequestParam("api_key") String riotKey, @PathVariable String name);
+	SummonerDto getSummonerByName(@RequestParam("api_key") String riotKey, @PathVariable String name);
 
 	@Slf4j
 	@Component
