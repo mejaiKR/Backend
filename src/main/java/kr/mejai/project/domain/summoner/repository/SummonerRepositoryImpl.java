@@ -9,9 +9,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
 import kr.mejai.project.domain.summoner.dto.TopUserDTO;
-import kr.mejai.project.matchstreak.domain.QMatchStreak;
-import kr.mejai.project.searchhistory.domain.QSearchHistory;
-import kr.mejai.project.summoner.domain.QSummoner;
+import kr.mejai.project.domain.summoner.entity.QMatchStreak;
+import kr.mejai.project.domain.summoner.entity.QSearchHistory;
+import kr.mejai.project.domain.summoner.entity.QSummoner;
 
 public class SummonerRepositoryImpl implements SummonerCustom {
 	private final JPAQueryFactory queryFactory;
