@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.searchhistory.dto;
+package kr.mejai.project.domain.summoner.dto.request;
 
 import org.springdoc.core.annotations.ParameterObject;
 

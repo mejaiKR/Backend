@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.matchstreak.repository;
+package kr.mejai.project.domain.summoner.repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -7,8 +7,8 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import kr.mejai.project.domain.matchstreak.domain.MatchStreak;
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
+import kr.mejai.project.domain.summoner.entity.MatchStreak;
+import kr.mejai.project.domain.summoner.entity.SearchHistory;
 
 public interface MatchStreakRepository extends JpaRepository<MatchStreak, Long> {
 	@Query("select mds from MatchStreak mds where mds.date = :date "

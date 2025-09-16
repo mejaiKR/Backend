@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import kr.mejai.project.domain.rank.domain.Rank;
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

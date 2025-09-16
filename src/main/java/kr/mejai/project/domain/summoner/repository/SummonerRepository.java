@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Limit;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 
 public interface SummonerRepository extends JpaRepository<Summoner, Long>, SummonerCustom {
 

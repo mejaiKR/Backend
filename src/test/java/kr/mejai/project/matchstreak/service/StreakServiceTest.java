@@ -15,16 +15,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import kr.mejai.project.domain.matchstreak.domain.MatchStreak;
-import kr.mejai.project.domain.matchstreak.repository.MatchStreakRepository;
-import kr.mejai.project.domain.matchstreak.service.StreakService;
 import kr.mejai.project.domain.rank.repository.RankRepository;
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
-import kr.mejai.project.domain.searchhistory.repository.SearchHistoryRepository;
-import kr.mejai.project.domain.summoner.domain.Summoner;
 import kr.mejai.project.domain.summoner.dto.request.SummonerStreakRequest;
 import kr.mejai.project.domain.summoner.dto.response.SummonerStreakResponse;
+import kr.mejai.project.domain.summoner.entity.MatchStreak;
+import kr.mejai.project.domain.summoner.entity.SearchHistory;
+import kr.mejai.project.domain.summoner.entity.Summoner;
+import kr.mejai.project.domain.summoner.repository.MatchStreakRepository;
+import kr.mejai.project.domain.summoner.repository.SearchHistoryRepository;
 import kr.mejai.project.domain.summoner.repository.SummonerRepository;
+import kr.mejai.project.domain.summoner.service.StreakService;
 
 @SpringBootTest
 @DisplayName("스트릭 테스트")

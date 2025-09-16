@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.matchstreak.domain;
+package kr.mejai.project.domain.summoner.entity;
 
 import java.time.LocalDate;
 
@@ -13,7 +13,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import kr.mejai.project.common.jpa.BaseEntity;
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

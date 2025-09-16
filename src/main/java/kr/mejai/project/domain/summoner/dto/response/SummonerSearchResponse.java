@@ -2,7 +2,7 @@ package kr.mejai.project.domain.summoner.dto.response;
 
 import java.util.List;
 
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

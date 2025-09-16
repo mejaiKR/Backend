@@ -13,7 +13,7 @@ import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import kr.mejai.project.common.jpa.BaseEntity;
 import kr.mejai.project.domain.rank.dto.RankDto;
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

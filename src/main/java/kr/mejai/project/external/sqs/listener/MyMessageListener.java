@@ -7,9 +7,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.awspring.cloud.sqs.listener.MessageListener;
 import kr.mejai.project.common.alarm.AlarmService;
-import kr.mejai.project.domain.matchstreak.service.StreakService;
 import kr.mejai.project.domain.summoner.dto.request.SummonerProfileRequest;
 import kr.mejai.project.domain.summoner.dto.request.SummonerStreakRequest;
+import kr.mejai.project.domain.summoner.service.StreakService;
 import kr.mejai.project.domain.summoner.service.SummonerService;
 import kr.mejai.project.external.riot.exception.ClientErrorCode;
 import kr.mejai.project.external.riot.exception.ClientException;

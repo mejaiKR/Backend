@@ -8,7 +8,7 @@ import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import jakarta.persistence.EntityManager;
-import kr.mejai.project.domain.searchhistory.dto.TopUserDTO;
+import kr.mejai.project.domain.summoner.dto.TopUserDTO;
 import kr.mejai.project.matchstreak.domain.QMatchStreak;
 import kr.mejai.project.searchhistory.domain.QSearchHistory;
 import kr.mejai.project.summoner.domain.QSummoner;

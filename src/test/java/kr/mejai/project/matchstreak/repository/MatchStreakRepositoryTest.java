@@ -13,11 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import kr.mejai.project.domain.matchstreak.domain.MatchStreak;
-import kr.mejai.project.domain.matchstreak.repository.MatchStreakRepository;
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
-import kr.mejai.project.domain.searchhistory.repository.SearchHistoryRepository;
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.MatchStreak;
+import kr.mejai.project.domain.summoner.entity.SearchHistory;
+import kr.mejai.project.domain.summoner.entity.Summoner;
+import kr.mejai.project.domain.summoner.repository.MatchStreakRepository;
+import kr.mejai.project.domain.summoner.repository.SearchHistoryRepository;
 import kr.mejai.project.domain.summoner.repository.SummonerRepository;
 import kr.mejai.project.global.util.TestUtil;
 

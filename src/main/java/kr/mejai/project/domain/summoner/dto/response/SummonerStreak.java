@@ -3,7 +3,7 @@ package kr.mejai.project.domain.summoner.dto.response;
 import java.time.LocalDate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import kr.mejai.project.domain.matchstreak.domain.MatchStreak;
+import kr.mejai.project.domain.summoner.entity.MatchStreak;
 import lombok.Data;
 
 @Data

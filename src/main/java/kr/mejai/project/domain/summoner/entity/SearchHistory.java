@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.searchhistory.domain;
+package kr.mejai.project.domain.summoner.entity;
 
 import java.time.YearMonth;
 import java.util.HashSet;
@@ -18,8 +18,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import kr.mejai.project.common.jpa.BaseEntity;
-import kr.mejai.project.domain.matchstreak.domain.MatchStreak;
-import kr.mejai.project.domain.summoner.domain.Summoner;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.matchstreak.exception;
+package kr.mejai.project.domain.summoner.exception;
 
 import org.springframework.http.HttpStatus;
 

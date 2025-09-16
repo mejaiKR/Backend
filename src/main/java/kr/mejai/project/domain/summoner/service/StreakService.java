@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.matchstreak.service;
+package kr.mejai.project.domain.summoner.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,16 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 import kr.mejai.project.common.config.RiotProperties;
 import kr.mejai.project.common.exception.RestApiException;
 import kr.mejai.project.common.util.YearMonthToEpochUtil;
-import kr.mejai.project.domain.matchstreak.domain.MatchStreak;
-import kr.mejai.project.domain.matchstreak.exception.StreakErrorCode;
-import kr.mejai.project.domain.matchstreak.repository.MatchStreakRepository;
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
-import kr.mejai.project.domain.searchhistory.repository.SearchHistoryRepository;
-import kr.mejai.project.domain.summoner.domain.Summoner;
 import kr.mejai.project.domain.summoner.dto.response.RenewalStatusResponse;
 import kr.mejai.project.domain.summoner.dto.response.SummonerStreak;
 import kr.mejai.project.domain.summoner.dto.response.SummonerStreakResponse;
-import kr.mejai.project.domain.summoner.service.SummonerService;
+import kr.mejai.project.domain.summoner.entity.MatchStreak;
+import kr.mejai.project.domain.summoner.entity.SearchHistory;
+import kr.mejai.project.domain.summoner.entity.Summoner;
+import kr.mejai.project.domain.summoner.exception.StreakErrorCode;
+import kr.mejai.project.domain.summoner.repository.MatchStreakRepository;
+import kr.mejai.project.domain.summoner.repository.SearchHistoryRepository;
 import kr.mejai.project.external.riot.service.RiotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

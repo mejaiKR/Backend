@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import kr.mejai.project.domain.rank.domain.Rank;
 import kr.mejai.project.domain.rank.dto.RankDto;
 import kr.mejai.project.domain.rank.repository.RankRepository;
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 import kr.mejai.project.external.riot.service.RiotService;
 import lombok.RequiredArgsConstructor;
 

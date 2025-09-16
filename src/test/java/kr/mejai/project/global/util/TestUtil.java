@@ -2,8 +2,8 @@ package kr.mejai.project.global.util;
 
 import java.time.YearMonth;
 
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.SearchHistory;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 
 public class TestUtil {
 	public static Summoner createTestUser() {

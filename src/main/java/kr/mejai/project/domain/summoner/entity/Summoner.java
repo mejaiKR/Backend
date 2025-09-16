@@ -1,4 +1,4 @@
-package kr.mejai.project.domain.summoner.domain;
+package kr.mejai.project.domain.summoner.entity;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -20,7 +20,6 @@ import kr.mejai.project.common.jpa.BaseEntity;
 import kr.mejai.project.domain.rank.domain.Rank;
 import kr.mejai.project.domain.rank.domain.RankId;
 import kr.mejai.project.domain.rank.dto.RankDto;
-import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
 import kr.mejai.project.external.riot.dto.SummonerDto;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

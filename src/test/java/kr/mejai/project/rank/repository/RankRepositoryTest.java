@@ -16,7 +16,7 @@ import kr.mejai.project.domain.rank.domain.Rank;
 import kr.mejai.project.domain.rank.domain.RankId;
 import kr.mejai.project.domain.rank.domain.TierType;
 import kr.mejai.project.domain.rank.repository.RankRepository;
-import kr.mejai.project.domain.summoner.domain.Summoner;
+import kr.mejai.project.domain.summoner.entity.Summoner;
 import kr.mejai.project.domain.summoner.repository.SummonerRepository;
 import kr.mejai.project.global.util.TestUtil;
 
