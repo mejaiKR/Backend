@@ -1,0 +1,150 @@
+package kr.mejai.project.domain.summoner.domain;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
+import kr.mejai.project.common.jpa.BaseEntity;
+import kr.mejai.project.domain.rank.domain.Rank;
+import kr.mejai.project.domain.rank.domain.RankId;
+import kr.mejai.project.domain.rank.dto.RankDto;
+import kr.mejai.project.domain.searchhistory.domain.SearchHistory;
+import kr.mejai.project.external.riot.dto.SummonerDto;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@Table(name = "summoner")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Summoner extends BaseEntity {
+	@Id
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@Column(name = "summoner_name", nullable = false)
+	private String summonerName;
+
+	@Column(name = "normalized_summoner_name", nullable = false)
+	private String normalizedSummonerName;
+
+	@Column(name = "tag_line")
+	private String tagLine;
+
+	@Column(name = "normalized_tag_line", nullable = false)
+	private String normalizedTagLine;
+
+	@Column(name = "puuid", nullable = false, unique = true)
+	private String puuid;
+
+	//Date summoner was last modified specified as epoch milliseconds.
+	@Column(name = "revision_date", nullable = false)
+	private Long revisionDate;
+
+	@Column(name = "profile_icon_id", nullable = false)
+	private int profileIconId;
+
+	@Column(name = "summoner_level", nullable = false)
+	private Long summonerLevel;
+
+	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@Builder.Default
+	private List<Rank> ranks = new LinkedList<>();
+
+	@OneToMany(mappedBy = "summoner", cascade = CascadeType.ALL)
+	@Builder.Default
+	private Set<SearchHistory> searchHistory = new HashSet<>();
+
+	@PrePersist
+	@PreUpdate
+	private void normalizeSummonerNameAndTagLine() {
+		this.normalizedSummonerName = summonerName.replace(" ", "").toLowerCase();
+		this.normalizedTagLine = tagLine.toLowerCase();
+	}
+
+	public void updateBySummonerDto(SummonerDto summonerDto) {
+		this.revisionDate = summonerDto.getRevisionDate();
+		this.profileIconId = summonerDto.getProfileIconId();
+		this.summonerLevel = summonerDto.getSummonerLevel();
+	}
+
+	public void updateNameAndTag(String summonerName, String tagLine) {
+		this.summonerName = summonerName;
+		this.tagLine = tagLine;
+	}
+
+	public void setRanks(List<Rank> ranks) {
+		this.ranks = ranks;
+		ranks.forEach(rank -> rank.setSummoner(this));
+	}
+
+	public void setRankByRankDtos(Set<RankDto> rankDtos) {
+		List<Rank> ranks = new LinkedList<>();
+		rankDtos.forEach(rankDto -> {
+			if (rankDto.getQueueType().equals("RANKED_SOLO_5x5") || rankDto.getQueueType().equals("RANKED_FLEX_SR")) {
+				Rank rank = Rank.builder()
+					.id(new RankId(this.getId(), rankDto.getQueueType()))
+					.tier(rankDto.getTier())
+					.rank(rankDto.getRank())
+					.leaguePoints(rankDto.getLeaguePoints())
+					.wins(rankDto.getWins())
+					.losses(rankDto.getLosses())
+					.veteran(rankDto.isVeteran())
+					.inactive(rankDto.isInactive())
+					.freshBlood(rankDto.isFreshBlood())
+					.hotStreak(rankDto.isHotStreak())
+					.summoner(this)
+					.build();
+				ranks.add(rank);
+			}
+		});
+		// 랭크 정보가 없는 경우 unRanked로 추가
+		if (rankDtos.stream().noneMatch(rank -> rank.getQueueType().equals("RANKED_SOLO_5x5")))
+			ranks.add(Rank.builder()
+				.id(new RankId(this.getId(), "RANKED_SOLO_5x5"))
+				.summoner(this)
+				.build());
+		if (rankDtos.stream().noneMatch(rank -> rank.getQueueType().equals("RANKED_FLEX_SR")))
+			ranks.add(Rank.builder()
+				.id(new RankId(this.getId(), "RANKED_FLEX_SR"))
+				.summoner(this)
+				.build());
+		this.ranks = ranks;
+	}
+
+	public void addSearchHistory(SearchHistory searchHistory) {
+		this.searchHistory.add(searchHistory);
+	}
+
+	public Rank getSoloRank() {
+		return ranks.stream()
+			.filter(rank -> rank.getId().getQueueType().equals("RANKED_SOLO_5x5"))
+			.findFirst()
+			.orElseThrow(IllegalArgumentException::new);
+	}
+
+	public Rank getFlexRank() {
+		return ranks.stream()
+			.filter(rank -> rank.getId().getQueueType().equals("RANKED_FLEX_SR"))
+			.findFirst()
+			.orElseThrow(IllegalArgumentException::new);
+	}
+}
